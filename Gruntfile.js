@@ -20,36 +20,28 @@ module.exports = function (grunt) {
 				'<%= config.lib %>/{,*/}*.js',
 				'<%= config.test %>/{,*/}*.js'
 			]
-//		},
-//
-//		shell: {
-//			integration: {
-//				options: {
-//					stdout: true,
-//					stderr: true,
-//					failOnError: true,
-//					execOptions: {
-//						env: {
-//							NODE_ENV: 'test'
-//						}
-//					}
-//				},
-//				command: 'node test/integration/runner.js'
-//			},
-//			load: {
-//				options: {
-//					stdout: true,
-//					stderr: true,
-//					failOnError: true
-//				},
-//				command: 'node ./node_modules/mocha/bin/mocha ./test/load/loadTest.js'
-//			}
+		},
+
+		shell: {
+			unit: {
+				options: {
+					stdout: true,
+					stderr: false,
+					failOnError: true,
+					execOptions: {
+						env: {
+							NODE_ENV: 'test'
+						}
+					}
+				},
+				command: 'node test/unit/runner.js'
+			}
 		}
 	});
 
 	grunt.registerTask('build', ['jshint']);
 
-//	grunt.registerTask('test-integration', ['shell:integration']);
+	grunt.registerTask('test-unit', ['shell:unit']);
 //	grunt.registerTask('test-load', ['shell:load']);
 //	grunt.registerTask('test', ['build', 'test-integration', 'test-load']);
 

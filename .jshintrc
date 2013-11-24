@@ -32,7 +32,9 @@
         "afterEach",
         "expect",
         "spyOn",
+	    "process",
         "runs",
+	    "module",
         "waits",
         "waitsFor",
         "jasmine"
