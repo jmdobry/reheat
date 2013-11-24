@@ -39,11 +39,11 @@ module.exports = function (grunt) {
 		}
 	});
 
-	grunt.registerTask('build', ['jshint']);
-
 	grunt.registerTask('test-unit', ['shell:unit']);
+	grunt.registerTask('test', ['test-unit']);
+	grunt.registerTask('build', ['jshint', 'test']);
+
 //	grunt.registerTask('test-load', ['shell:load']);
-//	grunt.registerTask('test', ['build', 'test-integration', 'test-load']);
 
 	grunt.registerTask('default', ['build']);
 };
