@@ -26,7 +26,7 @@ module.exports = function (grunt) {
 			unit: {
 				options: {
 					stdout: true,
-					stderr: false,
+					stderr: true,
 					failOnError: true,
 					execOptions: {
 						env: {
