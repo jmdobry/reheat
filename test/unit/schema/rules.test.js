@@ -1,6 +1,6 @@
 'use strict';
 
-var rules = require('../../../inquisitor/rules/rules'),
+var rules = require('../../../lib/schema/rules'),
 	assert = require('chai').assert;
 
 describe('rules', function () {

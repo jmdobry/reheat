@@ -1,6 +1,6 @@
 'use strict';
 
-var dataTypes = require('../../../inquisitor/rules/dataTypes'),
+var dataTypes = require('../../../lib/schema/dataTypes'),
 	assert = require('chai').assert;
 
 describe('dataTypes', function () {

@@ -20,10 +20,13 @@
     "trailing": true,
     "smarttabs": true,
 	"loopfunc": true,
+	"validthis": true,
     "predef": [
         "inject",
         "describe",
         "describe",
+	    "fail",
+	    "TYPES_EXCEPT_STRING",
         "it",
         "xit",
 	    "before",
@@ -37,6 +40,7 @@
 	    "module",
         "waits",
         "waitsFor",
-        "jasmine"
+        "jasmine",
+	    "assert"
     ]
 }

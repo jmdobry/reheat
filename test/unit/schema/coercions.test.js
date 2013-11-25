@@ -1,6 +1,6 @@
 'use strict';
 
-var coercions = require('../../../inquisitor/rules/coercions'),
+var coercions = require('../../../lib/schema/coercions'),
 	assert = require('chai').assert;
 
 describe('coercions', function () {
