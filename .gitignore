@@ -19,3 +19,5 @@ rethinkdb_data
 *~
 .idea
 *.iml
+
+doc/

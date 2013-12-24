@@ -1,13 +1,11 @@
-/*global assert:true */
-'use strict';
 
-var assert = require('chai').assert,
+var chaiAssert = require('chai').assert,
 	mocha = require('mocha'),
 	sinon = require('sinon');
 
 var globals = module.exports = {
 	fail: function (msg) {
-		assert.equal('should not reach this!: ' + msg, 'failure');
+		chaiAssert.equal('should not reach this!: ' + msg, 'failure');
 	},
 	TYPES_EXCEPT_STRING: [123, 123.123, null, undefined, {}, [], true, false, function () {
 	}],
@@ -35,7 +33,7 @@ var globals = module.exports = {
 		storageImpl: null,
 		verifyIntegrity: true
 	},
-	assert: assert,
+	assert: chaiAssert,
 	sinon: sinon
 };
 

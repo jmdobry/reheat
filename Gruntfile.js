@@ -1,24 +1,17 @@
-'use strict';
 module.exports = function (grunt) {
 
 	require('load-grunt-tasks')(grunt);
 	require('time-grunt')(grunt);
 
-	var config = {
-		lib: 'lib',
-		test: 'test'
-	};
-
 	grunt.initConfig({
-		config: config,
 		jshint: {
 			options: {
 				jshintrc: '.jshintrc'
 			},
 			all: [
 				'Gruntfile.js',
-				'<%= config.lib %>/{,*/}*.js',
-				'<%= config.test %>/{,*/}*.js'
+				'lib/**/*.js',
+				'test/**/*.js'
 			]
 		},
 
@@ -29,12 +22,37 @@ module.exports = function (grunt) {
 				},
 				src: ['test/support/support.js', 'test/unit/**/*.js']
 			}
+		},
+
+		jsdoc: {
+			dist: {
+				src: ['lib/**/*.js', 'README.md'],
+				options: {
+					destination: 'doc/',
+					plugins: [ 'plugins/markdown' ],
+					markdown: {
+						parser: 'gfm'
+					}
+				}
+			}
 		}
 	});
 
-	grunt.registerTask('test-unit', ['mochaTest:unit']);
-	grunt.registerTask('test', ['test-unit']);
-	grunt.registerTask('build', ['jshint', 'test']);
+	grunt.registerTask('test-unit', [
+		'mochaTest:unit'
+	]);
 
-	grunt.registerTask('default', ['build']);
+	grunt.registerTask('test', [
+		'test-unit'
+	]);
+
+	grunt.registerTask('build', [
+		'jshint',
+		'test',
+		'jsdoc'
+	]);
+
+	grunt.registerTask('default', [
+		'build'
+	]);
 };
