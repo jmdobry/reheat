@@ -22,28 +22,19 @@ module.exports = function (grunt) {
 			]
 		},
 
-		shell: {
+		mochaTest: {
 			unit: {
 				options: {
-					stdout: true,
-					stderr: true,
-					failOnError: true,
-					execOptions: {
-						env: {
-							NODE_ENV: 'test'
-						}
-					}
+					reporter: 'dot'
 				},
-				command: 'node test/unit/runner.js'
+				src: ['test/support/support.js', 'test/unit/**/*.js']
 			}
 		}
 	});
 
-	grunt.registerTask('test-unit', ['shell:unit']);
+	grunt.registerTask('test-unit', ['mochaTest:unit']);
 	grunt.registerTask('test', ['test-unit']);
 	grunt.registerTask('build', ['jshint', 'test']);
-
-//	grunt.registerTask('test-load', ['shell:load']);
 
 	grunt.registerTask('default', ['build']);
 };
