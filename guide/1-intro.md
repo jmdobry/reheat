@@ -2,6 +2,27 @@
 
 Reheat is an ORM for [RethinkDB](http://rethinkdb.com), built for the [Node.js](http://nodejs.org) platform.
 
+#### Benefits of using reheat:
+- Less code to write
+- Less code to test
+- Less code to maintain
+- Less code that can break
+- Improved sense of well-being
+
+#### Features:
+- Connection pool
+- Easy Model lifecycle setup/access (`beforeUpdate()`, `afterDestroy()`, etc.)
+- Robust and flexible Schema definition for your Models
+- Automatic validation based on Schema
+- Convert `req.query` to ReQL query (great for your app's API).
+- Query builder (it's just ReQL, easy!)
+- Connection and Schema can each be used on their own
+
+#### Roadmap:
+- Relationships
+- Migrations
+- You tell me!
+
 #### Quick, what is RethinkDB?
 
 From the RethinkDB website:
@@ -14,9 +35,21 @@ From the RethinkDB website:
 
 RethinkDB is awesome and ReQL makes data access fun, but still, who loves writing tons of code to pull data into and out of a database? Reheat exists to eliminate boilerplate and level up your RethinkDB experience!
 
+##### Install reheat
+
+`npm install reheat --save`
+
+##### Go!
+
 <pre>
 <code>
-var Post = Model.extend({
+var reheat = require('reheat');
+
+var connection = new reheat.Connection({
+	db: 'local'
+});
+
+var Post = reheat.Model.extend({
 	beforeCreate: function (cb) {
 		this.set('tags', []);
 		cb();
@@ -44,6 +77,24 @@ post.save(function (err, post) {
 });
 </code>
 </pre>
+
+### Resources
+
+#### Getting Started
+[Getting Started](tutorial-1-intro.html) - Read how to install reheat and get it running in your application.
+
+#### Topics
+[Topics](tutorial-2-topics.html) - List of tutorials on how to use reheat.
+
+#### API
+[API](index.html) - Reference API documentation for reheat.
+
+#### Community
+[Mailing List](https://groups.google.com/forum/#!forum/reheat) - Ask questions and get help.
+
+[Issues](https://github.com/jmdobry/reheat/issues?state=open) - Found a bug? Feature request? Submit an issue!
+
+[GitHub](https://github.com/jmdobry/reheat) - View the source code for reheat.
 
 ### Project Status
 
@@ -81,21 +132,3 @@ post.save(function (err, post) {
 </tr>
 </tbody>
 </table>
-
-### Getting Started
-
-#### Installation
-[Installation](installation.html) - Read how to install reheat and get it running in your application.
-
-#### Guide
-[Guide](guide.html) - Learn how to use reheat and read about common usage patterns.
-
-#### API
-[API](api.html) - Reference API documentation for reheat.
-
-#### Community
-[Mailing List](https://groups.google.com/forum/#!forum/reheat) - Ask questions and get help.
-
-[Issues](https://github.com/jmdobry/reheat/issues?state=open) - Found a bug? Feature request? Submit an issue!
-
-[GitHub](https://github.com/jmdobry/reheat) - View the source code for reheat.
