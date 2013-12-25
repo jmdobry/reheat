@@ -4,6 +4,8 @@ module.exports = function (grunt) {
 	require('time-grunt')(grunt);
 
 	grunt.initConfig({
+		clean: ['doc/'],
+
 		jshint: {
 			options: {
 				jshintrc: '.jshintrc'
@@ -31,8 +33,11 @@ module.exports = function (grunt) {
 					destination: 'doc/',
 					plugins: [ 'plugins/markdown' ],
 					markdown: {
-						parser: 'gfm'
-					}
+						parser: 'marked'
+					},
+					tutorials: 'guide/',
+					recurse: true,
+					private: false
 				}
 			}
 		}
@@ -47,6 +52,7 @@ module.exports = function (grunt) {
 	]);
 
 	grunt.registerTask('build', [
+		'clean',
 		'jshint',
 		'test',
 		'jsdoc'
