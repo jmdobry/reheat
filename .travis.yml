@@ -12,7 +12,6 @@ before_script:
   - ulimit -S -n 2048
   - sleep 10
 script:
-  - grunt test-unit
-#  - node node_modules/mocha/bin/mocha test/load/loadTest.js --check-leaks --reporter dot
+  - grunt build
 after_script:
   - killall rethinkdb
