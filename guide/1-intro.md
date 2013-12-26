@@ -20,6 +20,7 @@ Reheat is an ORM for [RethinkDB](http://rethinkdb.com), built for the [Node.js](
 
 #### Roadmap:
 - Relationships
+- Transactions (and rollbacks)
 - Migrations
 - You tell me!
 

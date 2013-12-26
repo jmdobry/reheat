@@ -21,3 +21,4 @@ rethinkdb_data
 *.iml
 
 doc/
+build/

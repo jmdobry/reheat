@@ -4,7 +4,7 @@ module.exports = function (grunt) {
 	require('time-grunt')(grunt);
 
 	grunt.initConfig({
-		clean: ['doc/'],
+		clean: ['doc/', 'build/'],
 
 		jshint: {
 			options: {
@@ -15,15 +15,6 @@ module.exports = function (grunt) {
 				'lib/**/*.js',
 				'test/**/*.js'
 			]
-		},
-
-		mochaTest: {
-			unit: {
-				options: {
-					reporter: 'dot'
-				},
-				src: ['test/support/support.js', 'test/unit/**/*.js']
-			}
 		},
 
 		jsdoc: {
@@ -40,11 +31,42 @@ module.exports = function (grunt) {
 					private: false
 				}
 			}
+		},
+
+		instrument: {
+			files: 'lib/**/*.js',
+			options: {
+				lazy: true,
+				basePath: 'build/instrument/'
+			}
+		},
+
+		reloadTasks: {
+			rootPath: 'build/instrument/lib'
+		},
+
+		storeCoverage: {
+			options: {
+				dir: 'build/report'
+			}
+		},
+
+		makeReport: {
+			src: 'build/report/*.json',
+			options: {
+				type: 'lcov',
+				dir: 'build/report',
+				print: 'detail'
+			}
+		},
+
+		nodeunit: {
+			files: ['test/unit/**/*.js' ]
 		}
 	});
 
 	grunt.registerTask('test-unit', [
-		'mochaTest:unit'
+		'nodeunit'
 	]);
 
 	grunt.registerTask('test', [
@@ -54,11 +76,13 @@ module.exports = function (grunt) {
 	grunt.registerTask('build', [
 		'clean',
 		'jshint',
-		'test',
+		'cover',
 		'jsdoc'
 	]);
 
 	grunt.registerTask('default', [
 		'build'
 	]);
+
+	grunt.registerTask('cover', ['clean', 'instrument', 'reloadTasks', 'test', 'storeCoverage', 'makeReport']);
 };
