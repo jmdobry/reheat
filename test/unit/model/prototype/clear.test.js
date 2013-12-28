@@ -1,3 +1,5 @@
+/*jshint loopfunc:true*/
+
 var clear = require('../../../../build/instrument/lib/model/prototype/clear'),
 	errors = require('../../../../build/instrument/lib/support/errors'),
 	support = require('../../../support/support'),

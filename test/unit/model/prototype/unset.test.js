@@ -1,3 +1,5 @@
+/*jshint loopfunc:true*/
+
 var unset = require('../../../../build/instrument/lib/model/prototype/unset'),
 	errors = require('../../../../build/instrument/lib/support/errors'),
 	support = require('../../../support/support'),

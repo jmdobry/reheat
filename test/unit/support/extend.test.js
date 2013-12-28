@@ -37,28 +37,6 @@ exports.extendTest = {
 
 		test.done();
 	},
-	constructor: function (test) {
-		test.expect(2);
-
-		function Parent(stuff) {
-			this.stuff = stuff;
-		}
-
-		Parent.extend = extend;
-
-		var Child = Parent.extend({
-			constructor: function () {
-				this.stuff2 = 'stuff2';
-			}
-		});
-
-		var child = new Child('stuff');
-
-		test.equal(child.stuff, undefined);
-		test.equal(child.stuff2, 'stuff2');
-
-		test.done();
-	},
 	noProto: function (test) {
 		test.expect(5);
 
