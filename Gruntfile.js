@@ -4,7 +4,10 @@ module.exports = function (grunt) {
 	require('time-grunt')(grunt);
 
 	grunt.initConfig({
-		clean: ['doc/', 'build/'],
+		clean: {
+			doc: ['doc/'],
+			build: ['build/']
+		},
 
 		jshint: {
 			options: {
@@ -70,19 +73,26 @@ module.exports = function (grunt) {
 	]);
 
 	grunt.registerTask('test', [
-		'test-unit'
+		'clean:build',
+		'instrument',
+		'reloadTasks',
+		'test-unit',
+		'storeCoverage',
+		'makeReport'
+	]);
+
+	grunt.registerTask('doc', [
+		'clean:doc',
+		'jsdoc'
 	]);
 
 	grunt.registerTask('build', [
-		'clean',
 		'jshint',
-		'cover',
-		'jsdoc'
+		'test',
+		'doc'
 	]);
 
 	grunt.registerTask('default', [
 		'build'
 	]);
-
-	grunt.registerTask('cover', ['clean', 'instrument', 'reloadTasks', 'test', 'storeCoverage', 'makeReport']);
 };
