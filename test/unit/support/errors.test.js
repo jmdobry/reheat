@@ -24,32 +24,42 @@ exports.errors = {
 	},
 	IllegalArgumentError: {
 		test: function (test) {
-			test.expect(4);
+			test.expect(8);
 
 			var err = new errors.IllegalArgumentError('message', { error: 'message' });
+			var err2 = new errors.IllegalArgumentError();
 
 			test.ok(err instanceof errors.IllegalArgumentError);
+			test.ok(err2 instanceof errors.IllegalArgumentError);
 
 			test.equal(err.type, 'IllegalArgumentError');
+			test.equal(err2.type, 'IllegalArgumentError');
 			test.equal(err.message, 'message');
+			test.equal(err2.message, 'Illegal Argument!');
 
 			test.deepEqual(err.errors, { error: 'message' });
+			test.deepEqual(err2.errors, {});
 
 			test.done();
 		}
 	},
 	ValidationError: {
 		test: function (test) {
-			test.expect(4);
+			test.expect(8);
 
 			var err = new errors.ValidationError('message', { error: 'message' });
+			var err2 = new errors.ValidationError();
 
 			test.ok(err instanceof errors.ValidationError);
+			test.ok(err2 instanceof errors.ValidationError);
 
 			test.equal(err.type, 'ValidationError');
+			test.equal(err2.type, 'ValidationError');
 			test.equal(err.message, 'message');
+			test.equal(err2.message, 'Validation Error!');
 
 			test.deepEqual(err.errors, { error: 'message' });
+			test.deepEqual(err2.errors, {});
 
 			test.done();
 		}

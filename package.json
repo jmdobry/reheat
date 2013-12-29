@@ -1,7 +1,7 @@
 {
   "name": "reheat",
   "description": "A red hot Node.js ORM for RethinkDB.",
-  "version": "0.8.0-alpha.1",
+  "version": "0.7.0",
   "homepage": "https://github.com/jmdobry/reheat",
   "repository": {
     "type": "git",

@@ -1,6 +1,6 @@
 ## reheat
 
-__Version:__ 0.0.1-SNAPSHOT
+__Version:__ 0.7.0
 
 __A red hot Node.js ORM for RethinkDB.__
 

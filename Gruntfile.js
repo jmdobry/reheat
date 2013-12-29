@@ -64,12 +64,17 @@ module.exports = function (grunt) {
 		},
 
 		nodeunit: {
-			files: ['test/unit/**/*.js' ]
+			unit: ['test/unit/**/*.js'],
+			integration: ['test/integration/**/*.js']
 		}
 	});
 
 	grunt.registerTask('test-unit', [
-		'nodeunit'
+		'nodeunit:unit'
+	]);
+
+	grunt.registerTask('test-integration', [
+		'nodeunit:integration'
 	]);
 
 	grunt.registerTask('test', [
@@ -77,6 +82,7 @@ module.exports = function (grunt) {
 		'instrument',
 		'reloadTasks',
 		'test-unit',
+		'test-integration',
 		'storeCoverage',
 		'makeReport'
 	]);
