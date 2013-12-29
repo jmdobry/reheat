@@ -94,6 +94,7 @@ exports.get = {
 
 		function Model() {
 		}
+
 		Model.get = get;
 
 		test.throws(

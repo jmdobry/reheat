@@ -531,13 +531,25 @@ exports.filter = {
 			test.equal(err.type, 'UnhandledError');
 			test.done();
 		});
-//	},
-//	unhandledError2: function (test) {
-//		test.expect(1);
-//
-//		filter('5', 'id', function (err) {
-//			test.equal(err.type, 'UnhandledError');
-//			test.done();
-//		});
+	},
+	unhandledError2: function (test) {
+		test.expect(1);
+
+		function Model(attrs) {
+			this.attributes = attrs;
+		}
+
+		Model.tableName = 'test';
+		Model.filter = filter;
+		Model.connection = {
+			run: function (query, options, next) {
+				next(new Error());
+			}
+		};
+
+		Model.filter({ where: '{}' }, { profile: true }, function (err, instances) {
+			test.equal(err.type, 'UnhandledError');
+			test.done();
+		});
 	}
 };
