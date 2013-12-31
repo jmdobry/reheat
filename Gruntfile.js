@@ -5,7 +5,6 @@ module.exports = function (grunt) {
 
 	grunt.initConfig({
 		clean: {
-			doc: ['doc/'],
 			build: ['build/']
 		},
 
@@ -18,22 +17,6 @@ module.exports = function (grunt) {
 				'lib/**/*.js',
 				'test/**/*.js'
 			]
-		},
-
-		jsdoc: {
-			dist: {
-				src: ['lib/**/*.js', 'README.md'],
-				options: {
-					destination: 'doc/',
-					plugins: [ 'plugins/markdown' ],
-					markdown: {
-						parser: 'marked'
-					},
-					tutorials: 'guide/',
-					recurse: true,
-					private: false
-				}
-			}
 		},
 
 		instrument: {
@@ -87,15 +70,9 @@ module.exports = function (grunt) {
 		'makeReport'
 	]);
 
-	grunt.registerTask('doc', [
-		'clean:doc',
-		'jsdoc'
-	]);
-
 	grunt.registerTask('build', [
 		'jshint',
-		'test',
-		'doc'
+		'test'
 	]);
 
 	grunt.registerTask('default', [
