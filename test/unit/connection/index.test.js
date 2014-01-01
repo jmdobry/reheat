@@ -25,7 +25,12 @@ var async = require('async'),
 
 exports.Connection = {
 	setUp: function (cb) {
-		this.connection = new Connection();
+		try {
+			this.connection = new Connection();
+		} catch (err) {
+			console.log(err);
+		}
+
 		cb();
 	},
 
@@ -51,15 +56,16 @@ exports.Connection = {
 
 	configure: {
 		optionsOnly: function (test) {
-			test.expect(1);
+			var _this = this;
+			test.expect(2);
 
 			this.connection.configure({
 				db: 'different'
+			}, function (err) {
+				test.ifError(err);
+				test.equal(_this.connection.get('db'), 'different', 'Should have a different db');
+				test.done();
 			});
-
-			test.equal(this.connection.get('db'), 'different', 'Should have a different db');
-
-			test.done();
 		},
 		optionsAndCallback: function (test) {
 			var _this = this;
@@ -89,7 +95,7 @@ exports.Connection = {
 		},
 		strictReset: function (test) {
 			var _this = this;
-			test.expect(9);
+			test.expect(10);
 
 			this.connection.configure({
 				db: 'different',
@@ -103,13 +109,14 @@ exports.Connection = {
 				test.equal(_this.connection.get('port'), 1111, 'Should have a different port');
 				test.equal(_this.connection.get('authKey'), 'secret', 'Should have a different authKey');
 
-				_this.connection.configure(null, true);
-
-				test.equal(_this.connection.get('db'), 'test', 'Should have the default db');
-				test.equal(_this.connection.get('host'), 'localhost', 'Should have the default host');
-				test.equal(_this.connection.get('port'), 28015, 'Should have the default port');
-				test.equal(_this.connection.get('authKey'), '', 'Should have the default authKey');
-				test.done();
+				_this.connection.configure(null, true, function (err) {
+					test.ifError(err);
+					test.equal(_this.connection.get('db'), 'test', 'Should have the default db');
+					test.equal(_this.connection.get('host'), 'localhost', 'Should have the default host');
+					test.equal(_this.connection.get('port'), 28015, 'Should have the default port');
+					test.equal(_this.connection.get('authKey'), '', 'Should have the default authKey');
+					test.done();
+				});
 			});
 		},
 		options: function (test) {
@@ -409,11 +416,7 @@ exports.Connection = {
 			_this.connection.configure({
 				log: 345
 			}, true, function (err) {
-				if (err) {
-					test.ok(true);
-				} else {
-					test.ok(false);
-				}
+				test.equal(err.type, 'IllegalArgumentError');
 			});
 
 			test.done();
@@ -562,62 +565,67 @@ exports.Connection = {
 	getPoolSize: function (test) {
 		var _this = this;
 
-		test.expect(9);
+		test.expect(10);
 
 		test.equal(this.connection.getPoolSize(), 0, 'Should start with an empty pool');
 
 		this.connection.configure({
 			max: 2
-		});
-
-		test.equal(this.connection.getPoolSize(), 0, 'Should still have an empty pool');
-
-		this.connection.acquire(function (err, conn) {
+		}, function (err) {
 			test.ifError(err);
 
-			test.equal(_this.connection.getPoolSize(), 1, 'There should now be one resource in the pool');
-			_this.connection.release(conn);
-			test.equal(_this.connection.getPoolSize(), 1, 'There should still be one resource in the pool');
+			test.equal(_this.connection.getPoolSize(), 0, 'Should still have an empty pool');
 
-			async.parallel([
-				function (cb) {
-					_this.connection.acquire(function (err, conn) {
-						test.ifError(err);
-						setTimeout(function () {
-							_this.connection.release(conn);
-							cb();
-						}, 100);
-					});
-				},
-				function (cb) {
-					_this.connection.acquire(function (err, conn) {
-						test.ifError(err);
-						setTimeout(function () {
-							_this.connection.release(conn);
-							cb();
-						}, 100);
-					});
-				}
-			], function (err, results) {
+			_this.connection.acquire(function (err, conn) {
 				test.ifError(err);
-				test.equal(_this.connection.getPoolSize(), 2, 'There should now be two resources in the pool');
-				test.done();
+
+				test.equal(_this.connection.getPoolSize(), 1, 'There should now be one resource in the pool');
+				_this.connection.release(conn);
+				test.equal(_this.connection.getPoolSize(), 1, 'There should still be one resource in the pool');
+
+				async.parallel([
+					function (cb) {
+						_this.connection.acquire(function (err, conn) {
+							test.ifError(err);
+							setTimeout(function () {
+								_this.connection.release(conn);
+								cb();
+							}, 100);
+						});
+					},
+					function (cb) {
+						_this.connection.acquire(function (err, conn) {
+							test.ifError(err);
+							setTimeout(function () {
+								_this.connection.release(conn);
+								cb();
+							}, 100);
+						});
+					}
+				], function (err, results) {
+					test.ifError(err);
+					test.equal(_this.connection.getPoolSize(), 2, 'There should now be two resources in the pool');
+					test.done();
+				});
 			});
 		});
 	},
 
 	getName: function (test) {
-		test.expect(2);
+		var _this = this;
+		test.expect(3);
 
 		test.equal(this.connection.getName(), '', 'Should have the default name');
 
 		this.connection.configure({
 			name: 'newName'
+		}, function (err) {
+			test.ifError(err);
+
+			test.equal(_this.connection.getName(), 'newName', 'Should have a different name');
+
+			test.done();
 		});
-
-		test.equal(this.connection.getName(), 'newName', 'Should have a different name');
-
-		test.done();
 	},
 
 	availableObjectsCount: function (test) {

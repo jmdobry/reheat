@@ -61,7 +61,7 @@ module.exports = function (grunt) {
 					sections: [
 						{
 							id: 'guide',
-							title:'Guide',
+							title: 'Guide',
 							scripts: ['guide/']
 						}
 					]
@@ -74,7 +74,7 @@ module.exports = function (grunt) {
 					sections: [
 						{
 							id: 'api',
-							title:'Reheat',
+							title: 'Reheat',
 							scripts: ['lib/connection/index.js', 'lib/support/errors.js']
 						}
 					]
@@ -86,23 +86,23 @@ module.exports = function (grunt) {
 					sections: [
 						{
 							id: 'mailinglist',
-							title:'Mailing List',
+							title: 'Mailing List',
 							link: 'https://groups.google.com/forum/?fromgroups#!forum/reheat'
 						},
 						{
 							id: 'issues',
-							title:'Issues',
+							title: 'Issues',
 							link: 'https://github.com/jmdobry/reheat/issues'
 						},
 						{
 							id: 'github',
-							title:'GitHub',
+							title: 'GitHub',
 							link: 'https://github.com/jmdobry/reheat'
 						}
 					]
 				}
 			],
-			docular_webapp_target : 'doc',
+			docular_webapp_target: 'doc',
 			showDocularDocs: true,
 			showAngularDocs: false
 		}

@@ -403,7 +403,7 @@ exports.index = {
 
 		instance.validate(function (err) {
 			test.equal(err.type, 'ValidationError');
-			test.equal(err.message, 'Model#validate(cb): Validation failed!');
+			test.equal(err.message, 'undefined#validate(cb): Validation failed!');
 			test.deepEqual(err.errors, { error: 'test' });
 			test.equal(instance.constructor.schema.validate.callCount, 1);
 			test.done();
