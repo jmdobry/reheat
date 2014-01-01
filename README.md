@@ -107,40 +107,14 @@ Mailing List - Ask questions and get help.
 
 ## Project Status
 
-<table class="table">
-<thead>
-<tr>
-<th></th>
-<th>Master</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Version</td>
-<td>[0.7.0](https://github.com/jmdobry/reheat)</td>
-</tr>
-<tr>
-<td>Source</td>
-<td>[master](https://github.com/jmdobry/reheat)</td>
-</tr>
-<tr>
-<td>Build Status</td>
-<td>[![Build Status](https://travis-ci.org/jmdobry/reheat.png?branch=master)](https://travis-ci.org/jmdobry/reheat)</td>
-</tr>
-<tr>
-<td>Coverage</td>
-<td>[![Coverage Status](https://coveralls.io/repos/jmdobry/reheat/badge.png?branch=master)](https://coveralls.io/r/jmdobry/reheat?branch=master)</td>
-</tr>
-<tr>
-<td>Code Climate</td>
-<td>[![Code Climate](https://codeclimate.com/github/jmdobry/reheat.png)](https://codeclimate.com/github/jmdobry/reheat)</td>
-</tr>
-<tr>
-<td>Dependency Status</td>
-<td>[![Dependency Status](https://gemnasium.com/jmdobry/reheat.png)](https://gemnasium.com/jmdobry/reheat)</td>
-</tr>
-</tbody>
-</table>
+| Branch | Master |
+| ------ | ------ |
+| Version | [0.7.0](https://github.com/jmdobry/reheat) |
+| Source | [master](https://github.com/jmdobry/reheat) |
+| Build Status | [![Build Status](https://travis-ci.org/jmdobry/reheat.png?branch=master)](https://travis-ci.org/jmdobry/reheat) |
+| Coverage | [![Coverage Status](https://coveralls.io/repos/jmdobry/reheat/badge.png?branch=master)](https://coveralls.io/r/jmdobry/reheat?branch=master) |
+| Code Climate | [![Code Climate](https://codeclimate.com/github/jmdobry/reheat.png)](https://codeclimate.com/github/jmdobry/reheat) |
+| Dependency Status | [![Dependency Status](https://gemnasium.com/jmdobry/reheat.png)](https://gemnasium.com/jmdobry/reheat) |
 
 ## License
 [MIT License](https://github.com/jmdobry/reheat/blob/master/LICENSE)
