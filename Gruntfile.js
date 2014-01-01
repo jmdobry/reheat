@@ -5,6 +5,7 @@ module.exports = function (grunt) {
 
 	grunt.initConfig({
 		clean: {
+			doc: ['doc/'],
 			build: ['build/']
 		},
 
@@ -49,6 +50,61 @@ module.exports = function (grunt) {
 		nodeunit: {
 			unit: ['test/unit/**/*.js'],
 			integration: ['test/integration/**/*.js']
+		},
+
+		docular: {
+			groups: [
+				{
+					groupTitle: 'Guide',
+					groupId: 'guide',
+					groupIcon: 'icon-book',
+					sections: [
+						{
+							id: 'guide',
+							title:'Guide',
+							scripts: ['guide/']
+						}
+					]
+				},
+				{
+					groupTitle: 'API',
+					groupId: 'api',
+					groupIcon: 'icon-wrench',
+					showSource: true,
+					sections: [
+						{
+							id: 'api',
+							title:'Reheat',
+							scripts: ['lib/connection/index.js', 'lib/support/errors.js']
+						}
+					]
+				},
+				{
+					groupTitle: 'Community',
+					groupId: 'Community',
+					groupIcon: 'icon-group',
+					sections: [
+						{
+							id: 'mailinglist',
+							title:'Mailing List',
+							link: 'https://groups.google.com/forum/?fromgroups#!forum/reheat'
+						},
+						{
+							id: 'issues',
+							title:'Issues',
+							link: 'https://github.com/jmdobry/reheat/issues'
+						},
+						{
+							id: 'github',
+							title:'GitHub',
+							link: 'https://github.com/jmdobry/reheat'
+						}
+					]
+				}
+			],
+			docular_webapp_target : 'doc',
+			showDocularDocs: true,
+			showAngularDocs: false
 		}
 	});
 
@@ -70,9 +126,13 @@ module.exports = function (grunt) {
 		'makeReport'
 	]);
 
+	grunt.registerTask('doc', ['clean:doc', 'docular']);
+	grunt.registerTask('docserve', ['clean:doc', 'docular', 'docular-server']);
+
 	grunt.registerTask('build', [
 		'jshint',
-		'test'
+		'test',
+		'doc'
 	]);
 
 	grunt.registerTask('default', [

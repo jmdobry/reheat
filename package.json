@@ -58,7 +58,8 @@
     "grunt-contrib-clean": "0.5.0",
     "grunt-istanbul": "0.2.3",
     "grunt-contrib-nodeunit": "0.2.2",
-    "coveralls": "2.6.1"
+    "coveralls": "2.6.1",
+    "grunt-docular": "~0.1.2"
   },
   "bugs": {
     "url": "https://github.com/jmdobry/reheat/issues",
