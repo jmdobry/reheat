@@ -1,0 +1,73 @@
+body {
+    background-size: auto;
+    background: url(/resources/img/cream_dust.png) repeat repeat;
+}
+
+.main-nav {
+    border-bottom: 2px solid #cb0018;
+}
+
+.main-nav:before {
+    content: " ";
+    position: absolute;
+    z-index: -1;
+    top: 5px;
+    left: 0px;
+    right: 0px;
+    bottom: -4px;
+    border: 2px solid #fd8023;
+}
+
+a {
+    color: #8e0410;
+}
+
+a:hover {
+    color: #cb0018;
+}
+
+.module-section.hidden .section-count {
+    color: #cb0018;
+}
+
+.nav-list .active>a, .nav-list .active>a:hover {
+    background-color: #cb0018;
+}
+
+.rounded-list a:before {
+    background: #cb0018;
+}
+
+.dropdown-menu li>a:hover, .dropdown-menu .active>a, .dropdown-menu .active>a:hover {
+    color: #ffffff;
+    text-decoration: none;
+    background-color: #cb0018;
+}
+
+.footer {
+    border-top: 2px solid #cb0018;
+    position: relative;
+}
+
+.footer:before {
+    content: " ";
+    position: absolute;
+    z-index: -1;
+    top: -4px;
+    left: 0px;
+    right: 0px;
+    bottom: 37px;
+    border: 2px solid #fd8023;
+}
+
+.footer a {
+    color: #fff;
+}
+
+.footer .nav>li>a:hover {
+    text-decoration: underline;
+}
+
+.nav>li>a:hover {
+    background: none;
+}

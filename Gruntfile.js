@@ -6,7 +6,22 @@ module.exports = function (grunt) {
 	grunt.initConfig({
 		clean: {
 			doc: ['doc/'],
-			build: ['build/']
+			build: ['build/'],
+			afterDoc: [
+				'doc/resources/img/angular.png',
+				'doc/resources/img/angular_grey.png',
+				'doc/resources/img/AngularJS-small.png',
+				'doc/resources/img/docular-small.png',
+				'doc/resources/img/favicon.ico',
+				'doc/resources/img/grunt.png',
+				'doc/resources/img/grunt_grey.png',
+				'doc/resources/img/node.png',
+				'doc/resources/img/node_grey.png',
+				'doc/resources/angular/',
+				'doc/resources/doc_api_resources/doc_api.js',
+				'doc/resources/js/docs*.js',
+				'doc/resources/js/jquery*.js'
+			]
 		},
 
 		jshint: {
@@ -30,6 +45,87 @@ module.exports = function (grunt) {
 
 		reloadTasks: {
 			rootPath: 'build/instrument/lib'
+		},
+
+		concat: {
+			libs: {
+				src: [
+					'doc/resources/js/jquery.js',
+					'doc/resources/js/jquery.goto.js',
+					'doc/resources/js/jquery.cookie.js',
+					'doc/resources/angular/angular.js',
+					'doc/resources/angular/angular-bootstrap.js',
+					'doc/resources/angular/angular-bootstrap-prettify.js',
+					'doc/resources/angular/angular-cookies.js',
+					'doc/resources/angular/angular-resource.js',
+					'doc/resources/angular/angular-sanitize.js'
+
+				],
+				dest: 'doc/resources/js/libs.js'
+			},
+			scripts: {
+				src: [
+					'doc/resources/js/docs_module_begin.js',
+					'guide/reheat.js',
+					'doc/resources/doc_api_resources/doc_api.js',
+					'doc/resources/js/docs_module_end.js',
+					'doc/documentation/docs-metadata.js',
+					'doc/documentation/groups-metadata.js',
+					'doc/documentation/layout-metadata.js'
+
+				],
+				dest: 'doc/resources/js/scripts.js'
+			},
+			css: {
+				src: [
+					'doc/resources/css/bootstrap.min.css',
+					'doc/resources/css/font-awesome.css',
+					'doc/resources/css/docular.css',
+					'doc/resources/css/custom.css',
+					'doc/resources/doc_api_resources/doc_api.css',
+					'guide/reheat.css'
+				],
+				dest: 'doc/resources/css/styles.css'
+			}
+		},
+
+		uglify: {
+			scripts: {
+				files: {
+					'doc/resources/js/libs.min.js': ['doc/resources/js/libs.js']
+				}
+			}
+		},
+
+		copy: {
+			favicon: {
+				expand: true,
+				cwd: 'guide/',
+				src: 'favicon.ico',
+				dest: 'doc/',
+				flatten: true
+			},
+			index: {
+				expand: true,
+				cwd: 'guide/',
+				src: 'index.html',
+				dest: 'doc/',
+				flatten: true
+			},
+			flames95: {
+				expand: true,
+				cwd: 'guide/',
+				src: 'flames95.png',
+				dest: 'doc/resources/img/',
+				flatten: true
+			},
+			cream_dust: {
+				expand: true,
+				cwd: 'guide/',
+				src: 'cream_dust.png',
+				dest: 'doc/resources/img/',
+				flatten: true
+			}
 		},
 
 		storeCoverage: {
@@ -133,8 +229,7 @@ module.exports = function (grunt) {
 		'makeReport'
 	]);
 
-	grunt.registerTask('doc', ['clean:doc', 'docular']);
-	grunt.registerTask('docserve', ['clean:doc', 'docular', 'docular-server']);
+	grunt.registerTask('doc', ['clean:doc', 'docular', 'concat', 'copy', 'clean:afterDoc', 'uglify']);
 
 	grunt.registerTask('build', [
 		'jshint',
