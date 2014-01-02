@@ -60,9 +60,30 @@ module.exports = function (grunt) {
 					groupIcon: 'icon-book',
 					sections: [
 						{
-							id: 'guide',
-							title: 'Guide',
-							scripts: ['guide/']
+							id: 'overview',
+							title: 'Overview',
+							docs: ['guide/overview/'],
+							rank: {
+								index: 1,
+								connections: 2,
+								schemas: 3,
+								models: 4
+							}
+						},
+						{
+							id: 'connection',
+							title: 'Connection Guide',
+							docs: ['guide/connection/']
+						},
+						{
+							id: 'schema',
+							title: 'Schema Guide',
+							docs: ['guide/schema/']
+						},
+						{
+							id: 'model',
+							title: 'Model Guide',
+							docs: ['guide/model/']
 						}
 					]
 				},
@@ -75,36 +96,22 @@ module.exports = function (grunt) {
 						{
 							id: 'api',
 							title: 'Reheat',
-							scripts: ['lib/connection/index.js', 'lib/support/errors.js']
-						}
-					]
-				},
-				{
-					groupTitle: 'Community',
-					groupId: 'Community',
-					groupIcon: 'icon-group',
-					sections: [
-						{
-							id: 'mailinglist',
-							title: 'Mailing List',
-							link: 'https://groups.google.com/forum/?fromgroups#!forum/reheat'
-						},
-						{
-							id: 'issues',
-							title: 'Issues',
-							link: 'https://github.com/jmdobry/reheat/issues'
-						},
-						{
-							id: 'github',
-							title: 'GitHub',
-							link: 'https://github.com/jmdobry/reheat'
+							scripts: [
+								'lib/connection/index.js',
+								'lib/support/errors.js',
+								'lib/model/'
+							],
+							docs: ['guide/api']
 						}
 					]
 				}
 			],
 			docular_webapp_target: 'doc',
-			showDocularDocs: true,
-			showAngularDocs: false
+			showDocularDocs: false,
+			showAngularDocs: false,
+			docular_partial_home: 'guide/home.html',
+			docular_partial_navigation: 'guide/nav.html',
+			docular_partial_footer: 'guide/footer.html'
 		}
 	});
 
