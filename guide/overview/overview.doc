@@ -1,0 +1,123 @@
+@doc overview
+@id index
+@name Overview of Reheat
+@description
+
+# Overview
+
+Reheat is an ORM for [RethinkDB](http://rethinkdb.com), built for the [Node.js](http://nodejs.org) platform and consists
+ of [Connections](http://reheat/documentation/guide/connection/index),
+[Schemas](http://reheat/documentation/guide/schema/index), [Models](http://reheat/documentation/guide/model/index)
+and a few custom error types.
+
+You extend `Model` to create your own models.
+
+All of your models can use the same instance of `Connection`, but you'll define an instance of `Schema` for each of
+your models.
+
+<page-list></page-list>
+
+@doc overview
+@id connections
+@name Connect to a database
+@description
+
+Reheat uses the [`Connection`](/documentation/api/api/Connection) class to connect to instances of RethinkDB.
+
+Each instance of `Connection` manages a connection pool to an instance of RethinkDB. The default configuration options
+are sufficient for connecting to a default RethinkDB instance on `localhost`. Every `Model` you define needs an
+instance of `Connection` in order to operate.
+
+```js
+var r = require('rethinkdb'),
+	reheat = require('reheat'),
+	Connection = reheat.Connection;
+
+// Connect to a default RethinkDB instance
+var connection = new Connection();
+
+connection.run(r.tableList(), function (err, tableList) {
+	// A default RethinkDB instance has one db ('test') with no tables
+	tableList;  //  [ ]
+});
+```
+
+See the [Connection Guide](http://reheat/documentation/guide/connection/index) for detailed usage information.
+
+@doc overview
+@id schemas
+@name Define a Schema
+@description
+
+Reheat uses the [robocop.js](http://jmdobry.github.io/robocop.js/) library for schema definition and validation.
+
+You are not required to provide a Schema when defining a Model, but if you do, instances of your Model will
+automatically be validated against the Model's Schema during create and update operations.
+
+```js
+var reheat = require('reheat'),
+	Schema = reheat.Schema,
+	Model = reheat.Model;
+
+var personSchema = new Schema({
+	name: {
+		type: 'string',
+		maxLength: 255
+	},
+	age: {
+		type: 'number',
+		max: 120,
+		min: 0
+	}
+});
+
+// This Model will use personSchema as its Schema
+var Person = Model.extend({}, {
+	schema: personSchema,
+	{...}
+});
+
+// This Model will not use any Schema
+var FreestylePerson = Model.extend();
+```
+
+See the [Schema Guide](http://reheat/documentation/guide/schema/index) for detailed usage information.
+
+@doc overview
+@id models
+@name Define a Model
+@description
+
+Reheat provides an extensible Model class from which your Models inherit properties and behavior, much like how
+Backbone Models work.
+
+```js
+var reheat = require('reheat'),
+	Connection = reheat.Connection,
+	Model = reheat.Model;
+
+// This Model will use personSchema as its Schema
+var Person = Model.extend({}, {
+	tableName: 'person',
+	connection: new Connection()
+});
+
+var person = new Person({
+	name: 'John Anderson',
+	age: 30
+});
+
+person.isNew(); //  true
+
+person.save(function (err, person) {
+	person.toJSON();    //  {
+						//      name: 'John Anderson',
+						//      age: 30,
+						//      id: '4a16101b-f35e-46d5-be0e-3a9596abfcf9'
+						//  }
+
+	person.isNew(); //  false
+});
+```
+
+See the [Model Guide](http://reheat/documentation/guide/model/index) for detailed usage information.
