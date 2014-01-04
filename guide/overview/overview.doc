@@ -6,8 +6,8 @@
 # Overview
 
 Reheat is an ORM for [RethinkDB](http://rethinkdb.com), built for the [Node.js](http://nodejs.org) platform and consists
- of [Connections](http://reheat/documentation/guide/connection/index),
-[Schemas](http://reheat/documentation/guide/schema/index), [Models](http://reheat/documentation/guide/model/index)
+ of [Connections](documentation/guide/connection/index),
+[Schemas](documentation/guide/schema/index), [Models](documentation/guide/model/index)
 and a few custom error types.
 
 You extend `Model` to create your own models.
@@ -42,7 +42,7 @@ connection.run(r.tableList(), function (err, tableList) {
 });
 ```
 
-See the [Connection Guide](http://reheat/documentation/guide/connection/index) for detailed usage information.
+See the [Connection Guide](documentation/guide/connection/index) for detailed usage information.
 
 @doc overview
 @id schemas
@@ -81,7 +81,7 @@ var Person = Model.extend({}, {
 var FreestylePerson = Model.extend();
 ```
 
-See the [Schema Guide](http://reheat/documentation/guide/schema/index) for detailed usage information.
+See the [Schema Guide](documentation/guide/schema/index) for detailed usage information.
 
 @doc overview
 @id models
@@ -120,4 +120,4 @@ person.save(function (err, person) {
 });
 ```
 
-See the [Model Guide](http://reheat/documentation/guide/model/index) for detailed usage information.
+See the [Model Guide](documentation/guide/model/index) for detailed usage information.

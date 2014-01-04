@@ -4,7 +4,11 @@ __Current Version:__ 0.7.0
 
 __A red hot Node.js ORM for RethinkDB.__
 
-_Documentation and website are under construction._
+All documentation can be found at [http://reheat.codetrain.io/](http://reheat.codetrain.io/).
+
+<a href="https://nodei.co/npm/reheat/">
+    <img src="https://nodei.co/npm/reheat.png?downloads=true">
+</a>
 
 ## What is reheat?
 
@@ -50,8 +54,7 @@ RethinkDB is awesome and ReQL makes data access fun, but still, who loves writin
 
 ##### Go!
 
-<pre>
-<code>
+```javascript
 var reheat = require('reheat');
 
 var connection = new reheat.Connection({
@@ -84,22 +87,21 @@ post.save(function (err, post) {
 
 	post.isNew();   //  false
 });
-</code>
-</pre>
+```
 
 ## Resources
 
 #### Getting Started
-Getting Started - Read how to install reheat and get it running in your application.
+[Getting Started](http://reheat.codetrain.io/documentation/guide/overview/index) - Read how to install reheat and get it running in your application.
 
 #### Guide
-Guide - List of tutorials on how to use reheat.
+[Guide](http://reheat.codetrain.io/documentation/guide/index) - List of tutorials on how to use reheat.
 
 #### API
-API - Reference API documentation for reheat.
+[API](http://reheat.codetrain.io/documentation/api/api/index) - Reference API documentation for reheat.
 
 #### Community
-Mailing List - Ask questions and get help.
+[Mailing List](https://groups.google.com/forum/?fromgroups#!forum/reheat) - Ask questions and get help.
 
 [Issues](https://github.com/jmdobry/reheat/issues?state=open) - Found a bug? Feature request? Submit an issue!
 
@@ -109,10 +111,9 @@ Mailing List - Ask questions and get help.
 
 | Branch | Master |
 | ------ | ------ |
-| Version | [0.7.0](https://github.com/jmdobry/reheat) |
+| Version | [![NPM version](https://badge.fury.io/js/reheat.png)](http://badge.fury.io/js/reheat) |
 | Source | [master](https://github.com/jmdobry/reheat) |
 | Build Status | [![Build Status](https://travis-ci.org/jmdobry/reheat.png?branch=master)](https://travis-ci.org/jmdobry/reheat) |
-| Coverage | [![Coverage Status](https://coveralls.io/repos/jmdobry/reheat/badge.png?branch=master)](https://coveralls.io/r/jmdobry/reheat?branch=master) |
 | Code Climate | [![Code Climate](https://codeclimate.com/github/jmdobry/reheat.png)](https://codeclimate.com/github/jmdobry/reheat) |
 | Dependency Status | [![Dependency Status](https://gemnasium.com/jmdobry/reheat.png)](https://gemnasium.com/jmdobry/reheat) |
 
