@@ -3,6 +3,8 @@ module.exports = function (grunt) {
 	require('load-grunt-tasks')(grunt);
 	require('time-grunt')(grunt);
 
+	var dev = process.cwd().indexOf('/home/codetrain/reheat') === -1;
+
 	grunt.initConfig({
 		clean: {
 			doc: ['doc/'],
@@ -207,7 +209,16 @@ module.exports = function (grunt) {
 			showAngularDocs: false,
 			docular_partial_home: 'guide/home.html',
 			docular_partial_navigation: 'guide/nav.html',
-			docular_partial_footer: 'guide/footer.html'
+			docular_partial_footer: 'guide/footer.html',
+			analytics: {
+				account: 'UA-46792694-2',
+				domainName: 'reheat.codetrain.io'
+			},
+			discussions: {
+				shortName: 'reheat',
+				url: 'http://reheat.codetrain.io',
+				dev: dev
+			}
 		}
 	});
 
