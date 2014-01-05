@@ -5,14 +5,72 @@
 
 # Schema
 
-test
+Reheat uses the [robocop.js](http://jmdobry.github.io/robocop.js/) library for schema definition and validation.
+
+You are not required to provide a Schema when defining a Model, but if you do, instances of your Model will
+automatically be validated against the Model's Schema during create and update operations.
+
+```js
+var reheat = require('reheat'),
+	Schema = reheat.Schema,
+	Model = reheat.Model;
+
+var personSchema = new Schema({
+	name: {
+		type: 'string',
+		maxLength: 255
+	},
+	age: {
+		type: 'number',
+		max: 120,
+		min: 0
+	}
+});
+
+// This Model will use personSchema as its Schema
+var Person = Model.extend({}, {
+	schema: personSchema,
+	{...}
+});
+
+// This Model will not use any Schema
+var FreestylePerson = Model.extend();
+```
 
 @doc overview
-@id test1
-@name Schema Guide1
+@id overview
+@name Schema Guide
 @description
 
-# Schema1
+Reheat uses the [robocop.js](http://jmdobry.github.io/robocop.js/) library for schema definition and validation.
 
-test1
+You are not required to provide a Schema when defining a Model, but if you do, instances of your Model will
+automatically be validated against the Model's Schema during create and update operations.
+
+```js
+var reheat = require('reheat'),
+	Schema = reheat.Schema,
+	Model = reheat.Model;
+
+var personSchema = new Schema({
+	name: {
+		type: 'string',
+		maxLength: 255
+	},
+	age: {
+		type: 'number',
+		max: 120,
+		min: 0
+	}
+});
+
+// This Model will use personSchema as its Schema
+var Person = Model.extend({}, {
+	schema: personSchema,
+	{...}
+});
+
+// This Model will not use any Schema
+var FreestylePerson = Model.extend();
+```
 

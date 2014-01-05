@@ -5,4 +5,47 @@
 
 # Connection
 
-test
+Reheat uses the [`Connection`](/documentation/api/api/Connection) class to connect to instances of RethinkDB.
+
+Each instance of `Connection` manages a connection pool to an instance of RethinkDB. The default configuration options
+are sufficient for connecting to a default RethinkDB instance on `localhost`. Every `Model` you define needs an
+instance of `Connection` in order to operate.
+
+```js
+var r = require('rethinkdb'),
+	reheat = require('reheat'),
+	Connection = reheat.Connection;
+
+// Connect to a default RethinkDB instance
+var connection = new Connection();
+
+connection.run(r.tableList(), function (err, tableList) {
+	// A default RethinkDB instance has one db ('test') with no tables
+	tableList;  //  [ ]
+});
+```
+
+@doc overview
+@id overview
+@name Connection Guide
+@description
+
+Reheat uses the [`Connection`](/documentation/api/api/Connection) class to connect to instances of RethinkDB.
+
+Each instance of `Connection` manages a connection pool to an instance of RethinkDB. The default configuration options
+are sufficient for connecting to a default RethinkDB instance on `localhost`. Every `Model` you define needs an
+instance of `Connection` in order to operate.
+
+```js
+var r = require('rethinkdb'),
+	reheat = require('reheat'),
+	Connection = reheat.Connection;
+
+// Connect to a default RethinkDB instance
+var connection = new Connection();
+
+connection.run(r.tableList(), function (err, tableList) {
+	// A default RethinkDB instance has one db ('test') with no tables
+	tableList;  //  [ ]
+});
+```

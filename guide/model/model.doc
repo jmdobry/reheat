@@ -5,13 +5,71 @@
 
 # Model
 
-test
+Reheat provides an extensible Model class from which your Models inherit properties and behavior, much like how
+Backbone Models work.
+
+```js
+var reheat = require('reheat'),
+	Connection = reheat.Connection,
+	Model = reheat.Model;
+
+// This Model will use personSchema as its Schema
+var Person = Model.extend({}, {
+	tableName: 'person',
+	connection: new Connection()
+});
+
+var person = new Person({
+	name: 'John Anderson',
+	age: 30
+});
+
+person.isNew(); //  true
+
+person.save(function (err, person) {
+	person.toJSON();    //  {
+						//      name: 'John Anderson',
+						//      age: 30,
+						//      id: '4a16101b-f35e-46d5-be0e-3a9596abfcf9'
+						//  }
+
+	person.isNew(); //  false
+});
+```
 
 @doc overview
-@id index2
-@name Model Guide2
+@id overview
+@name Model Guide
 @description
 
-# Model2
+Reheat provides an extensible Model class from which your Models inherit properties and behavior, much like how
+Backbone Models work.
 
-test2
+```js
+var reheat = require('reheat'),
+	Connection = reheat.Connection,
+	Model = reheat.Model;
+
+// This Model will use personSchema as its Schema
+var Person = Model.extend({}, {
+	tableName: 'person',
+	connection: new Connection()
+});
+
+var person = new Person({
+	name: 'John Anderson',
+	age: 30
+});
+
+person.isNew(); //  true
+
+person.save(function (err, person) {
+	person.toJSON();    //  {
+						//      name: 'John Anderson',
+						//      age: 30,
+						//      id: '4a16101b-f35e-46d5-be0e-3a9596abfcf9'
+						//  }
+
+	person.isNew(); //  false
+});
+```
