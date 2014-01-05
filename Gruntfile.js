@@ -127,6 +127,13 @@ module.exports = function (grunt) {
 				src: 'cream_dust.png',
 				dest: 'doc/resources/img/',
 				flatten: true
+			},
+			ga: {
+				expand: true,
+				cwd: 'guide/',
+				src: 'docular-configuration.js',
+				dest: 'doc/documentation/',
+				flatten: true
 			}
 		},
 
