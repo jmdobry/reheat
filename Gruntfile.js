@@ -211,8 +211,8 @@ module.exports = function (grunt) {
 			docular_partial_navigation: 'guide/nav.html',
 			docular_partial_footer: 'guide/footer.html',
 			analytics: {
-				account: 'UA-46792694-2',
-				domainName: 'codetrain.io'
+				account: 'UA-46792694-4',
+				domainName: 'reheat.codetrain.io'
 			},
 			discussions: {
 				shortName: 'reheat',
