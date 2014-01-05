@@ -13,5 +13,6 @@ before_script:
   - sleep 10
 script:
   - grunt build
+  - grunt doc
 after_script:
   - killall rethinkdb

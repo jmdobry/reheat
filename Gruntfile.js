@@ -212,7 +212,7 @@ module.exports = function (grunt) {
 			docular_partial_footer: 'guide/footer.html',
 			analytics: {
 				account: 'UA-46792694-2',
-				domainName: 'reheat.codetrain.io'
+				domainName: 'codetrain.io'
 			},
 			discussions: {
 				shortName: 'reheat',
@@ -244,8 +244,7 @@ module.exports = function (grunt) {
 
 	grunt.registerTask('build', [
 		'jshint',
-		'test',
-		'doc'
+		'test'
 	]);
 
 	grunt.registerTask('default', [
