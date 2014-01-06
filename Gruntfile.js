@@ -193,7 +193,13 @@ module.exports = function (grunt) {
 						{
 							id: 'model',
 							title: 'Model Guide',
-							docs: ['guide/model/']
+							docs: ['guide/model/'],
+							rank: {
+								index: 1,
+								overview: 2,
+								options: 3,
+								lifecycle: 4
+							}
 						}
 					]
 				},

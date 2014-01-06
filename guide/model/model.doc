@@ -39,7 +39,7 @@ person.save(function (err, person) {
 
 @doc overview
 @id overview
-@name Model Guide
+@name Overview
 @description
 
 Reheat provides an extensible Model class from which your Models inherit properties and behavior, much like how
@@ -73,3 +73,181 @@ person.save(function (err, person) {
 	person.isNew(); //  false
 });
 ```
+
+@doc overview
+@id options
+@name Configuration Options
+@description
+
+[Model.extend()](http://reheat/documentation/api/api/Model.static_methods:extend) accepts two arguments: `prototypeProperties` and `staticProperties`.
+
+Example:
+
+```js
+var Person = Model.extend({
+	// These properties will be on the prototype of any instances of Person
+	say: function () {
+		return 'Hello';
+	},
+	yell: function () {
+		return 'Oho!';
+	}
+}, {
+	// These properties will be available on Person itself
+	say: function () {
+		return 'Person!';
+	},
+	whisper: function () {
+		return 'Shhhhh';
+	}
+});
+
+Person.say(); // "Person!"
+Person.whisper(); // "Shhhhh"
+Person.yell(); // TypeError: Object function Person(...) {...} has no method 'yell'
+
+var person = new Person();
+
+person.say(); // "Hello"
+person.whisper(); // TypeError: Object #<person> has no method 'whisper'
+person.yell(); // "Oho!"
+```
+
+### prototype properties
+
+This is optional. Instances of your models will work just fine without you adding anything to their prototype. Generally,
+if you do provide any prototype properties then they will be methods, and more specifically, methods that override
+existing methods already defined on `Model.prototype` such as `toJSON()` and `afterValidate()`.
+
+Example:
+
+```js
+var Person = Model.extend({
+	// Override toJSON() for custom serialization
+	toJSON: function () {
+		var attrs = Model.prototype.toJSON.call(this);
+		delete attrs.secretField;
+		return attrs;
+	},
+
+	// Override afterCreate() to perform logic needed after database inserts
+	afterCreate: function(instance, meta, cb) {
+		// send transactional email, etc.
+		console.log('sent transactional email!');
+		cb(null, instance, meta);
+	}
+
+}, {...});
+
+var person = new Person({
+	name: 'John Anderson',
+	secretField: 'secret'
+});
+
+person.toJSON(); // { name: 'John Anderson' }
+
+person.save(function (err, person, meta) {
+	person.toJSON(); { name: 'John Anderson', id: '4a16101b-f35e-46d5-be0e-3a9596abfcf9' }
+}); // "sent transactional email!"
+```
+
+### static properties
+
+These properties configure your new model. This argument is required because every model needs an instance of `Connection` to function.
+
+Example:
+
+```js
+var Person = Model.extend({...}, {
+	connection: new reheat.Connection()
+});
+```
+
+The static properties also configure things such as `tableName`, `softDelete`, `timestamps` and `schema`.
+
+Example:
+
+```js
+var Person = Model.extend({...}, {
+	// required
+	connection: new reheat.Connection(),
+
+	// optional
+	schema: new reheat.Schema({
+		name: {
+			type: 'string'
+		}
+	}),
+
+	// optional - default "test"
+	tableName: 'person',
+
+	// optional - default false
+	softDelete: true,
+
+	// optional - default false
+	timestamps: true
+});
+
+Person.tableName; // "person"
+Person.softDelete; // true
+Person.timestamps; // true
+
+Person.connection.run(r.tableList(), function(err, tableList) {
+	tableList; // [ "person", ... ]
+
+	Person.schema.validate({
+		name: 1234
+	}, function (err) {
+		err;    //  {
+				//      name: {
+				//          errors: [{
+				//              rule: 'type',
+				//              actual: 'number',
+				//              expected: 'string'
+				//          }]
+				//      }
+				//  }
+	});
+});
+```
+
+See [Model.extend()](/documentation/api/api/Model.static_methods:extend) for detailed information.
+
+@doc overview
+@id lifecylce
+@name Model Lifecycle
+@description
+
+The CRUD operations performed on instances of each model go through a lifecycle. By default, the lifecycle steps don't
+do anything except for the CRUD operation itself.
+
+What about `this`? Each lifecycle step is executed in the context of the instance on which you called `save(cb)` or `destroy(cb)`.
+
+## Lifecycle steps
+
+#### Model#save(cb)
+
+If `isNew() === true`:
+
+- `beforeValidate(cb)`
+- `validate(cb)` - Generally you won't override this unless you want 100% custom validation, otherwise this step will validate `this.attributes` against the schema of the model.
+- `afterValidate(cb)`
+- `beforeCreate(cb)`
+- `save(cb)` - Don't override this, bad things might happen!
+- `afterCreate(instance, meta, cb)` - Make sure to pass along `instance` and `meta` if you override this! i.e. `cb(null, instance, meta)`
+
+Else if `isNew() === false`:
+
+- `beforeValidate(cb)`
+- `validate(cb)` - Generally you won't override this unless you want 100% custom validation, otherwise this step will validate `this.attributes` against the schema of the model.
+- `afterValidate(cb)`
+- `beforeUpdate(cb)`
+- `save(cb)` - Don't override this, bad things might happen!
+- `afterUpdate(instance, meta, cb)` - Make sure to pass along `instance` and `meta` if you override this! i.e. `cb(null, instance, meta)`
+
+#### Model#destroy(cb)
+
+- `beforeDestroy(cb)`
+- `destroy(cb)` - Don't override this, bad things might happen!
+- `afterDestroy(instance, meta, cb)` - Make sure to pass along `instance` and `meta` if you override this! i.e. `cb(null, instance, meta)`

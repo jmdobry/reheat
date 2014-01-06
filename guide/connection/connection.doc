@@ -27,7 +27,7 @@ connection.run(r.tableList(), function (err, tableList) {
 
 @doc overview
 @id overview
-@name Connection Guide
+@name Overview
 @description
 
 Reheat uses the [`Connection`](/documentation/api/api/Connection) class to connect to instances of RethinkDB.

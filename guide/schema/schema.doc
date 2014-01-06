@@ -39,7 +39,7 @@ var FreestylePerson = Model.extend();
 
 @doc overview
 @id overview
-@name Schema Overview
+@name Overview
 @description
 
 Reheat uses the [robocop.js](http://jmdobry.github.io/robocop.js/) library for schema definition and validation.
