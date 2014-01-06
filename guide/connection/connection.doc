@@ -11,6 +11,8 @@ Each instance of `Connection` manages a pool of connections to an instance of Re
 are sufficient for connecting to a default RethinkDB instance on `localhost`. Every `Model` you define needs an
 instance of `Connection` in order to operate.
 
+<page-list></page-list>
+
 ```js
 var r = require('rethinkdb'),
 	reheat = require('reheat'),
@@ -35,6 +37,8 @@ Reheat uses the [`Connection`](/documentation/api/api/Connection) class to conne
 Each instance of `Connection` manages a pool of connections to an instance of RethinkDB. The default configuration options
 are sufficient for connecting to a default RethinkDB instance on `localhost`. Every `Model` you define needs an
 instance of `Connection` in order to operate.
+
+<page-list></page-list>
 
 ```js
 var r = require('rethinkdb'),

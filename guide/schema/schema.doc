@@ -10,6 +10,8 @@ Reheat uses the [robocop.js](http://jmdobry.github.io/robocop.js/) library for s
 You are not required to provide a Schema when defining a Model, but if you do, instances of your Model will
 automatically be validated against the Model's Schema during create and update operations.
 
+<page-list></page-list>
+
 ```js
 var reheat = require('reheat'),
 	Schema = reheat.Schema,
@@ -46,6 +48,8 @@ Reheat uses the [robocop.js](http://jmdobry.github.io/robocop.js/) library for s
 
 You are not required to provide a Schema when defining a Model, but if you do, instances of your Model will
 automatically be validated against the Model's Schema during create and update operations.
+
+<page-list></page-list>
 
 ```js
 var reheat = require('reheat'),

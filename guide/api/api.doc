@@ -58,3 +58,5 @@ reheat.support.UnhandledError;
 reheat.support.IllegalArgumentError;
 reheat.support.ValidationError;
 ```
+
+<page-list></page-list>

@@ -8,6 +8,8 @@
 Reheat provides an extensible Model class from which your Models inherit properties and behavior, much like how
 Backbone Models work.
 
+<page-list></page-list>
+
 ```js
 var reheat = require('reheat'),
 	Connection = reheat.Connection,
@@ -44,6 +46,8 @@ person.save(function (err, person) {
 
 Reheat provides an extensible Model class from which your Models inherit properties and behavior, much like how
 Backbone Models work.
+
+<page-list></page-list>
 
 ```js
 var reheat = require('reheat'),
