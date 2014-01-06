@@ -198,7 +198,9 @@ module.exports = function (grunt) {
 								index: 1,
 								overview: 2,
 								options: 3,
-								lifecycle: 4
+								instances: 4,
+								lifecycle: 5,
+								saving: 6
 							}
 						}
 					]

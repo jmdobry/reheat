@@ -8,6 +8,17 @@
 Reheat provides an extensible Model class from which your Models inherit properties and behavior, much like how
 Backbone Models work.
 
+Your models _extend_ `Model` and map to tables. Instances of your models map to individual rows in the table specified
+by the instances' model's `tableName`.
+
+Terms used in documentation:
+
+- _Model_ - Extendable class provided by reheat.
+- _model(s)_ - Your models that have extended `Model` (map to tables).
+- _(model) instances_ - Instantiations of your models (map to rows).
+- `Model#property` - Refers to prototype or instance properties of `Model`.
+- `Model.property` - Refers to static properties on `Model` itself.
+
 <page-list></page-list>
 
 ```js
@@ -47,6 +58,17 @@ person.save(function (err, person) {
 Reheat provides an extensible Model class from which your Models inherit properties and behavior, much like how
 Backbone Models work.
 
+Your models _extend_ `Model` and map to tables. Instances of your models map to individual rows in the table specified
+by the instances' model's `tableName`.
+
+Terms used in documentation:
+
+- _Model_ - Extendable class provided by reheat.
+- _model(s)_ - Your models that have extended `Model` (map to tables).
+- _(model) instances_ - Instantiations of your models (map to rows).
+- `Model#property` - Refers to prototype or instance properties of `Model`.
+- `Model.property` - Refers to static properties on `Model` itself.
+
 <page-list></page-list>
 
 ```js
@@ -80,7 +102,7 @@ person.save(function (err, person) {
 
 @doc overview
 @id options
-@name Configuration Options
+@name Extending "Model"
 @description
 
 [Model.extend()](http://reheat/documentation/api/api/Model.static_methods:extend) accepts two arguments: `prototypeProperties` and `staticProperties`.
@@ -219,7 +241,31 @@ Person.connection.run(r.tableList(), function(err, tableList) {
 See [Model.extend()](/documentation/api/api/Model.static_methods:extend) for detailed information.
 
 @doc overview
-@id lifecylce
+@id instances
+@name Model instances
+@description
+
+"Instances" or "model instances" refer to instantiations of the models you have defined by extending `Model`. These
+instances inherit properties from `Model.prototype`, including any prototype properties you defined when you extended
+`Model`.
+
+When you instantiate a model, the constructor function accepts one argument `attrs`, which are the initial properties
+of the instances. These properties are saved in `Model#attributes`.
+
+Example:
+
+```js
+var person = new Person({ name: 'John Anderson'});
+
+person.attributes; // { name: 'John Anderson'}
+```
+
+`Model#attributes`, while a JavaScript Object in memory, represents the JSON document (in this example) specified by
+`Person#attributes[Person.idAttribute]` in the table specified by `Person.tableName`. Model instances inherit a number
+of methods from `Model.prototype`.
+
+@doc overview
+@id lifecycle
 @name Model Lifecycle
 @description
 
@@ -255,3 +301,16 @@ Else if `isNew() === false`:
 - `beforeDestroy(cb)`
 - `destroy(cb)` - Don't override this, bad things might happen!
 - `afterDestroy(instance, meta, cb)` - Make sure to pass along `instance` and `meta` if you override this! i.e. `cb(null, instance, meta)`
+
+@doc overview
+@id saving
+@name Saving Data
+@description
+
+You save data to the database by calling `save(cb)` on instances of your models.
+
+If an instance is new, meaning that its properties do not yet contain the field specified by the instance's model's
+`idAttribute` field, then the save operation will be an insert (see [r#insert](http://rethinkdb.com/api/javascript#insert)).
+
+If an instance is __not__ new, meaning that is properties already contain the field specified by the instance's model's
+`idAttribute` field, then the save operation will be an update (see [r#update](http://rethinkdb.com/api/javascript#update)).
