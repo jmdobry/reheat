@@ -39,7 +39,7 @@ var FreestylePerson = Model.extend();
 
 @doc overview
 @id overview
-@name Schema Guide
+@name Schema Overview
 @description
 
 Reheat uses the [robocop.js](http://jmdobry.github.io/robocop.js/) library for schema definition and validation.
@@ -74,3 +74,75 @@ var Person = Model.extend({}, {
 var FreestylePerson = Model.extend();
 ```
 
+@doc overview
+@id robocop
+@name Robocop Library
+@description
+
+[robocop.js](http://jmdobry.github.io/robocop.js/) robocop.js is a library that allows you to define and validate rules, datatypes and schemata in Node and in the browser.
+
+The API of the `robocop` object has been mixed into the `reheat` object, giving access to the `robocop` methods and the `Schema` constructor. For example:
+
+```js
+// This schema is actually registered by reheat (robocop) so you don't have to keep track of it yourself
+reheat.defineSchema('PersonSchema', {
+	name: {
+		type: 'string'
+	}
+});
+
+var Person = Model.extend({}, {
+	schema: reheat.getSchema('PersonSchema'),
+	{...}
+});
+```
+
+Using `Schema` constructor only:
+
+```js
+// equivalent using only the Schema constructor–you have to keep track of the schema yourself
+var personSchema = new reheat.Schema({
+	name: {
+		type: 'string'
+	}
+});
+
+var Person = Model.extend({}, {
+	schema: personSchema,
+	{...}
+});
+```
+
+Reheat only requires use of the `Schema` constructor to function, and you're free to keep it at that, but you'll be restricted to the default rules and data types.
+
+See the [robocop API](http://jmdobry.github.io/robocop.js/api.html#robocop) for details on the `robocop` methods exposed on the `reheat` object.
+
+@doc overview
+@id rules
+@name Rules & Data Types
+@description
+
+[robocop.js](http://jmdobry.github.io/robocop.js/) ships with a number of rules and data types, but you can define your
+own.
+
+### Default Rules
+- nullable
+- max,
+- min,
+- maxLength,
+- minLength,
+- type
+
+### Default Data Types
+- string
+- number
+- integer
+- float
+- array
+- object
+- boolean
+- date
+
+See [robocop.defineRule(name, ruleFunc)](http://jmdobry.github.io/robocop.js/api.html#robocopdefinerule) and
+[robocop.defineDatatype(name, def)](http://jmdobry.github.io/robocop.js/api.html#robocopdefinedatatype) for defining
+custom rules and data types.

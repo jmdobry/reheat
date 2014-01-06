@@ -3,6 +3,58 @@
 @name Reheat API
 @description
 
-# API
+# Reheat API
 
-TODO: Put something tasty here
+Classes provided by Reheat:
+
+### Reheat
+```js
+var reheat = require('reheat');
+```
+
+### Connection
+```js
+// Connection constructor function
+reheat.Connection;
+
+var connection = new reheat.Connection({
+	host: '123.45.67.890'
+});
+```
+
+### Schema
+```js
+// Schema constructor function
+reheat.Schema;
+
+var personSchema = new reheat.Schema({
+	name: {
+		type: 'string'
+	}
+});
+```
+
+### Model
+```js
+// Extendable Model class
+reheat.Model;
+
+var Person = Model.extend({}, {
+	connection: connection,
+	schema: personSchema
+});
+```
+
+```js
+var person = new Person({
+	name: 'John Anderson'
+});
+```
+
+### Errors
+```js
+// Error constructor functions
+reheat.support.UnhandledError;
+reheat.support.IllegalArgumentError;
+reheat.support.ValidationError;
+```

@@ -171,12 +171,24 @@ module.exports = function (grunt) {
 						{
 							id: 'connection',
 							title: 'Connection Guide',
-							docs: ['guide/connection/']
+							docs: ['guide/connection/'],
+							rank: {
+								index: 1,
+								overview: 2,
+								options: 3,
+								dynamic: 4
+							}
 						},
 						{
 							id: 'schema',
 							title: 'Schema Guide',
-							docs: ['guide/schema/']
+							docs: ['guide/schema/'],
+							rank: {
+								index: 1,
+								overview: 2,
+								robocop: 3,
+								rules: 4
+							}
 						},
 						{
 							id: 'model',
