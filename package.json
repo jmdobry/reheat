@@ -44,7 +44,7 @@
     "generic-pool": "2.0.4",
     "meld": "1.3.0",
     "mout": "0.8.0",
-    "robocop.js": "0.11.0",
+    "robocop.js": "0.12.0",
     "rethinkdb": "1.11.0-1"
   },
   "devDependencies": {

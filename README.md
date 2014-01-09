@@ -1,8 +1,10 @@
 ## reheat
 
-__Current Version:__ 0.7.0
+__Current Version:__ 0.7.3
 
 __A red hot Node.js ORM for RethinkDB.__
+
+#### This is alpha software!
 
 All documentation can be found at [http://reheat.codetrain.io/](http://reheat.codetrain.io/).
 
