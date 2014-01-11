@@ -80,12 +80,12 @@ exports.saveIntegration = {
 			}
 		});
 
-		post.save(function (err, post, meta) {
+		post.save(function (err, post) {
 			test.ifError(err);
 			test.deepEqual(post.get('author'), 'John Anderson');
 			test.deepEqual(post.get('address.state'), 'NY');
 			test.ok(typeof post.get('id') === 'string');
-			test.equal(meta.inserted, 1);
+			test.equal(post.meta.inserted, 1);
 			test.done();
 		});
 	},
@@ -105,7 +105,7 @@ exports.saveIntegration = {
 			}
 		});
 
-		post.save(function (err, post, meta) {
+		post.save(function (err, post) {
 			test.ifError(err);
 			test.deepEqual(post.get('author'), 'John Anderson');
 			test.deepEqual(post.get('address.state'), 'NY');
@@ -114,7 +114,7 @@ exports.saveIntegration = {
 			test.ok(utils.isDate(post.get('updated')));
 			test.deepEqual(post.get('updated'), post.get('created'));
 			test.deepEqual(post.get('deleted'), null);
-			test.equal(meta.inserted, 1);
+			test.equal(post.meta.inserted, 1);
 			test.done();
 		});
 	},
@@ -135,22 +135,22 @@ exports.saveIntegration = {
 			}
 		});
 
-		post.save(function (err, post, meta) {
+		post.save(function (err, post) {
 			test.ifError(err);
 			test.deepEqual(post.get('author'), 'John Anderson');
 			test.deepEqual(post.get('address.state'), 'NY');
 			test.ok(typeof post.get(Post.idAttribute) === 'string');
-			test.equal(meta.inserted, 1);
+			test.equal(post.meta.inserted, 1);
 			id = post.get(Post.idAttribute);
 			post.set({ author: 'Sally Johnson', address: { state: 'CO' } }, function (err) {
 				test.ifError(err);
 				test.deepEqual(post.get('author'), 'Sally Johnson');
 				test.deepEqual(post.get('address.state'), 'CO');
-				post.save(function (err, post, meta) {
+				post.save(function (err, post) {
 					test.ifError(err);
 					test.deepEqual(post.get('author'), 'Sally Johnson');
 					test.deepEqual(post.get('address.state'), 'CO');
-					test.equal(meta.replaced, 1);
+					test.equal(post.meta.replaced, 1);
 					test.deepEqual(post.get('id'), id);
 					test.done();
 				});
@@ -175,7 +175,7 @@ exports.saveIntegration = {
 			}
 		});
 
-		post.save(function (err, post, meta) {
+		post.save(function (err, post) {
 			test.ifError(err);
 			test.deepEqual(post.get('author'), 'John Anderson');
 			test.deepEqual(post.get('address.state'), 'NY');
@@ -184,17 +184,17 @@ exports.saveIntegration = {
 			test.ok(utils.isDate(post.get('updated')));
 			test.deepEqual(post.get('updated'), post.get('created'));
 			test.deepEqual(post.get('deleted'), null);
-			test.equal(meta.inserted, 1);
+			test.equal(post.meta.inserted, 1);
 			id = post.get(Post.idAttribute);
 			post.set({ author: 'Sally Johnson', address: { state: 'CO' } }, function (err) {
 				test.ifError(err);
 				test.deepEqual(post.get('author'), 'Sally Johnson');
 				test.deepEqual(post.get('address.state'), 'CO');
-				post.save(function (err, post, meta) {
+				post.save(function (err, post) {
 					test.ifError(err);
 					test.deepEqual(post.get('author'), 'Sally Johnson');
 					test.deepEqual(post.get('address.state'), 'CO');
-					test.equal(meta.replaced, 1);
+					test.equal(post.meta.replaced, 1);
 					test.deepEqual(post.get('id'), id);
 					test.ok(post.get('created') !== post.get('updated'));
 					test.ok(post.get('updated') > post.get('created'));

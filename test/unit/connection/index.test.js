@@ -1,7 +1,6 @@
 /*jshint loopfunc:true*/
 
-var async = require('async'),
-	errors = require('../../../build/instrument/lib/support/errors'),
+var errors = require('../../../build/instrument/lib/support/errors'),
 	SandboxedModule = require('sandboxed-module'),
 	Connection = SandboxedModule.require('../../../build/instrument/lib/connection', {
 		requires: {
@@ -17,10 +16,10 @@ var async = require('async'),
 						});
 					}, 100);
 				}
-			}, // Mock dependency
-			async: async // Real dependency
+			}
 		}
 	}),
+	Promise = require('bluebird'),
 	support = require('../../support/support');
 
 exports.Connection = {
@@ -28,9 +27,8 @@ exports.Connection = {
 		try {
 			this.connection = new Connection();
 		} catch (err) {
-			console.log(err);
+			console.error(err.stack);
 		}
-
 		cb();
 	},
 
@@ -121,293 +119,390 @@ exports.Connection = {
 		},
 		options: function (test) {
 			var _this = this;
-			test.expect(5);
+			test.expect(8);
+
+			var queue = [];
 
 			for (var i = 0; i < support.TYPES_EXCEPT_OBJECT.length; i++) {
-				if (!support.TYPES_EXCEPT_OBJECT[i]) {
-					continue;
+				if (support.TYPES_EXCEPT_OBJECT[i] && typeof support.TYPES_EXCEPT_OBJECT[i] !== 'function') {
+					queue.push((function (j) {
+						return _this.connection.configure(support.TYPES_EXCEPT_OBJECT[j]).then(function () {
+							support.fail('Should have failed on ' + support.TYPES_EXCEPT_OBJECT[j]);
+						})
+							.catch(errors.IllegalArgumentError, function (err) {
+								test.equal(err.type, 'IllegalArgumentError');
+								test.deepEqual(err.errors, { actual: typeof support.TYPES_EXCEPT_OBJECT[j], expected: 'object' });
+							})
+							.error(function () {
+								support.fail('Should not have an unknown error!');
+							});
+					})(i));
 				}
-				test.throws(
-					function () {
-						_this.connection.configure(support.TYPES_EXCEPT_OBJECT[i]);
-					},
-					errors.IllegalArgumentError,
-					'Should fail on ' + support.TYPES_EXCEPT_OBJECT[i]
-				);
 			}
 
-			test.done();
+			Promise.all(queue).finally(function () {
+				test.done();
+			});
 		},
 		port: function (test) {
 			var _this = this;
-			test.expect(5);
+			test.expect(10);
+
+			var queue = [];
 
 			for (var i = 0; i < support.TYPES_EXCEPT_NUMBER.length; i++) {
 				if (!support.TYPES_EXCEPT_NUMBER[i]) {
 					continue;
 				}
-				test.throws(
-					function () {
-						_this.connection.configure({
-							port: support.TYPES_EXCEPT_NUMBER[i]
+				queue.push((function (j) {
+					return _this.connection.configure({
+						port: support.TYPES_EXCEPT_NUMBER[j]
+					}).then(function () {
+							support.fail('Should have failed on ' + support.TYPES_EXCEPT_NUMBER[j]);
+						})
+						.catch(errors.IllegalArgumentError, function (err) {
+							test.equal(err.type, 'IllegalArgumentError');
+							test.deepEqual(err.errors, { port: { actual: typeof support.TYPES_EXCEPT_NUMBER[j], expected: 'number' } });
+						})
+						.error(function () {
+							support.fail('Should not have an unknown error!');
 						});
-					},
-					errors.IllegalArgumentError,
-					'Should fail on ' + support.TYPES_EXCEPT_NUMBER[i]
-				);
+				})(i));
 			}
 
-			test.done();
+			Promise.all(queue).finally(function () {
+				test.done();
+			});
 		},
 		db: function (test) {
 			var _this = this;
-			test.expect(6);
+			test.expect(12);
+
+			var queue = [];
 
 			for (var i = 0; i < support.TYPES_EXCEPT_STRING.length; i++) {
 				if (!support.TYPES_EXCEPT_STRING[i]) {
 					continue;
 				}
-				test.throws(
-					function () {
-						_this.connection.configure({
-							db: support.TYPES_EXCEPT_STRING[i]
+				queue.push((function (j) {
+					return _this.connection.configure({
+						db: support.TYPES_EXCEPT_STRING[j]
+					}).then(function () {
+							support.fail('Should have failed on ' + support.TYPES_EXCEPT_STRING[j]);
+						})
+						.catch(errors.IllegalArgumentError, function (err) {
+							test.equal(err.type, 'IllegalArgumentError');
+							test.deepEqual(err.errors, { db: { actual: typeof support.TYPES_EXCEPT_STRING[j], expected: 'string' } });
+						})
+						.error(function () {
+							support.fail('Should not have an unknown error!');
 						});
-					},
-					errors.IllegalArgumentError,
-					'Should fail on ' + support.TYPES_EXCEPT_STRING[i]
-				);
+				})(i));
 			}
 
-			test.done();
+			Promise.all(queue).finally(function () {
+				test.done();
+			});
 		},
 		host: function (test) {
 			var _this = this;
-			test.expect(6);
+			test.expect(12);
+
+			var queue = [];
 
 			for (var i = 0; i < support.TYPES_EXCEPT_STRING.length; i++) {
 				if (!support.TYPES_EXCEPT_STRING[i]) {
 					continue;
 				}
-				test.throws(
-					function () {
-						_this.connection.configure({
-							host: support.TYPES_EXCEPT_STRING[i]
+				queue.push((function (j) {
+					return _this.connection.configure({
+						host: support.TYPES_EXCEPT_STRING[j]
+					}).then(function () {
+							support.fail('Should have failed on ' + support.TYPES_EXCEPT_STRING[j]);
+						})
+						.catch(errors.IllegalArgumentError, function (err) {
+							test.equal(err.type, 'IllegalArgumentError');
+							test.deepEqual(err.errors, { host: { actual: typeof support.TYPES_EXCEPT_STRING[j], expected: 'string' } });
+						})
+						.error(function () {
+							support.fail('Should not have an unknown error!');
 						});
-					},
-					errors.IllegalArgumentError,
-					'Should fail on ' + support.TYPES_EXCEPT_STRING[i]
-				);
+				})(i));
 			}
 
-			test.done();
+			Promise.all(queue).finally(function () {
+				test.done();
+			});
 		},
 		authKey: function (test) {
 			var _this = this;
-			test.expect(6);
+			test.expect(12);
+
+			var queue = [];
 
 			for (var i = 0; i < support.TYPES_EXCEPT_STRING.length; i++) {
 				if (!support.TYPES_EXCEPT_STRING[i]) {
 					continue;
 				}
-				test.throws(
-					function () {
-						_this.connection.configure({
-							authKey: support.TYPES_EXCEPT_STRING[i]
+				queue.push((function (j) {
+					return _this.connection.configure({
+						authKey: support.TYPES_EXCEPT_STRING[j]
+					}).then(function () {
+							support.fail('Should have failed on ' + support.TYPES_EXCEPT_STRING[j]);
+						})
+						.catch(errors.IllegalArgumentError, function (err) {
+							test.equal(err.type, 'IllegalArgumentError');
+							test.deepEqual(err.errors, { authKey: { actual: typeof support.TYPES_EXCEPT_STRING[j], expected: 'string' } });
+						})
+						.error(function () {
+							support.fail('Should not have an unknown error!');
 						});
-					},
-					errors.IllegalArgumentError,
-					'Should fail on ' + support.TYPES_EXCEPT_STRING[i]
-				);
+				})(i));
 			}
 
-			test.done();
+			Promise.all(queue).finally(function () {
+				test.done();
+			});
 		},
 		name: function (test) {
 			var _this = this;
-			test.expect(6);
+			test.expect(12);
+
+			var queue = [];
 
 			for (var i = 0; i < support.TYPES_EXCEPT_STRING.length; i++) {
 				if (!support.TYPES_EXCEPT_STRING[i]) {
 					continue;
 				}
-				test.throws(
-					function () {
-						_this.connection.configure({
-							name: support.TYPES_EXCEPT_STRING[i]
+				queue.push((function (j) {
+					return _this.connection.configure({
+						name: support.TYPES_EXCEPT_STRING[j]
+					}).then(function () {
+							support.fail('Should have failed on ' + support.TYPES_EXCEPT_STRING[j]);
+						})
+						.catch(errors.IllegalArgumentError, function (err) {
+							test.equal(err.type, 'IllegalArgumentError');
+							test.deepEqual(err.errors, { name: { actual: typeof support.TYPES_EXCEPT_STRING[j], expected: 'string' } });
+						})
+						.error(function () {
+							support.fail('Should not have an unknown error!');
 						});
-					},
-					errors.IllegalArgumentError,
-					'Should fail on ' + support.TYPES_EXCEPT_STRING[i]
-				);
+				})(i));
 			}
 
-			test.done();
+			Promise.all(queue).finally(function () {
+				test.done();
+			});
 		},
 		max: function (test) {
 			var _this = this;
-			test.expect(5);
+			test.expect(10);
+
+			var queue = [];
 
 			for (var i = 0; i < support.TYPES_EXCEPT_NUMBER.length; i++) {
 				if (!support.TYPES_EXCEPT_NUMBER[i]) {
 					continue;
 				}
-				test.throws(
-					function () {
-						_this.connection.configure({
-							max: support.TYPES_EXCEPT_NUMBER[i]
+				queue.push((function (j) {
+					return _this.connection.configure({
+						max: support.TYPES_EXCEPT_NUMBER[j]
+					}).then(function () {
+							support.fail('Should have failed on ' + support.TYPES_EXCEPT_NUMBER[j]);
+						})
+						.catch(errors.IllegalArgumentError, function (err) {
+							test.equal(err.type, 'IllegalArgumentError');
+							test.deepEqual(err.errors, { max: { actual: typeof support.TYPES_EXCEPT_NUMBER[j], expected: 'number' } });
+						})
+						.error(function () {
+							support.fail('Should not have an unknown error!');
 						});
-					},
-					errors.IllegalArgumentError,
-					'Should fail on ' + support.TYPES_EXCEPT_NUMBER[i]
-				);
+				})(i));
 			}
 
-			test.done();
+			Promise.all(queue).finally(function () {
+				test.done();
+			});
 		},
 		min: function (test) {
 			var _this = this;
-			test.expect(5);
+			test.expect(10);
+
+			var queue = [];
 
 			for (var i = 0; i < support.TYPES_EXCEPT_NUMBER.length; i++) {
 				if (!support.TYPES_EXCEPT_NUMBER[i]) {
 					continue;
 				}
-				test.throws(
-					function () {
-						_this.connection.configure({
-							min: support.TYPES_EXCEPT_NUMBER[i]
+				queue.push((function (j) {
+					return _this.connection.configure({
+						min: support.TYPES_EXCEPT_NUMBER[j]
+					}).then(function () {
+							support.fail('Should have failed on ' + support.TYPES_EXCEPT_NUMBER[j]);
+						})
+						.catch(errors.IllegalArgumentError, function (err) {
+							test.equal(err.type, 'IllegalArgumentError');
+							test.deepEqual(err.errors, { min: { actual: typeof support.TYPES_EXCEPT_NUMBER[j], expected: 'number' } });
+						})
+						.error(function () {
+							support.fail('Should not have an unknown error!');
 						});
-					},
-					errors.IllegalArgumentError,
-					'Should fail on ' + support.TYPES_EXCEPT_NUMBER[i]
-				);
+				})(i));
 			}
 
-			test.done();
+			Promise.all(queue).finally(function () {
+				test.done();
+			});
 		},
 		idleTimeoutMillis: function (test) {
 			var _this = this;
-			test.expect(5);
+			test.expect(10);
+
+			var queue = [];
 
 			for (var i = 0; i < support.TYPES_EXCEPT_NUMBER.length; i++) {
 				if (!support.TYPES_EXCEPT_NUMBER[i]) {
 					continue;
 				}
-				test.throws(
-					function () {
-						_this.connection.configure({
-							idleTimeoutMillis: support.TYPES_EXCEPT_NUMBER[i]
+				queue.push((function (j) {
+					return _this.connection.configure({
+						idleTimeoutMillis: support.TYPES_EXCEPT_NUMBER[j]
+					}).then(function () {
+							support.fail('Should have failed on ' + support.TYPES_EXCEPT_NUMBER[j]);
+						})
+						.catch(errors.IllegalArgumentError, function (err) {
+							test.equal(err.type, 'IllegalArgumentError');
+							test.deepEqual(err.errors, { idleTimeoutMillis: { actual: typeof support.TYPES_EXCEPT_NUMBER[j], expected: 'number' } });
+						})
+						.error(function () {
+							support.fail('Should not have an unknown error!');
 						});
-					},
-					errors.IllegalArgumentError,
-					'Should fail on ' + support.TYPES_EXCEPT_NUMBER[i]
-				);
+				})(i));
 			}
 
-			test.done();
+			Promise.all(queue).finally(function () {
+				test.done();
+			});
 		},
 		reapIntervalMillis: function (test) {
 			var _this = this;
-			test.expect(5);
+			test.expect(10);
+
+			var queue = [];
 
 			for (var i = 0; i < support.TYPES_EXCEPT_NUMBER.length; i++) {
 				if (!support.TYPES_EXCEPT_NUMBER[i]) {
 					continue;
 				}
-				test.throws(
-					function () {
-						_this.connection.configure({
-							reapIntervalMillis: support.TYPES_EXCEPT_NUMBER[i]
+				queue.push((function (j) {
+					return _this.connection.configure({
+						reapIntervalMillis: support.TYPES_EXCEPT_NUMBER[j]
+					}).then(function () {
+							support.fail('Should have failed on ' + support.TYPES_EXCEPT_NUMBER[j]);
+						})
+						.catch(errors.IllegalArgumentError, function (err) {
+							test.equal(err.type, 'IllegalArgumentError');
+							test.deepEqual(err.errors, { reapIntervalMillis: { actual: typeof support.TYPES_EXCEPT_NUMBER[j], expected: 'number' } });
+						})
+						.error(function () {
+							support.fail('Should not have an unknown error!');
 						});
-					},
-					errors.IllegalArgumentError,
-					'Should fail on ' + support.TYPES_EXCEPT_NUMBER[i]
-				);
+				})(i));
 			}
 
-			test.done();
+			Promise.all(queue).finally(function () {
+				test.done();
+			});
 		},
 		priorityRange: function (test) {
 			var _this = this;
-			test.expect(5);
+			test.expect(10);
+
+			var queue = [];
 
 			for (var i = 0; i < support.TYPES_EXCEPT_NUMBER.length; i++) {
 				if (!support.TYPES_EXCEPT_NUMBER[i]) {
 					continue;
 				}
-				test.throws(
-					function () {
-						_this.connection.configure({
-							priorityRange: support.TYPES_EXCEPT_NUMBER[i]
+				queue.push((function (j) {
+					return _this.connection.configure({
+						priorityRange: support.TYPES_EXCEPT_NUMBER[j]
+					}).then(function () {
+							support.fail('Should have failed on ' + support.TYPES_EXCEPT_NUMBER[j]);
+						})
+						.catch(errors.IllegalArgumentError, function (err) {
+							test.equal(err.type, 'IllegalArgumentError');
+							test.deepEqual(err.errors, { priorityRange: { actual: typeof support.TYPES_EXCEPT_NUMBER[j], expected: 'number' } });
+						})
+						.error(function () {
+							support.fail('Should not have an unknown error!');
 						});
-					},
-					errors.IllegalArgumentError,
-					'Should fail on ' + support.TYPES_EXCEPT_NUMBER[i]
-				);
+				})(i));
 			}
 
-			test.done();
+			Promise.all(queue).finally(function () {
+				test.done();
+			});
 		},
 		refreshIdle: function (test) {
 			var _this = this;
-			test.expect(6);
+			test.expect(12);
+
+			var queue = [];
 
 			for (var i = 0; i < support.TYPES_EXCEPT_BOOLEAN.length; i++) {
 				if (!support.TYPES_EXCEPT_BOOLEAN[i]) {
 					continue;
 				}
-				test.throws(
-					function () {
-						_this.connection.configure({
-							refreshIdle: support.TYPES_EXCEPT_BOOLEAN[i]
+				queue.push((function (j) {
+					return _this.connection.configure({
+						refreshIdle: support.TYPES_EXCEPT_BOOLEAN[j]
+					}).then(function () {
+							support.fail('Should have failed on ' + support.TYPES_EXCEPT_BOOLEAN[j]);
+						})
+						.catch(errors.IllegalArgumentError, function (err) {
+							test.equal(err.type, 'IllegalArgumentError');
+							test.deepEqual(err.errors, { refreshIdle: { actual: typeof support.TYPES_EXCEPT_BOOLEAN[j], expected: 'boolean' } });
+						})
+						.error(function () {
+							support.fail('Should not have an unknown error!');
 						});
-					},
-					errors.IllegalArgumentError,
-					'Should fail on ' + support.TYPES_EXCEPT_BOOLEAN[i]
-				);
+				})(i));
 			}
 
-			test.done();
-		},
-		cb: function (test) {
-			var _this = this;
-			test.expect(6);
-
-			for (var i = 0; i < support.TYPES_EXCEPT_FUNCTION.length; i++) {
-				if (!support.TYPES_EXCEPT_FUNCTION[i]) {
-					continue;
-				}
-				test.throws(
-					function () {
-						_this.connection.configure({}, true, support.TYPES_EXCEPT_FUNCTION[i]);
-					},
-					errors.IllegalArgumentError,
-					'Should fail on ' + support.TYPES_EXCEPT_FUNCTION[i]
-				);
-			}
-
-			test.done();
+			Promise.all(queue).finally(function () {
+				test.done();
+			});
 		},
 		log: function (test) {
 			var _this = this;
-			test.expect(5);
+			test.expect(10);
+
+			var queue = [];
 
 			for (var i = 0; i < support.TYPES_EXCEPT_BOOLEAN.length; i++) {
 				if (!support.TYPES_EXCEPT_BOOLEAN[i] || typeof support.TYPES_EXCEPT_BOOLEAN[i] === 'function') {
 					continue;
 				}
-				test.throws(
-					function () {
-						_this.connection.configure({
-							log: support.TYPES_EXCEPT_BOOLEAN[i]
+				queue.push((function (j) {
+					return _this.connection.configure({
+						log: support.TYPES_EXCEPT_BOOLEAN[j]
+					}).then(function () {
+							support.fail('Should have failed on ' + support.TYPES_EXCEPT_BOOLEAN[j]);
+						})
+						.catch(errors.IllegalArgumentError, function (err) {
+							test.equal(err.type, 'IllegalArgumentError');
+							test.deepEqual(err.errors, { log: { actual: typeof support.TYPES_EXCEPT_BOOLEAN[j], expected: 'boolean|function' } });
+						})
+						.error(function () {
+							support.fail('Should not have an unknown error!');
 						});
-					},
-					errors.IllegalArgumentError,
-					'Should fail on ' + support.TYPES_EXCEPT_BOOLEAN[i]
-				);
+				})(i));
 			}
 
-			test.done();
+			Promise.all(queue).finally(function () {
+				test.done();
+			});
 		},
 		callbackError: function (test) {
 			var _this = this;
@@ -417,64 +512,85 @@ exports.Connection = {
 				log: 345
 			}, true, function (err) {
 				test.equal(err.type, 'IllegalArgumentError');
+				test.done();
 			});
-
-			test.done();
 		}
 	},
 
 	destroy: function (test) {
 		var _this = this;
 
-		test.expect(6);
+		test.expect(11);
 
 		this.connection.acquire(function (err, conn) {
 			test.ifError(err);
 			test.ok('close' in conn);
 			test.equal(typeof conn.close, 'function');
 			_this.connection.destroy(conn);
-			_this.connection.destroy(null);
 			test.equal(_this.connection.availableObjectsCount(), 0);
 			test.equal(_this.connection.waitingClientsCount(), 0);
 			test.equal(_this.connection.getPoolSize(), 0);
 
-			test.done();
+			_this.connection.acquire().then(function (conn) {
+				test.ok('close' in conn);
+				test.equal(typeof conn.close, 'function');
+				_this.connection.destroy(conn);
+				test.equal(_this.connection.availableObjectsCount(), 0);
+				test.equal(_this.connection.waitingClientsCount(), 0);
+				test.equal(_this.connection.getPoolSize(), 0);
+
+				test.done();
+			});
 		});
 	},
 
 	acquire: function (test) {
 		var _this = this;
 
-		test.expect(6);
+		test.expect(11);
 
 		this.connection.acquire(function (err, conn) {
 			test.ifError(err);
 			test.ok('close' in conn);
 			test.equal(typeof conn.close, 'function');
 			_this.connection.release(conn);
-			_this.connection.destroyAllNow();
-			test.equal(_this.connection.availableObjectsCount(), 0);
+			test.equal(_this.connection.availableObjectsCount(), 1);
 			test.equal(_this.connection.waitingClientsCount(), 0);
-			test.equal(_this.connection.getPoolSize(), 0);
+			test.equal(_this.connection.getPoolSize(), 1);
 
-			test.done();
+			_this.connection.acquire().then(function (conn) {
+				test.ok('close' in conn);
+				test.equal(typeof conn.close, 'function');
+				_this.connection.release(conn);
+				test.equal(_this.connection.availableObjectsCount(), 1);
+				test.equal(_this.connection.waitingClientsCount(), 0);
+				test.equal(_this.connection.getPoolSize(), 1);
+
+				test.done();
+			});
 		});
 	},
 
 	release: function (test) {
 		var _this = this;
 
-		test.expect(4);
+		test.expect(7);
 
 		this.connection.acquire(function (err, conn) {
 			test.ifError(err);
 			_this.connection.release(conn);
-			_this.connection.destroyAllNow();
-			test.equal(_this.connection.availableObjectsCount(), 0);
+			test.equal(_this.connection.availableObjectsCount(), 1);
 			test.equal(_this.connection.waitingClientsCount(), 0);
-			test.equal(_this.connection.getPoolSize(), 0);
+			test.equal(_this.connection.getPoolSize(), 1);
 
-			test.done();
+			_this.connection.acquire().then(function (conn) {
+				_this.connection.release(conn);
+				test.equal(_this.connection.availableObjectsCount(), 1);
+				test.equal(_this.connection.waitingClientsCount(), 0);
+				test.equal(_this.connection.getPoolSize(), 1);
+
+				test.done();
+			});
 		});
 	},
 
@@ -487,12 +603,12 @@ exports.Connection = {
 			test.ifError(err);
 			_this.connection.release(conn);
 			_this.connection.drain(function () {
-				_this.connection.destroyAllNow();
-				test.equal(_this.connection.availableObjectsCount(), 0);
-				test.equal(_this.connection.waitingClientsCount(), 0);
-				test.equal(_this.connection.getPoolSize(), 0);
-
-				test.done();
+				_this.connection.destroyAllNow(function () {
+					test.equal(_this.connection.availableObjectsCount(), 0);
+					test.equal(_this.connection.waitingClientsCount(), 0);
+					test.equal(_this.connection.getPoolSize(), 0);
+					test.done();
+				});
 			});
 		});
 	},
@@ -565,7 +681,7 @@ exports.Connection = {
 	getPoolSize: function (test) {
 		var _this = this;
 
-		test.expect(10);
+		test.expect(7);
 
 		test.equal(this.connection.getPoolSize(), 0, 'Should start with an empty pool');
 
@@ -583,30 +699,27 @@ exports.Connection = {
 				_this.connection.release(conn);
 				test.equal(_this.connection.getPoolSize(), 1, 'There should still be one resource in the pool');
 
-				async.parallel([
-					function (cb) {
-						_this.connection.acquire(function (err, conn) {
-							test.ifError(err);
+				Promise.all([
+						_this.connection.acquire().then(function (conn) {
+							var deferred = Promise.defer();
 							setTimeout(function () {
 								_this.connection.release(conn);
-								cb();
+								deferred.resolve();
 							}, 100);
-						});
-					},
-					function (cb) {
-						_this.connection.acquire(function (err, conn) {
-							test.ifError(err);
+							return deferred.promise;
+						}),
+						_this.connection.acquire().then(function (conn) {
+							var deferred = Promise.defer();
 							setTimeout(function () {
 								_this.connection.release(conn);
-								cb();
+								deferred.resolve();
 							}, 100);
-						});
-					}
-				], function (err, results) {
-					test.ifError(err);
-					test.equal(_this.connection.getPoolSize(), 2, 'There should now be two resources in the pool');
-					test.done();
-				});
+							return deferred.promise;
+						})
+					]).then(function () {
+						test.equal(_this.connection.getPoolSize(), 2, 'There should now be two resources in the pool');
+						test.done();
+					});
 			});
 		});
 	},
@@ -653,7 +766,7 @@ exports.Connection = {
 
 		test.equal(this.connection.waitingClientsCount(), 0, 'Should not have any clients waiting to start with');
 
-		this.connection.acquire(function (err, conn) {
+		this.connection.acquire(function (err) {
 			test.ifError(err);
 
 			test.equal(_this.connection.waitingClientsCount(), 0, 'Should no longer have any waiting clients');
@@ -667,51 +780,34 @@ exports.Connection = {
 	run: {
 		test1: function (test) {
 			var _this = this;
-			test.expect(5);
+			test.expect(8);
+
+			var queue = [];
 
 			for (var i = 0; i < support.TYPES_EXCEPT_OBJECT.length; i++) {
-				if (!support.TYPES_EXCEPT_OBJECT[i]) {
-					continue;
+				if (support.TYPES_EXCEPT_OBJECT[i] && typeof support.TYPES_EXCEPT_OBJECT[i] !== 'function') {
+					queue.push((function (j) {
+						return _this.connection.run({
+							run: function (options, next) {
+								next();
+							}
+						}, support.TYPES_EXCEPT_OBJECT[j]).then(function () {
+								support.fail('Should have failed on ' + support.TYPES_EXCEPT_OBJECT[j]);
+							})
+							.catch(errors.IllegalArgumentError, function (err) {
+								test.equal(err.type, 'IllegalArgumentError');
+								test.deepEqual(err.errors, { actual: typeof support.TYPES_EXCEPT_OBJECT[j], expected: 'object' });
+							})
+							.error(function () {
+								support.fail('Should not have an unknown error!');
+							});
+					})(i));
 				}
-				_this.connection.run({
-					run: function (options, next) {
-						next();
-					}
-				}, support.TYPES_EXCEPT_OBJECT[i], function (err, res) {
-					if (typeof support.TYPES_EXCEPT_OBJECT[i] !== 'function') {
-						test.equal(err.type, 'IllegalArgumentError');
-					}
-				});
 			}
 
-			test.throws(
-				function () {
-					_this.connection.run({}, null, null);
-				},
-				errors.IllegalArgumentError,
-				'Should fail on null'
-			);
-
-			test.done();
-		},
-		test2: function (test) {
-			var _this = this;
-			test.expect(6);
-
-			for (var i = 0; i < support.TYPES_EXCEPT_FUNCTION.length; i++) {
-				if (!support.TYPES_EXCEPT_FUNCTION[i]) {
-					continue;
-				}
-				test.throws(
-					function () {
-						_this.connection.run({}, {}, support.TYPES_EXCEPT_FUNCTION[i]);
-					},
-					errors.IllegalArgumentError,
-					'Should fail on ' + support.TYPES_EXCEPT_FUNCTION[i]
-				);
-			}
-
-			test.done();
+			Promise.all(queue).finally(function () {
+				test.done();
+			});
 		},
 		noQuery: function (test) {
 			var _this = this;
@@ -719,9 +815,8 @@ exports.Connection = {
 
 			_this.connection.run(null, {}, function (err) {
 				test.equal(err.type, 'IllegalArgumentError');
+				test.done();
 			});
-
-			test.done();
 		}
 	}
 };

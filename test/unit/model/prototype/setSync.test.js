@@ -116,7 +116,7 @@ exports.setSync = {
 			}
 		};
 
-		instance.constructor.schema.validateSync = function (attrs) {
+		instance.constructor.schema.validateSync = function () {
 			return null;
 		};
 
@@ -194,7 +194,7 @@ exports.setSync = {
 			}
 		};
 
-		instance.constructor.schema.validateSync = function (attrs) {
+		instance.constructor.schema.validateSync = function () {
 			return null;
 		};
 
@@ -217,7 +217,7 @@ exports.setSync = {
 			}
 		};
 
-		instance.constructor.schema.validateSync = function (attrs) {
+		instance.constructor.schema.validateSync = function () {
 			return new errors.ValidationError('error', { error: 'testError' });
 		};
 
@@ -248,7 +248,7 @@ exports.setSync = {
 			}
 		};
 
-		instance.constructor.schema.validateSync = function (attrs) {
+		instance.constructor.schema.validateSync = function () {
 			throw new Error();
 		};
 

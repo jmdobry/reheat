@@ -247,15 +247,15 @@ exports.index = {
 				test.ok(true);
 				instance.beforeCreate(function () {
 					test.ok(true);
-					instance.afterCreate(instance, {}, function (err, instance, meta) {
+					instance.afterCreate(instance, function (err, instance) {
 						test.ok(true);
 						instance.beforeUpdate(function () {
 							test.ok(true);
-							instance.afterUpdate(instance, {}, function (err, instance, meta) {
+							instance.afterUpdate(instance, function (err, instance) {
 								test.ok(true);
 								instance.beforeDestroy(function () {
 									test.ok(true);
-									instance.afterDestroy(instance, {}, function (err, instance, meta) {
+									instance.afterDestroy(instance, function () {
 										test.ok(true);
 									});
 								});

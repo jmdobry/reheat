@@ -56,7 +56,7 @@
 	"shadow": false,
 	"supernew": false,
 	"undef": true,
-	"unused": "vars",
+	"unused": true,
 
 
 	"newcap": true,
