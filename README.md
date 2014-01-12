@@ -4,7 +4,7 @@ __Current Version:__ 0.7.3
 
 __A red hot Node.js ORM for RethinkDB.__
 
-#### This is alpha software!
+#### This is alpha software! API will fluctuate until 1.0.0.
 
 All documentation can be found at [http://reheat.codetrain.io/](http://reheat.codetrain.io/).
 
@@ -118,6 +118,7 @@ post.save(function (err, post) {
 | Build Status | [![Build Status](https://travis-ci.org/jmdobry/reheat.png?branch=master)](https://travis-ci.org/jmdobry/reheat) |
 | Code Climate | [![Code Climate](https://codeclimate.com/github/jmdobry/reheat.png)](https://codeclimate.com/github/jmdobry/reheat) |
 | Dependency Status | [![Dependency Status](https://gemnasium.com/jmdobry/reheat.png)](https://gemnasium.com/jmdobry/reheat) |
+| Coverage | [![Coverage Status](https://coveralls.io/repos/jmdobry/reheat/badge.png?branch=feature-promises)](https://coveralls.io/r/jmdobry/reheat?branch=feature-promises) |
 
 ## License
 [MIT License](https://github.com/jmdobry/reheat/blob/master/LICENSE)
