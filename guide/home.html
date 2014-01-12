@@ -18,6 +18,9 @@
                     <img src="https://gemnasium.com/jmdobry/reheat.png" alt="Dependency Status"
                          style="max-width:100%;">
                 </a>
+                <a href='https://coveralls.io/r/jmdobry/reheat'>
+                    <img src='https://coveralls.io/repos/jmdobry/reheat/badge.png' alt='Coverage Status'/>
+                </a>
             </h1>
 
             <p>
@@ -25,7 +28,7 @@
                 access code? Reheat exists to eliminate boilerplate and level up your RethinkDB experience!
             </p>
 
-            <p style="font-size: 16px; color: #d14;">This is alpha software!</p>
+            <p style="font-size: 16px; color: #d14;">This is alpha software! API will fluctuate until 1.0.0.</p>
 
             <h3>
                 <a name="benefits" href="#benefits"></a>Benefits
@@ -47,8 +50,10 @@
             <h3><a name="features" href="#features"></a>Features:</h3>
 
             <ul>
-                <li>Connection pool</li>
-                <li>Easy Model lifecycle setup/access (<code>beforeUpdate()</code>, <code>afterDestroy()</code>, etc.)
+                <li>Managed connection pool</li>
+                <li>Entire API supports Promises and Node-style callbacks</li>
+                <li>
+                    Easy hooks into Model lifecycle (<code>beforeUpdate()</code>, <code>afterDestroy()</code>, etc.)
                 </li>
                 <li>Robust and flexible Schema definition for your Models</li>
                 <li>Automatic validation based on Schema</li>
@@ -59,6 +64,10 @@
             <h3><a name="roadmap" href="#roadmap"></a>Roadmap:</h3>
 
             <ul>
+                <li>Finish Alpha</li>
+                <li>Beta</li>
+                <li>1.0.0</li>
+                <li><strong>The following may or may not make it in before 1.0.0</strong></li>
                 <li>Relationships</li>
                 <li>Transactions (and rollbacks)</li>
                 <li>Migrations</li>

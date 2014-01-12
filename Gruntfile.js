@@ -146,8 +146,18 @@ module.exports = function (grunt) {
 		},
 
 		nodeunit: {
-			unit: ['test/unit/**/*.js'],
-			integration: ['test/integration/**/*.js']
+			unit: [
+				'test/unit/**/*.test.js'
+			],
+			integration: [
+				'test/integration/**/*.test.js'
+			]
+		},
+
+		coveralls: {
+			options: {
+				coverage_dir: 'build/report'
+			}
 		},
 
 		docular: {
@@ -250,7 +260,7 @@ module.exports = function (grunt) {
 		'nodeunit:integration'
 	]);
 
-	grunt.registerTask('test', [
+	var testTasks = [
 		'clean:build',
 		'instrument',
 		'reloadTasks',
@@ -258,7 +268,12 @@ module.exports = function (grunt) {
 		'test-integration',
 		'storeCoverage',
 		'makeReport'
-	]);
+	];
+
+	if (process.env.TRAVIS === true || process.env.TRAVIS === 'true') {
+		testTasks.push('coveralls');
+	}
+	grunt.registerTask('test', testTasks);
 
 	grunt.registerTask('doc', ['clean:doc', 'docular', 'concat', 'copy', 'clean:afterDoc', 'uglify']);
 

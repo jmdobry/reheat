@@ -3,7 +3,8 @@
 var SandboxedModule = require('sandboxed-module'),
 	errors = require('../../../../build/instrument/lib/support/errors'),
 	support = require('../../../support/support'),
-	async = require('async'),
+	Promise = require('bluebird'),
+	now = function () { return 5; },
 	save = SandboxedModule.require('../../../../build/instrument/lib/model/prototype/save', {
 		requires: {
 			'../../support/utils': require('../../../../build/instrument/lib/support/utils'), // Real dependency
@@ -11,21 +12,28 @@ var SandboxedModule = require('sandboxed-module'),
 			rethinkdb: {
 				table: function () {
 					return {
-						insert: function (attrs, options) {
+						insert: function () {
+						},
+						get: function () {
+							return {
+								update: function () {
+
+								}
+							};
+						},
+						update: function () {
+
 						}
 					};
 				},
-				now: function () {
-					return 5;
-				}
-			}, // Mock dependency
-			async: async // Real dependency
+				now: now
+			}
 		}
 	});
 
 exports.save = {
 	normal: function (test) {
-//		test.expect(3);
+		test.expect(3);
 
 		var instance = {
 			attributes: {
@@ -41,52 +49,30 @@ exports.save = {
 			}
 		};
 
-		instance.constructor.connection.run = function (query, next) {
+		instance.constructor.connection.run = Promise.promisify(function (query, options, next) {
 			next(null, {
-				cursor: 'test',
 				new_val: {
 					name: 'John'
 				},
 				errors: 0
 			});
-		};
+		});
 
-		instance.save(function (err, instance, meta) {
-			// These won't work until [this bug](https://github.com/caolan/async/pull/393) is fixed in the async library
-//			test.ifError(err);
-//			test.deepEqual(instance.attributes, {
-//				name: 'John'
-//			});
-//			test.deepEqual(meta, {
-//				cursor: 'test'
-//			});
-			test.done();
+		instance.save(function (err, instance) {
+			test.ifError(err);
+			test.deepEqual(instance.attributes, {
+				name: 'John'
+			});
+			instance.save().then(function (instance) {
+				test.deepEqual(instance.attributes, {
+					name: 'John'
+				});
+				test.done();
+			});
 		});
 	},
-	noCallback: function (test) {
-		test.expect(9);
-
-		var instance = {
-			attributes: {
-				name: 'John'
-			},
-			save: save
-		};
-
-		for (var i = 0; i < support.TYPES_EXCEPT_FUNCTION.length; i++) {
-			test.throws(
-				function () {
-					instance.save(support.TYPES_EXCEPT_FUNCTION[i]);
-				},
-				errors.IllegalArgumentError,
-				'Should fail on ' + support.TYPES_EXCEPT_FUNCTION[i]
-			);
-		}
-
-		test.done();
-	},
 	timestampsIsNew: function (test) {
-//		test.expect(3);
+		test.expect(5);
 
 		var instance = {
 			attributes: {
@@ -99,36 +85,63 @@ exports.save = {
 			},
 			isNew: function () {
 				return true;
+			},
+			get: function () {
+				return '5';
 			}
 		};
 
-		instance.constructor.connection.run = function (query, next) {
+		instance.constructor.connection.run = Promise.promisify(function (query, options, next) {
 			next(null, {
-				cursor: 'test',
 				new_val: {
-					name: 'John'
+					name: 'John',
+					updated: 5,
+					created: 5,
+					deleted: null
 				},
 				errors: 0
 			});
-		};
+		});
 
-		instance.save(function (err, instance, meta) {
-			// These won't work until [this bug](https://github.com/caolan/async/pull/393) is fixed in the async library
-//			test.ifError(err);
-//			test.deepEqual(instance.attributes, {
-//				name: 'John',
-//				updated: 5,
-//				created: 5,
-//				deleted: null
-//			});
-//			test.deepEqual(meta, {
-//				cursor: 'test'
-//			});
-			test.done();
+		instance.save(function (err, instance) {
+			test.ifError(err);
+			test.deepEqual(instance.attributes, {
+				name: 'John',
+				updated: 5,
+				created: 5,
+				deleted: null
+			});
+			test.deepEqual(instance.meta, {
+				new_val: {
+					name: 'John',
+					updated: 5,
+					created: 5,
+					deleted: null
+				},
+				errors: 0
+			});
+			instance.save().then(function (instance) {
+				test.deepEqual(instance.attributes, {
+					name: 'John',
+					updated: 5,
+					created: 5,
+					deleted: null
+				});
+				test.deepEqual(instance.meta, {
+					new_val: {
+						name: 'John',
+						updated: 5,
+						created: 5,
+						deleted: null
+					},
+					errors: 0
+				});
+				test.done();
+			});
 		});
 	},
 	timestampsNotNew: function (test) {
-//		test.expect(3);
+		test.expect(5);
 
 		var instance = {
 			attributes: {
@@ -141,36 +154,66 @@ exports.save = {
 			},
 			isNew: function () {
 				return false;
+			},
+			get: function () {
+				return '5';
 			}
 		};
 
-		instance.constructor.connection.run = function (query, next) {
+		instance.constructor.connection.run = Promise.promisify(function (query, options, next) {
 			next(null, {
-				cursor: 'test',
 				new_val: {
-					name: 'John'
+					name: 'John',
+					updated: 6,
+					created: 5,
+					deleted: null
 				},
 				errors: 0
 			});
-		};
+		});
 
-		instance.save(function (err, instance, meta) {
-			// These won't work until [this bug](https://github.com/caolan/async/pull/393) is fixed in the async library
-//			test.ifError(err);
-//			test.deepEqual(instance.attributes, {
-//				name: 'John',
-//				updated: 5,
-//				created: 5,
-//				deleted: null
-//			});
-//			test.deepEqual(meta, {
-//				cursor: 'test'
-//			});
-			test.done();
+		now = function () { return 6; };
+
+		instance.save(function (err, instance) {
+			test.ifError(err);
+			test.deepEqual(instance.attributes, {
+				name: 'John',
+				updated: 6,
+				created: 5,
+				deleted: null
+			});
+			test.deepEqual(instance.meta, {
+				new_val: {
+					name: 'John',
+					updated: 6,
+					created: 5,
+					deleted: null
+				},
+				errors: 0
+			});
+			instance.save().then(function (instance) {
+				test.deepEqual(instance.attributes, {
+					name: 'John',
+					updated: 6,
+					created: 5,
+					deleted: null
+				});
+				test.deepEqual(instance.meta, {
+					new_val: {
+						name: 'John',
+						updated: 6,
+						created: 5,
+						deleted: null
+					},
+					errors: 0
+				});
+				now = function () { return 5; };
+				test.done();
+			});
 		});
 	},
-	unhandledError: function (test) {
-//		test.expect(1);
+	options: function (test) {
+		test.expect(8);
 
 		var instance = {
 			attributes: {
@@ -180,19 +223,29 @@ exports.save = {
 			constructor: {
 				connection: {},
 				timestamps: true
-			},
-			isNew: function () {
-				return false;
 			}
 		};
 
-		instance.constructor.connection.run = function (query, next) {
-			throw new Error();
-		};
+		var queue = [];
 
-		instance.save(function (err, instance, meta) {
-			// This won't work until [this bug](https://github.com/caolan/async/pull/393) is fixed in the async library
-//			test.equal(err.type, 'UnhandledError');
+		for (var i = 0; i < support.TYPES_EXCEPT_OBJECT.length; i++) {
+			if (support.TYPES_EXCEPT_OBJECT[i] && typeof support.TYPES_EXCEPT_OBJECT[i] !== 'function') {
+				queue.push((function (j) {
+					return instance.save(support.TYPES_EXCEPT_OBJECT[j]).then(function () {
+						support.fail('Should have failed on ' + support.TYPES_EXCEPT_OBJECT[j]);
+					})
+						.catch(errors.IllegalArgumentError, function (err) {
+							test.equal(err.type, 'IllegalArgumentError');
+							test.deepEqual(err.errors, { actual: typeof support.TYPES_EXCEPT_OBJECT[j], expected: 'object' });
+						})
+						.error(function () {
+							support.fail('Should not have an unknown error!');
+						});
+				})(i));
+			}
+		}
+
+		Promise.all(queue).finally(function () {
 			test.done();
 		});
 	}

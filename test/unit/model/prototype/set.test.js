@@ -3,8 +3,10 @@
 var set = require('../../../../build/instrument/lib/model/prototype/set'),
 	errors = require('../../../../build/instrument/lib/support/errors'),
 	support = require('../../../support/support'),
-	sinon = require('sinon');
+	sinon = require('sinon'),
+	Promise = require('bluebird');
 
+//noinspection JSValidateTypes
 exports.set = {
 	simple: function (test) {
 		test.expect(3);
@@ -138,8 +140,8 @@ exports.set = {
 			test.done();
 		});
 	},
-	noCallback: function (test) {
-		test.expect(1);
+	key: function (test) {
+		test.expect(12);
 
 		var instance = {
 			attributes: {
@@ -148,17 +150,30 @@ exports.set = {
 			set: set
 		};
 
-		test.throws(
-			function () {
-				instance.set('name', 'Sally');
-			},
-			errors.InvalidArgumentError,
-			'Should fail with no callback'
-		);
+		var queue = [];
 
-		test.done();
+		for (var i = 0; i < support.TYPES_EXCEPT_STRING.length; i++) {
+			if (typeof support.TYPES_EXCEPT_STRING[i] !== 'object') {
+				queue.push((function (j) {
+					return instance.set(support.TYPES_EXCEPT_STRING[i], 'Sally', {}).then(function () {
+						support.fail('Should have failed on ' + support.TYPES_EXCEPT_STRING[j]);
+					})
+						.catch(errors.IllegalArgumentError, function (err) {
+							test.equal(err.type, 'IllegalArgumentError');
+							test.deepEqual(err.errors, { actual: typeof support.TYPES_EXCEPT_STRING[j], expected: 'string|object' });
+						})
+						.error(function () {
+							support.fail('Should not have an unknown error!');
+						});
+				})(i));
+			}
+		}
+
+		Promise.all(queue).finally(function () {
+			test.done();
+		});
 	},
-	key: function (test) {
+	options: function (test) {
 		test.expect(6);
 
 		var instance = {
@@ -168,37 +183,28 @@ exports.set = {
 			set: set
 		};
 
-		for (var i = 0; i < support.TYPES_EXCEPT_STRING.length; i++) {
-			if (typeof support.TYPES_EXCEPT_STRING[i] === 'object') {
-				continue;
-			}
-			instance.set(support.TYPES_EXCEPT_STRING[i], 'Sally', {}, function (err, instance) {
-				test.equal(err.type, 'IllegalArgumentError');
-			});
-		}
-
-		test.done();
-	},
-	options: function (test) {
-		test.expect(3);
-
-		var instance = {
-			attributes: {
-				name: 'John'
-			},
-			set: set
-		};
+		var queue = [];
 
 		for (var i = 0; i < support.TYPES_EXCEPT_OBJECT.length; i++) {
-			if (!support.TYPES_EXCEPT_OBJECT[i] || support.TYPES_EXCEPT_OBJECT[i] === true || typeof support.TYPES_EXCEPT_OBJECT[i] === 'function') {
-				continue;
+			if (support.TYPES_EXCEPT_OBJECT[i] && support.TYPES_EXCEPT_OBJECT[i] !== true && typeof support.TYPES_EXCEPT_OBJECT[i] !== 'function') {
+				queue.push((function (j) {
+					return instance.set('name', 'Sally', support.TYPES_EXCEPT_OBJECT[i]).then(function () {
+						support.fail('Should have failed on ' + support.TYPES_EXCEPT_OBJECT[j]);
+					})
+						.catch(errors.IllegalArgumentError, function (err) {
+							test.equal(err.type, 'IllegalArgumentError');
+							test.deepEqual(err.errors, { actual: typeof support.TYPES_EXCEPT_OBJECT[j], expected: 'object' });
+						})
+						.error(function () {
+							support.fail('Should not have an unknown error!');
+						});
+				})(i));
 			}
-			instance.set('name', 'Sally', support.TYPES_EXCEPT_OBJECT[i], function (err, instance) {
-				test.equal(err.type, 'IllegalArgumentError');
-			});
 		}
 
-		test.done();
+		Promise.all(queue).finally(function () {
+			test.done();
+		});
 	},
 	validate: function (test) {
 		test.expect(1);
@@ -243,30 +249,9 @@ exports.set = {
 
 		sinon.spy(instance.constructor.schema, 'validate');
 
-		instance.set('name', 'Sally', true, function (err, instance2) {
+		instance.set('name', 'Sally', true, function (err) {
 			test.equal(err.type, 'ValidationError');
 			test.equal(instance.constructor.schema.validate.callCount, 1);
-			test.deepEqual(instance.attributes, {
-				name: 'John'
-			});
-			test.done();
-		});
-	},
-	unhandledErrorOne: function (test) {
-		test.expect(2);
-
-		var instance = {
-			attributes: {
-				name: 'John'
-			},
-			set: set,
-			constructor: {
-				schema: {}
-			}
-		};
-
-		instance.set('name', 'Sally', true, function (err, instance2) {
-			test.equal(err.type, 'UnhandledError');
 			test.deepEqual(instance.attributes, {
 				name: 'John'
 			});

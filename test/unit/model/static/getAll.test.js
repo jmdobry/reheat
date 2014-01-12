@@ -2,37 +2,11 @@
 
 var getAll = require('../../../../build/instrument/lib/model/static/getAll'),
 	errors = require('../../../../build/instrument/lib/support/errors'),
-	support = require('../../../support/support');
+	support = require('../../../support/support'),
+	Promise = require('bluebird');
 
 exports.getAll = {
 	normal: function (test) {
-		test.expect(2);
-
-		function Model(attrs) {
-			this.attributes = attrs;
-		}
-
-		Model.tableName = 'test';
-		Model.getAll = getAll;
-		Model.connection = {
-			run: function (query, options, next) {
-				next(null, {
-					toArray: function (cb) {
-						cb(null, [
-							{ id: 5, name: 'John' }
-						]);
-					}
-				});
-			}
-		};
-
-		Model.getAll('5', 'id', function (err, instances) {
-			test.ifError(err);
-			test.deepEqual(instances[0].attributes, { id: 5, name: 'John' });
-			test.done();
-		});
-	},
-	profile: function (test) {
 		test.expect(3);
 
 		function Model(attrs) {
@@ -42,7 +16,37 @@ exports.getAll = {
 		Model.tableName = 'test';
 		Model.getAll = getAll;
 		Model.connection = {
-			run: function (query, options, next) {
+			run: Promise.promisify(function (query, options, next) {
+				next(null, {
+					toArray: function (cb) {
+						cb(null, [
+							{ id: 5, name: 'John' }
+						]);
+					}
+				});
+			})
+		};
+
+		Model.getAll('5', 'id', function (err, instances) {
+			test.ifError(err);
+			test.deepEqual(instances[0].attributes, { id: 5, name: 'John' });
+			Model.getAll('5', 'id').then(function (instances) {
+				test.deepEqual(instances[0].attributes, { id: 5, name: 'John' });
+				test.done();
+			});
+		});
+	},
+	profile: function (test) {
+		test.expect(5);
+
+		function Model(attrs) {
+			this.attributes = attrs;
+		}
+
+		Model.tableName = 'test';
+		Model.getAll = getAll;
+		Model.connection = {
+			run: Promise.promisify(function (query, options, next) {
 				next(null, {
 					profile: {},
 					value: {
@@ -54,18 +58,22 @@ exports.getAll = {
 						}
 					}
 				});
-			}
+			})
 		};
 
 		Model.getAll(['5', '6'], 'id', { profile: true }, function (err, instances) {
 			test.ifError(err);
 			test.deepEqual(instances[0].attributes, { id: 5, name: 'John' });
 			test.deepEqual(instances[1].attributes, { id: 6, name: 'Sally' });
-			test.done();
+			Model.getAll(['5', '6'], 'id', { profile: true }).then(function (instances) {
+				test.deepEqual(instances[0].attributes, { id: 5, name: 'John' });
+				test.deepEqual(instances[1].attributes, { id: 6, name: 'Sally' });
+				test.done();
+			});
 		});
 	},
 	normalKeyArray: function (test) {
-		test.expect(3);
+		test.expect(5);
 
 		function Model(attrs) {
 			this.attributes = attrs;
@@ -74,7 +82,7 @@ exports.getAll = {
 		Model.tableName = 'test';
 		Model.getAll = getAll;
 		Model.connection = {
-			run: function (query, options, next) {
+			run: Promise.promisify(function (query, options, next) {
 				next(null, {
 					toArray: function (cb) {
 						cb(null, [
@@ -83,18 +91,22 @@ exports.getAll = {
 						]);
 					}
 				});
-			}
+			})
 		};
 
 		Model.getAll(['5', '6'], 'id', function (err, instances) {
 			test.ifError(err);
 			test.deepEqual(instances[0].attributes, { id: 5, name: 'John' });
 			test.deepEqual(instances[1].attributes, { id: 6, name: 'Sally' });
-			test.done();
+			Model.getAll(['5', '6'], 'id').then(function (instances) {
+				test.deepEqual(instances[0].attributes, { id: 5, name: 'John' });
+				test.deepEqual(instances[1].attributes, { id: 6, name: 'Sally' });
+				test.done();
+			});
 		});
 	},
 	raw: function (test) {
-		test.expect(3);
+		test.expect(5);
 
 		function Model(attrs) {
 			this.attributes = attrs;
@@ -103,7 +115,7 @@ exports.getAll = {
 		Model.tableName = 'test';
 		Model.getAll = getAll;
 		Model.connection = {
-			run: function (query, options, next) {
+			run: Promise.promisify(function (query, options, next) {
 				next(null, {
 					toArray: function (cb) {
 						cb(null, [
@@ -112,36 +124,22 @@ exports.getAll = {
 						]);
 					}
 				});
-			}
+			})
 		};
 
 		Model.getAll(['5', '6'], { index: 'id' }, { raw: true }, function (err, instances) {
 			test.ifError(err);
 			test.deepEqual(instances[0], { id: 5, name: 'John' });
 			test.deepEqual(instances[1], { id: 6, name: 'Sally' });
-			test.done();
+			Model.getAll(['5', '6'], { index: 'id' }, { raw: true }).then(function (instances) {
+				test.deepEqual(instances[0], { id: 5, name: 'John' });
+				test.deepEqual(instances[1], { id: 6, name: 'Sally' });
+				test.done();
+			});
 		});
 	},
-	noCallback: function (test) {
-		test.expect(1);
-
-		function Model() {
-		}
-
-		Model.getAll = getAll;
-
-		test.throws(
-			function () {
-				Model.getAll('5', 'id');
-			},
-			errors.InvalidArgumentError,
-			'Should fail with no callback'
-		);
-
-		test.done();
-	},
-	primaryKey: function (test) {
-		test.expect(8);
+	keys: function (test) {
+		test.expect(16);
 
 		function Model(attrs) {
 			this.attributes = attrs;
@@ -149,28 +147,60 @@ exports.getAll = {
 
 		Model.tableName = 'test';
 		Model.getAll = getAll;
-		Model.connection = {
-			run: function (query, options, next) {
-				next(null, {
-					toArray: function (cb) {
-						cb(null, [
-							{ id: 5, name: 'John' },
-							{ id: 6, name: 'Sally' }
-						]);
-					}
-				});
-			}
-		};
+
+		var queue = [];
 
 		for (var i = 0; i < support.TYPES_EXCEPT_STRING_OR_ARRAY.length; i++) {
-			Model.getAll(support.TYPES_EXCEPT_STRING_OR_ARRAY[i], { index: 'id' }, function (err) {
-				test.equal(err.type, 'IllegalArgumentError');
-			});
+			queue.push((function (j) {
+				return Model.getAll(support.TYPES_EXCEPT_STRING_OR_ARRAY[j], { index: 'id' }).then(function () {
+					support.fail('Should have failed on ' + support.TYPES_EXCEPT_STRING_OR_ARRAY[j]);
+				})
+					.catch(errors.IllegalArgumentError, function (err) {
+						test.equal(err.type, 'IllegalArgumentError');
+						test.deepEqual(err.errors, { actual: typeof support.TYPES_EXCEPT_STRING_OR_ARRAY[j], expected: 'string|array' });
+					})
+					.error(function () {
+						support.fail('Should not have an unknown error!');
+					});
+			})(i));
 		}
 
-		test.done();
+		Promise.all(queue).finally(function () {
+			test.done();
+		});
 	},
 	index: function (test) {
+		test.expect(16);
+
+		function Model(attrs) {
+			this.attributes = attrs;
+		}
+
+		Model.tableName = 'test';
+		Model.getAll = getAll;
+
+		var queue = [];
+
+		for (var i = 0; i < support.TYPES_EXCEPT_STRING_OR_OBJECT.length; i++) {
+			queue.push((function (j) {
+				return Model.getAll('5', support.TYPES_EXCEPT_STRING_OR_OBJECT[j]).then(function () {
+					support.fail('Should have failed on ' + support.TYPES_EXCEPT_STRING_OR_OBJECT[j]);
+				})
+					.catch(errors.IllegalArgumentError, function (err) {
+						test.equal(err.type, 'IllegalArgumentError');
+						test.deepEqual(err.errors, { actual: typeof support.TYPES_EXCEPT_STRING_OR_OBJECT[j], expected: 'string|object' });
+					})
+					.error(function () {
+						support.fail('Should not have an unknown error!');
+					});
+			})(i));
+		}
+
+		Promise.all(queue).finally(function () {
+			test.done();
+		});
+	},
+	options: function (test) {
 		test.expect(8);
 
 		function Model(attrs) {
@@ -179,82 +209,27 @@ exports.getAll = {
 
 		Model.tableName = 'test';
 		Model.getAll = getAll;
-		Model.connection = {
-			run: function (query, options, next) {
-				next(null, {
-					toArray: function (cb) {
-						cb(null, [
-							{ id: 5, name: 'John' },
-							{ id: 6, name: 'Sally' }
-						]);
-					}
-				});
-			}
-		};
 
-		for (var i = 0; i < support.TYPES_EXCEPT_STRING_OR_OBJECT.length; i++) {
-			Model.getAll('5', support.TYPES_EXCEPT_STRING_OR_OBJECT[i], function (err) {
-				test.equal(err.type, 'IllegalArgumentError');
-			});
-		}
-
-		test.done();
-	},
-	options: function (test) {
-		test.expect(4);
-
-		function Model(attrs) {
-			this.attributes = attrs;
-		}
-
-		Model.tableName = 'test';
-		Model.getAll = getAll;
-		Model.connection = {
-			run: function (query, options, next) {
-				next(null, { id: 5, name: 'John' });
-			}
-		};
+		var queue = [];
 
 		for (var i = 0; i < support.TYPES_EXCEPT_OBJECT.length; i++) {
-			if (!support.TYPES_EXCEPT_OBJECT[i] || typeof support.TYPES_EXCEPT_OBJECT[i] === 'function') {
-				continue;
+			if (support.TYPES_EXCEPT_OBJECT[i] && typeof support.TYPES_EXCEPT_OBJECT[i] !== 'function') {
+				queue.push((function (type) {
+					return Model.getAll('5', 'id', type).then(function () {
+						support.fail('Should have failed on ' + type);
+					})
+						.catch(errors.IllegalArgumentError, function (err) {
+							test.equal(err.type, 'IllegalArgumentError');
+							test.deepEqual(err.errors, { actual: typeof type, expected: 'object' });
+						})
+						.error(function () {
+							support.fail('Should not have an unknown error!');
+						});
+				})(support.TYPES_EXCEPT_OBJECT[i]));
 			}
-			Model.getAll('5', 'id', support.TYPES_EXCEPT_OBJECT[i], function (err) {
-				test.equal(err.type, 'IllegalArgumentError');
-			});
 		}
 
-		test.done();
-	},
-	unhandledError: function (test) {
-		test.expect(1);
-
-		function Model(attrs) {
-			this.attributes = attrs;
-		}
-
-		Model.tableName = 'test';
-		Model.getAll = getAll;
-		Model.connection = {
-			run: function (query, options, next) {
-				next(null, {
-					toArray: function (cb) {
-						cb(new Error());
-					}
-				});
-			}
-		};
-
-		Model.getAll('5', 'id', function (err) {
-			test.equal(err.type, 'UnhandledError');
-			test.done();
-		});
-	},
-	unhandledError2: function (test) {
-		test.expect(1);
-
-		getAll('5', 'id', function (err) {
-			test.equal(err.type, 'UnhandledError');
+		Promise.all(queue).finally(function () {
 			test.done();
 		});
 	}

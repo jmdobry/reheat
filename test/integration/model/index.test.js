@@ -78,8 +78,8 @@ exports.saveIntegration = {
 			beforeCreate: function (cb) {
 				cb(null);
 			},
-			afterCreate: function (instance, meta, cb) {
-				cb(null, instance, meta);
+			afterCreate: function (instance, cb) {
+				cb(null, instance);
 			}
 		}, {
 			tableName: tableName,
@@ -98,12 +98,12 @@ exports.saveIntegration = {
 		sinon.spy(post, 'beforeCreate');
 		sinon.spy(post, 'afterCreate');
 
-		post.save(function (err, post, meta) {
+		post.save(function (err, post) {
 			test.ifError(err);
 			test.deepEqual(post.get('author'), 'John Anderson');
 			test.deepEqual(post.get('address.state'), 'NY');
 			test.ok(typeof post.get('id') === 'string');
-			test.equal(meta.inserted, 1);
+			test.equal(post.meta.inserted, 1);
 			test.equal(post.beforeValidate.callCount, 1);
 			test.equal(post.afterValidate.callCount, 1);
 			test.equal(post.beforeCreate.callCount, 1);
