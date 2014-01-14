@@ -25,7 +25,19 @@ var SandboxedModule = require('sandboxed-module'),
 				}
 			}
 		}
-	});
+	}),
+	mout = require('mout');
+
+var lifecycleFunctions = {
+	beforeDestroy: function (cb) {
+//		console.log('beforeDestroy');
+		cb();
+	},
+	afterDestroy: function (instance, cb) {
+//		console.log('afterDestroy');
+		cb(null, instance);
+	}
+};
 
 exports.destroyTest = {
 	normal: function (test) {
@@ -50,12 +62,15 @@ exports.destroyTest = {
 			}
 		};
 
+		mout.object.deepMixIn(instance, lifecycleFunctions);
+
 		instance.constructor.connection.run = Promise.promisify(function (query, options, next) {
 			next(null, {
 				old_val: {
 					name: 'John',
 					id: 2
 				},
+				deleted: 1,
 				errors: 0
 			});
 		});
@@ -74,6 +89,7 @@ exports.destroyTest = {
 					name: 'John',
 					id: 2
 				},
+				deleted: 1,
 				errors: 0
 			});
 			instance.destroy().then(function (instance) {
@@ -89,6 +105,7 @@ exports.destroyTest = {
 						name: 'John',
 						id: 2
 					},
+					deleted: 1,
 					errors: 0
 				});
 				test.done();
@@ -113,6 +130,8 @@ exports.destroyTest = {
 				return true;
 			}
 		};
+
+		mout.object.deepMixIn(instance, lifecycleFunctions);
 
 		instance.destroy(function (err, instance) {
 			test.ifError(err);
@@ -148,6 +167,8 @@ exports.destroyTest = {
 				return 2;
 			}
 		};
+
+		mout.object.deepMixIn(instance, lifecycleFunctions);
 
 		instance.constructor.connection.run = Promise.promisify(function (query, options, next) {
 			next(null, {
@@ -249,6 +270,8 @@ exports.destroyTest = {
 				return 2;
 			}
 		};
+
+		mout.object.deepMixIn(instance, lifecycleFunctions);
 
 		instance.constructor.connection.run = Promise.promisify(function (query, options, next) {
 			next(null, {

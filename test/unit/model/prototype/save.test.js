@@ -4,7 +4,9 @@ var SandboxedModule = require('sandboxed-module'),
 	errors = require('../../../../build/instrument/lib/support/errors'),
 	support = require('../../../support/support'),
 	Promise = require('bluebird'),
-	now = function () { return 5; },
+	now = function () {
+		return 5;
+	},
 	save = SandboxedModule.require('../../../../build/instrument/lib/model/prototype/save', {
 		requires: {
 			'../../support/utils': require('../../../../build/instrument/lib/support/utils'), // Real dependency
@@ -29,7 +31,39 @@ var SandboxedModule = require('sandboxed-module'),
 				now: now
 			}
 		}
-	});
+	}),
+	mout = require('mout');
+
+var lifecycleFunctions = {
+	beforeValidate: function (cb) {
+//		console.log('beforeValidate');
+		cb();
+	},
+	validate: function (cb) {
+//		console.log('validate');
+		cb();
+	},
+	afterValidate: function (cb) {
+//		console.log('afterValidate');
+		cb();
+	},
+	beforeCreate: function (cb) {
+//		console.log('beforeCreate');
+		cb();
+	},
+	beforeUpdate: function (cb) {
+//		console.log('beforeUpdate');
+		cb();
+	},
+	afterCreate: function (instance, cb) {
+//		console.log('afterCreate');
+		cb(null, instance);
+	},
+	afterUpdate: function (instance, cb) {
+//		console.log('afterUpdate');
+		cb(null, instance);
+	}
+};
 
 exports.save = {
 	normal: function (test) {
@@ -49,11 +83,14 @@ exports.save = {
 			}
 		};
 
+		mout.object.deepMixIn(instance, lifecycleFunctions);
+
 		instance.constructor.connection.run = Promise.promisify(function (query, options, next) {
 			next(null, {
 				new_val: {
 					name: 'John'
 				},
+				inserted: 1,
 				errors: 0
 			});
 		});
@@ -91,6 +128,8 @@ exports.save = {
 			}
 		};
 
+		mout.object.deepMixIn(instance, lifecycleFunctions);
+
 		instance.constructor.connection.run = Promise.promisify(function (query, options, next) {
 			next(null, {
 				new_val: {
@@ -99,6 +138,7 @@ exports.save = {
 					created: 5,
 					deleted: null
 				},
+				inserted: 1,
 				errors: 0
 			});
 		});
@@ -118,6 +158,7 @@ exports.save = {
 					created: 5,
 					deleted: null
 				},
+				inserted: 1,
 				errors: 0
 			});
 			instance.save().then(function (instance) {
@@ -134,6 +175,7 @@ exports.save = {
 						created: 5,
 						deleted: null
 					},
+					inserted: 1,
 					errors: 0
 				});
 				test.done();
@@ -159,6 +201,8 @@ exports.save = {
 				return '5';
 			}
 		};
+
+		mout.object.deepMixIn(instance, lifecycleFunctions);
 
 		instance.constructor.connection.run = Promise.promisify(function (query, options, next) {
 			next(null, {
@@ -223,8 +267,13 @@ exports.save = {
 			constructor: {
 				connection: {},
 				timestamps: true
+			},
+			isNew: function () {
+				return true;
 			}
 		};
+
+		mout.object.deepMixIn(instance, lifecycleFunctions);
 
 		var queue = [];
 
