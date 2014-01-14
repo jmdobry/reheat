@@ -24,10 +24,7 @@ var connection = new reheat.Connection({
 
 ### Schema
 ```js
-// Schema constructor function
-reheat.Schema;
-
-var personSchema = new reheat.Schema({
+var personSchema = reheat.defineSchema('PersonSchema', {
 	name: {
 		type: 'string'
 	}
@@ -36,10 +33,7 @@ var personSchema = new reheat.Schema({
 
 ### Model
 ```js
-// Extendable Model class
-reheat.Model;
-
-var Person = Model.extend({}, {
+var Person = reheat.defineModel('Person', {
 	connection: connection,
 	schema: personSchema
 });
@@ -56,6 +50,7 @@ var person = new Person({
 // Error constructor functions
 reheat.support.UnhandledError;
 reheat.support.IllegalArgumentError;
+reheat.support.RuntimeError;
 reheat.support.ValidationError;
 ```
 

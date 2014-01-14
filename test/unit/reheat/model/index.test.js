@@ -1,16 +1,14 @@
 /*jshint loopfunc:true*/
 
-var Model = require('../../../build/instrument/lib/model'),
-	errors = require('../../../build/instrument/lib/support/errors'),
-	support = require('../../support/support'),
-	Connection = require('../../../build/instrument/lib/connection'),
+var reheat = require('../../../../build/instrument/lib'),
+	Model = require('../../../../build/instrument/lib/model'),
+	Connection = require('../../../../build/instrument/lib/connection'),
 	sinon = require('sinon');
 
 exports.index = {
 	methodsExist: function (test) {
-		test.expect(31);
+		test.expect(30);
 
-		test.ok(typeof Model.extend, 'function');
 		test.ok(typeof Model.get, 'function');
 		test.ok(typeof Model.getAll, 'function');
 		test.ok(typeof Model.filter, 'function');
@@ -45,90 +43,10 @@ exports.index = {
 
 		test.done();
 	},
-	extend: function (test) {
-		test.expect(42);
-
-		for (var i = 0; i < support.TYPES_EXCEPT_STRING.length; i++) {
-			test.throws(
-				function () {
-					Model.extend(null, {
-						idAttribute: support.TYPES_EXCEPT_STRING[i]
-					});
-				},
-				errors.IllegalArgumentError
-			);
-		}
-
-		for (i = 0; i < support.TYPES_EXCEPT_STRING.length; i++) {
-			test.throws(
-				function () {
-					Model.extend(null, {
-						tableName: support.TYPES_EXCEPT_STRING[i]
-					});
-				},
-				errors.IllegalArgumentError
-			);
-		}
-
-		for (i = 0; i < support.TYPES_EXCEPT_BOOLEAN.length; i++) {
-			test.throws(
-				function () {
-					Model.extend(null, {
-						timestamps: support.TYPES_EXCEPT_BOOLEAN[i]
-					});
-				},
-				errors.IllegalArgumentError
-			);
-		}
-
-		for (i = 0; i < support.TYPES_EXCEPT_BOOLEAN.length; i++) {
-			test.throws(
-				function () {
-					Model.extend(null, {
-						softDelete: support.TYPES_EXCEPT_BOOLEAN[i]
-					});
-				},
-				errors.IllegalArgumentError
-			);
-		}
-
-		test.throws(
-			function () {
-				Model.extend(null, {});
-			},
-			errors.IllegalArgumentError
-		);
-
-		var connection = new Connection();
-
-		for (i = 0; i < support.TYPES_EXCEPT_BOOLEAN.length; i++) {
-			if (!support.TYPES_EXCEPT_BOOLEAN[i]) {
-				continue;
-			}
-			test.throws(
-				function () {
-					Model.extend(null, {
-						schema: support.TYPES_EXCEPT_BOOLEAN[i],
-						connection: connection
-					});
-				},
-				errors.IllegalArgumentError
-			);
-		}
-		test.doesNotThrow(
-			function () {
-				Model.extend(null, {
-					connection: connection
-				});
-			}
-		);
-
-		test.done();
-	},
 	constructor: function (test) {
 		test.expect(4);
 
-		var Post = Model.extend(null, {
+		var Post = reheat.defineModel('Post', {
 			connection: new Connection()
 		});
 
@@ -151,17 +69,18 @@ exports.index = {
 		test.deepEqual(post.changed, null);
 		test.deepEqual(post.validationError, null);
 
+		reheat.unregisterModel('Post');
 		test.done();
 	},
 	prototype: function (test) {
 		test.expect(2);
 
-		var Post = Model.extend({
+		var Post = reheat.defineModel('Post', {
+			connection: new Connection()
+		}, {
 			initialize: function () {
 				this.attributes.name = 'John';
 			}
-		}, {
-			connection: new Connection()
 		});
 
 		sinon.spy(Post.prototype, 'initialize');
@@ -172,6 +91,8 @@ exports.index = {
 		test.deepEqual(post.attributes, {
 			name: 'John'
 		});
+
+		reheat.unregisterModel('Post');
 
 		test.done();
 	}

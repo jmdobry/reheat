@@ -1,9 +1,9 @@
 /*jshint loopfunc:true*/
 
-var prototype = require('../../../../build/instrument/lib/model/prototype'),
-	errors = require('../../../../build/instrument/lib/support/errors'),
-	utils = require('../../../../build/instrument/lib/support/utils'),
-	support = require('../../../support/support'),
+var prototype = require('../../../../../build/instrument/lib/model/prototype'),
+	errors = require('../../../../../build/instrument/lib/support/errors'),
+	utils = require('../../../../../build/instrument/lib/support/utils'),
+	support = require('../../../../support/support'),
 	sinon = require('sinon');
 
 exports.index = {

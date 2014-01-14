@@ -5,29 +5,24 @@
 
 # Model
 
-Reheat provides an extensible Model class from which your Models inherit properties and behavior, much like how
-Backbone Models work.
-
-Your models _extend_ `Model` and map to tables. Instances of your models map to individual rows in the table specified
-by the instances' model's `tableName`.
+You define models via `reheat.defineModel()` which map to tables. Instances of your models map to individual rows in the tables.
 
 Terms used in documentation:
 
-- _Model_ - Extendable class provided by reheat.
-- _model(s)_ - Your models that have extended `Model` (map to tables).
-- _(model) instances_ - Instantiations of your models (map to rows).
-- `Model#property` - Refers to prototype or instance properties of `Model`.
-- `Model.property` - Refers to static properties on `Model` itself.
+- _Model_ - Reheat's Model class.
+- _model(s)_ - Your models you've created via `reheat.defineModel()` (map to tables).
+- _(model) instances_ - Instances of your models (map to rows).
+- `Model#property` - Refers to prototype or instance properties of instances of a model you've defined.
+- `Model.property` - Refers to static properties on a model you've defined.
 
 <page-list></page-list>
 
 ```js
 var reheat = require('reheat'),
-	Connection = reheat.Connection,
-	Model = reheat.Model;
+	Connection = reheat.Connection;
 
 // This Model will use personSchema as its Schema
-var Person = Model.extend({}, {
+var Person = reheat.defineModel('Person', {
 	tableName: 'person',
 	connection: new Connection()
 });
@@ -55,29 +50,24 @@ person.save(function (err, person) {
 @name Overview
 @description
 
-Reheat provides an extensible Model class from which your Models inherit properties and behavior, much like how
-Backbone Models work.
-
-Your models _extend_ `Model` and map to tables. Instances of your models map to individual rows in the table specified
-by the instances' model's `tableName`.
+You define models via `reheat.defineModel()` which map to tables. Instances of your models map to individual rows in the tables.
 
 Terms used in documentation:
 
-- _Model_ - Extendable class provided by reheat.
-- _model(s)_ - Your models that have extended `Model` (map to tables).
-- _(model) instances_ - Instantiations of your models (map to rows).
-- `Model#property` - Refers to prototype or instance properties of `Model`.
-- `Model.property` - Refers to static properties on `Model` itself.
+- _Model_ - Reheat's Model class.
+- _model(s)_ - Your models you've created via `reheat.defineModel()` (map to tables).
+- _(model) instances_ - Instances of your models (map to rows).
+- `Model#property` - Refers to prototype or instance properties of instances of a model you've defined.
+- `Model.property` - Refers to static properties on a model you've defined.
 
 <page-list></page-list>
 
 ```js
 var reheat = require('reheat'),
-	Connection = reheat.Connection,
-	Model = reheat.Model;
+	Connection = reheat.Connection;
 
 // This Model will use personSchema as its Schema
-var Person = Model.extend({}, {
+var Person = reheat.defineModel('Person', {
 	tableName: 'person',
 	connection: new Connection()
 });
@@ -102,29 +92,29 @@ person.save(function (err, person) {
 
 @doc overview
 @id options
-@name Extending "Model"
+@name Defining models
 @description
 
-[Model.extend()](http://reheat/documentation/api/api/Model.static_methods:extend) accepts two arguments: `prototypeProperties` and `staticProperties`.
+[reheat.defineModel()](/documentation/api/api/reheat.defineModel) accepts three arguments: `name`, `staticProperties` and `prototypeProperties`.
 
 Example:
 
 ```js
-var Person = Model.extend({
+var Person = reheat.defineModel('Person', {
+	// These properties will be available on Person itself
+	say: function () {
+	    return 'Person!';
+	},
+	whisper: function () {
+	    return 'Shhhhh';
+	}
+}, {
 	// These properties will be on the prototype of any instances of Person
 	say: function () {
 		return 'Hello';
 	},
 	yell: function () {
 		return 'Oho!';
-	}
-}, {
-	// These properties will be available on Person itself
-	say: function () {
-		return 'Person!';
-	},
-	whisper: function () {
-		return 'Shhhhh';
 	}
 });
 
@@ -148,7 +138,7 @@ existing methods already defined on `Model.prototype` such as `toJSON()` and `af
 Example:
 
 ```js
-var Person = Model.extend({
+var Person = reheat.defineModel('Person', {...}, {
 	// Override toJSON() for custom serialization
 	toJSON: function () {
 		var attrs = Model.prototype.toJSON.call(this);
@@ -163,7 +153,7 @@ var Person = Model.extend({
 		cb(null, instance, meta);
 	}
 
-}, {...});
+});
 
 var person = new Person({
 	name: 'John Anderson',
@@ -184,7 +174,7 @@ These properties configure your new model. This argument is required because eve
 Example:
 
 ```js
-var Person = Model.extend({...}, {
+var Person = reheat.defineModel('Person', {
 	connection: new reheat.Connection()
 });
 ```
@@ -194,12 +184,12 @@ The static properties also configure things such as `tableName`, `softDelete`, `
 Example:
 
 ```js
-var Person = Model.extend({...}, {
+var Person = reheat.defineModel('Person', {
 	// required
 	connection: new reheat.Connection(),
 
 	// optional
-	schema: new reheat.Schema({
+	schema: reheat.defineSchema('PersonSchema', {
 		name: {
 			type: 'string'
 		}
@@ -245,7 +235,7 @@ See [Model.extend()](/documentation/api/api/Model.static_methods:extend) for det
 @name Model instances
 @description
 
-"Instances" or "model instances" refer to instantiations of the models you have defined by extending `Model`. These
+"Instances" or "model instances" refer to instantiations of the models you have defined via `reheat.defineModel()`. These
 instances inherit properties from `Model.prototype`, including any prototype properties you defined when you extended
 `Model`.
 

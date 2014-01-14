@@ -1,8 +1,8 @@
 /*jshint loopfunc:true*/
 
-var setSync = require('../../../../build/instrument/lib/model/prototype/setSync'),
-	errors = require('../../../../build/instrument/lib/support/errors'),
-	support = require('../../../support/support'),
+var setSync = require('../../../../../build/instrument/lib/model/prototype/setSync'),
+	errors = require('../../../../../build/instrument/lib/support/errors'),
+	support = require('../../../../support/support'),
 	sinon = require('sinon');
 
 exports.setSync = {

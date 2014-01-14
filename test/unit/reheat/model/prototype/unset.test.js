@@ -1,57 +1,84 @@
 /*jshint loopfunc:true*/
 
-var clear = require('../../../../build/instrument/lib/model/prototype/clear'),
-	errors = require('../../../../build/instrument/lib/support/errors'),
-	support = require('../../../support/support'),
+var unset = require('../../../../../build/instrument/lib/model/prototype/unset'),
+	errors = require('../../../../../build/instrument/lib/support/errors'),
+	IllegalArgumentError = errors.IllegalArgumentError,
+	support = require('../../../../support/support'),
 	Promise = require('bluebird'),
 	sinon = require('sinon');
 
-//noinspection JSValidateTypes
-exports.clear = {
+exports.unset = {
 	simple: function (test) {
-		test.expect(5);
+		test.expect(4);
 
 		var instance = {
 			attributes: {
 				name: 'John'
 			},
-			clear: clear
+			unset: unset
 		};
 
 		test.deepEqual(instance.attributes, { name: 'John' });
-		instance.clear(function (err, instance) {
+		instance.unset('name', function (err, instance) {
 			test.ifError(err);
 			test.deepEqual(instance.attributes, {});
 
-			instance.attributes.name = 'John';
-			test.deepEqual(instance.attributes, { name: 'John' });
-
-			instance.clear().then(function (instance) {
+			instance.unset('name').then(function (instance) {
 				test.deepEqual(instance.attributes, {});
 				test.done();
 			});
 		});
 	},
+	nested: function (test) {
+		test.expect(4);
+
+		var instance = {
+			attributes: {
+				address: {
+					state: 'NY'
+				}
+			},
+			unset: unset
+		};
+
+		test.deepEqual(instance.attributes, {
+			address: {
+				state: 'NY'
+			}
+		});
+		instance.unset('address.state', function (err, instance) {
+			test.ifError(err);
+			test.deepEqual(instance.attributes, {
+				address: {}
+			});
+
+			instance.unset('address.state').then(function (instance) {
+				test.deepEqual(instance.attributes, {
+					address: {}
+				});
+
+				test.done();
+			});
+		});
+	},
 	simpleValidateTrue: function (test) {
-		test.expect(5);
+		test.expect(4);
 
 		var instance = {
 			attributes: {
 				name: 'John'
 			},
-			clear: clear
+			unset: unset
 		};
 
 		test.deepEqual(instance.attributes, { name: 'John' });
-		instance.clear(true, function (err, instance) {
+		instance.unset('name', true, function (err, instance) {
 			test.ifError(err);
 			test.deepEqual(instance.attributes, {});
 
-			instance.attributes.name = 'John';
-			test.deepEqual(instance.attributes, { name: 'John' });
-
-			instance.clear(true).then(function (instance) {
+			instance.unset('name', true).then(function (instance) {
 				test.deepEqual(instance.attributes, {});
+
 				test.done();
 			});
 		});
@@ -63,7 +90,7 @@ exports.clear = {
 			attributes: {
 				name: 'John'
 			},
-			clear: clear
+			unset: unset
 		};
 
 		var queue = [];
@@ -71,10 +98,10 @@ exports.clear = {
 		for (var i = 0; i < support.TYPES_EXCEPT_OBJECT.length; i++) {
 			if (support.TYPES_EXCEPT_OBJECT[i] && support.TYPES_EXCEPT_OBJECT[i] !== true && typeof support.TYPES_EXCEPT_OBJECT[i] !== 'function') {
 				queue.push((function (j) {
-					return instance.clear(support.TYPES_EXCEPT_OBJECT[i]).then(function () {
+					return instance.unset('name', support.TYPES_EXCEPT_OBJECT[i]).then(function () {
 						support.fail('Should have failed on ' + support.TYPES_EXCEPT_OBJECT[j]);
 					})
-						.catch(errors.IllegalArgumentError, function (err) {
+						.catch(IllegalArgumentError, function (err) {
 							test.equal(err.type, 'IllegalArgumentError');
 							test.deepEqual(err.errors, { actual: typeof support.TYPES_EXCEPT_OBJECT[j], expected: 'object' });
 						})
@@ -96,7 +123,7 @@ exports.clear = {
 			attributes: {
 				name: 'John'
 			},
-			clear: clear,
+			unset: unset,
 			constructor: {
 				schema: {}
 			}
@@ -108,10 +135,10 @@ exports.clear = {
 
 		sinon.spy(instance.constructor.schema, 'validate');
 
-		instance.clear(true, function (err, instance) {
+		instance.unset('name', true, function (err, instance) {
 			test.ifError(err);
 			test.equal(instance.constructor.schema.validate.callCount, 1);
-			instance.clear(true).then(function (instance) {
+			instance.unset('name', true).then(function (instance) {
 				test.equal(instance.constructor.schema.validate.callCount, 2);
 				test.done();
 			});
@@ -124,7 +151,7 @@ exports.clear = {
 			attributes: {
 				name: 'John'
 			},
-			clear: clear,
+			unset: unset,
 			constructor: {
 				schema: {}
 			}
@@ -136,13 +163,13 @@ exports.clear = {
 
 		sinon.spy(instance.constructor.schema, 'validate');
 
-		instance.clear(true, function (err) {
+		instance.unset('name', true, function (err) {
 			test.equal(err.type, 'ValidationError');
 			test.equal(instance.constructor.schema.validate.callCount, 1);
 			test.deepEqual(instance.attributes, {
 				name: 'John'
 			});
-			instance.clear(true).catch(errors.ValidationError, function (err) {
+			instance.unset('name', true).catch(errors.ValidationError, function (err) {
 				test.equal(err.type, 'ValidationError');
 				test.equal(instance.constructor.schema.validate.callCount, 2);
 				test.deepEqual(instance.attributes, {

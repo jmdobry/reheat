@@ -1,8 +1,8 @@
 /*jshint loopfunc:true*/
 
-var set = require('../../../../build/instrument/lib/model/prototype/set'),
-	errors = require('../../../../build/instrument/lib/support/errors'),
-	support = require('../../../support/support'),
+var set = require('../../../../../build/instrument/lib/model/prototype/set'),
+	errors = require('../../../../../build/instrument/lib/support/errors'),
+	support = require('../../../../support/support'),
 	sinon = require('sinon'),
 	Promise = require('bluebird');
 

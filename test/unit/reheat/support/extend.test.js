@@ -1,4 +1,4 @@
-var extend = require('../../../build/instrument/lib/support/extend');
+var extend = require('../../../../build/instrument/lib/support/extend');
 
 exports.extendTest = {
 	simple: function (test) {

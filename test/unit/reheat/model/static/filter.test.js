@@ -1,8 +1,8 @@
 /*jshint loopfunc:true*/
 
-var filter = require('../../../../build/instrument/lib/model/static/filter'),
-	errors = require('../../../../build/instrument/lib/support/errors'),
-	support = require('../../../support/support'),
+var filter = require('../../../../../build/instrument/lib/model/static/filter'),
+	errors = require('../../../../../build/instrument/lib/support/errors'),
+	support = require('../../../../support/support'),
 	Promise = require('bluebird');
 
 exports.filter = {

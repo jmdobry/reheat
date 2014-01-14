@@ -13,11 +13,9 @@ automatically be validated against the Model's Schema during create and update o
 <page-list></page-list>
 
 ```js
-var reheat = require('reheat'),
-	Schema = reheat.Schema,
-	Model = reheat.Model;
+var reheat = require('reheat');
 
-var personSchema = new Schema({
+var personSchema = reheat.defineSchema('PersonSchema', {
 	name: {
 		type: 'string',
 		maxLength: 255
@@ -30,13 +28,13 @@ var personSchema = new Schema({
 });
 
 // This Model will use personSchema as its Schema
-var Person = Model.extend({}, {
+var Person = reheat.defineModel('Person', {
 	schema: personSchema,
 	{...}
 });
 
 // This Model will not use any Schema
-var FreestylePerson = Model.extend();
+var FreestylePerson = reheat.defineModel('FreestylePerson', {...});
 ```
 
 @doc overview
@@ -52,11 +50,9 @@ automatically be validated against the Model's Schema during create and update o
 <page-list></page-list>
 
 ```js
-var reheat = require('reheat'),
-	Schema = reheat.Schema,
-	Model = reheat.Model;
+var reheat = require('reheat');
 
-var personSchema = new Schema({
+var personSchema = reheat.defineSchema('PersonSchema', {
 	name: {
 		type: 'string',
 		maxLength: 255
@@ -69,13 +65,13 @@ var personSchema = new Schema({
 });
 
 // This Model will use personSchema as its Schema
-var Person = Model.extend({}, {
+var Person = reheat.defineModel('Person', {
 	schema: personSchema,
 	{...}
 });
 
 // This Model will not use any Schema
-var FreestylePerson = Model.extend();
+var FreestylePerson = reheat.defineModel('FreestylePerson', {...});
 ```
 
 @doc overview
@@ -85,39 +81,20 @@ var FreestylePerson = Model.extend();
 
 [robocop.js](http://jmdobry.github.io/robocop.js/) robocop.js is a library that allows you to define and validate rules, datatypes and schemata in Node and in the browser.
 
-The API of the `robocop` object has been mixed into the `reheat` object, giving access to the `robocop` methods and the `Schema` constructor. For example:
+Reheat delegates Schema functionality to robocop.js.
 
 ```js
-// This schema is actually registered by reheat (robocop) so you don't have to keep track of it yourself
 reheat.defineSchema('PersonSchema', {
 	name: {
 		type: 'string'
 	}
 });
 
-var Person = Model.extend({}, {
+var Person = reheat.defineModel('Person', {
 	schema: reheat.getSchema('PersonSchema'),
 	{...}
 });
 ```
-
-Using `Schema` constructor only:
-
-```js
-// equivalent using only the Schema constructor–you have to keep track of the schema yourself
-var personSchema = new reheat.Schema({
-	name: {
-		type: 'string'
-	}
-});
-
-var Person = Model.extend({}, {
-	schema: personSchema,
-	{...}
-});
-```
-
-Reheat only requires use of the `Schema` constructor to function, and you're free to keep it at that, but you'll be restricted to the default rules and data types.
 
 See the [robocop API](http://jmdobry.github.io/robocop.js/api.html#robocop) for details on the `robocop` methods exposed on the `reheat` object.
 

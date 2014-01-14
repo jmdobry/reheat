@@ -1,7 +1,7 @@
 /*jshint loopfunc:true*/
 
 var Connection = require('../../../build/instrument/lib/connection'),
-	Model = require('../../../build/instrument/lib/model'),
+	reheat = require('../../../build/instrument/lib'),
 	r = require('rethinkdb'),
 	sinon = require('sinon'),
 	connection = new Connection(),
@@ -68,7 +68,10 @@ exports.saveIntegration = {
 	createLifecycle: function (test) {
 		test.expect(9);
 
-		var Post = Model.extend({
+		var Post = reheat.defineModel('Post', {
+			tableName: tableName,
+			connection: connection
+		}, {
 			beforeValidate: function (cb) {
 				cb(null);
 			},
@@ -81,9 +84,6 @@ exports.saveIntegration = {
 			afterCreate: function (instance, cb) {
 				cb(null, instance);
 			}
-		}, {
-			tableName: tableName,
-			connection: connection
 		});
 
 		var post = new Post({
@@ -108,6 +108,7 @@ exports.saveIntegration = {
 			test.equal(post.afterValidate.callCount, 1);
 			test.equal(post.beforeCreate.callCount, 1);
 			test.equal(post.afterCreate.callCount, 1);
+			reheat.unregisterModel('Post');
 			test.done();
 		});
 	}

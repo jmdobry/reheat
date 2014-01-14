@@ -1,10 +1,10 @@
 /*jshint loopfunc:true*/
 
-var errors = require('../../../build/instrument/lib/support/errors'),
+var errors = require('../../../../build/instrument/lib/support/errors'),
 	SandboxedModule = require('sandboxed-module'),
-	Connection = SandboxedModule.require('../../../build/instrument/lib/connection', {
+	Connection = SandboxedModule.require('../../../../build/instrument/lib/connection', {
 		requires: {
-			'../support/utils': require('../../../build/instrument/lib/support/utils'), // Real dependency
+			'../support/utils': require('../../../../build/instrument/lib/support/utils'), // Real dependency
 			'../support/errors': errors, // Real dependency
 			'generic-pool': require('generic-pool'), // Real dependency
 			rethinkdb: {
@@ -20,7 +20,7 @@ var errors = require('../../../build/instrument/lib/support/errors'),
 		}
 	}),
 	Promise = require('bluebird'),
-	support = require('../../support/support');
+	support = require('../../../support/support');
 
 exports.Connection = {
 	setUp: function (cb) {

@@ -1,4 +1,4 @@
-var errors = require('../../../build/instrument/lib/support/errors');
+var errors = require('../../../../build/instrument/lib/support/errors');
 
 exports.errors = {
 	UnhandledError: {

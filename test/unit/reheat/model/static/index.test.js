@@ -1,4 +1,4 @@
-var static = require('../../../../build/instrument/lib/model/static');
+var static = require('../../../../../build/instrument/lib/model/static');
 
 exports.static = {
 	test: function (test) {

@@ -1,15 +1,15 @@
 /*jshint loopfunc:true*/
 
 var SandboxedModule = require('sandboxed-module'),
-	errors = require('../../../../build/instrument/lib/support/errors'),
-	support = require('../../../support/support'),
+	errors = require('../../../../../build/instrument/lib/support/errors'),
+	support = require('../../../../support/support'),
 	Promise = require('bluebird'),
 	now = function () {
 		return 5;
 	},
-	save = SandboxedModule.require('../../../../build/instrument/lib/model/prototype/save', {
+	save = SandboxedModule.require('../../../../../build/instrument/lib/model/prototype/save', {
 		requires: {
-			'../../support/utils': require('../../../../build/instrument/lib/support/utils'), // Real dependency
+			'../../support/utils': require('../../../../../build/instrument/lib/support/utils'), // Real dependency
 			'../../support/errors': errors, // Real dependency
 			rethinkdb: {
 				table: function () {

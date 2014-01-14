@@ -1,8 +1,8 @@
 /*jshint loopfunc:true*/
 
-var getAll = require('../../../../build/instrument/lib/model/static/getAll'),
-	errors = require('../../../../build/instrument/lib/support/errors'),
-	support = require('../../../support/support'),
+var getAll = require('../../../../../build/instrument/lib/model/static/getAll'),
+	errors = require('../../../../../build/instrument/lib/support/errors'),
+	support = require('../../../../support/support'),
 	Promise = require('bluebird');
 
 exports.getAll = {

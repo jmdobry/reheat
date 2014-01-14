@@ -2,7 +2,7 @@
 
 var utils = require('../../../../build/instrument/lib/support/utils'),
 	Connection = require('../../../../build/instrument/lib/connection'),
-	Model = require('../../../../build/instrument/lib/model'),
+	reheat = require('../../../../build/instrument/lib'),
 	r = require('rethinkdb'),
 	connection = new Connection(),
 	tableName = 'save';
@@ -68,7 +68,7 @@ exports.saveIntegration = {
 	saveNew: function (test) {
 		test.expect(5);
 
-		var Post = Model.extend(null, {
+		var Post = reheat.defineModel('Post', {
 			tableName: tableName,
 			connection: connection
 		});
@@ -86,13 +86,14 @@ exports.saveIntegration = {
 			test.deepEqual(post.get('address.state'), 'NY');
 			test.ok(typeof post.get('id') === 'string');
 			test.equal(post.meta.inserted, 1);
+			reheat.unregisterModel('Post');
 			test.done();
 		});
 	},
 	saveNewWithTimestamps: function (test) {
 		test.expect(9);
 
-		var Post = Model.extend(null, {
+		var Post = reheat.defineModel('Post', {
 			tableName: tableName,
 			connection: connection,
 			timestamps: true
@@ -115,13 +116,14 @@ exports.saveIntegration = {
 			test.deepEqual(post.get('updated'), post.get('created'));
 			test.deepEqual(post.get('deleted'), null);
 			test.equal(post.meta.inserted, 1);
+			reheat.unregisterModel('Post');
 			test.done();
 		});
 	},
 	saveExisting: function (test) {
 		test.expect(13);
 
-		var Post = Model.extend(null, {
+		var Post = reheat.defineModel('Post', {
 			tableName: tableName,
 			connection: connection
 		});
@@ -152,6 +154,7 @@ exports.saveIntegration = {
 					test.deepEqual(post.get('address.state'), 'CO');
 					test.equal(post.meta.replaced, 1);
 					test.deepEqual(post.get('id'), id);
+					reheat.unregisterModel('Post');
 					test.done();
 				});
 			});
@@ -160,7 +163,7 @@ exports.saveIntegration = {
 	saveExistingWithTimestamps: function (test) {
 		test.expect(19);
 
-		var Post = Model.extend(null, {
+		var Post = reheat.defineModel('Post', {
 			tableName: tableName,
 			connection: connection,
 			timestamps: true
@@ -198,6 +201,7 @@ exports.saveIntegration = {
 					test.deepEqual(post.get('id'), id);
 					test.ok(post.get('created') !== post.get('updated'));
 					test.ok(post.get('updated') > post.get('created'));
+					reheat.unregisterModel('Post');
 					test.done();
 				});
 			});
