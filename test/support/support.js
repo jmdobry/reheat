@@ -24,12 +24,29 @@ module.exports = {
 	}],
 	TYPES_EXCEPT_FUNCTION: ['string', 123, 123.123, null, undefined, {}, [], true, false],
 	ensureTableExists: function (tableName) {
+		console.log('ensureTableExists', tableName);
 		var connection = new Connection();
 
 		return connection.run(r.tableList())
 			.then(function (tableList) {
 				if (!mout.array.contains(tableList, tableName)) {
 					return connection.run(r.tableCreate(tableName));
+				}
+			})
+			.then(function () {
+				connection.drain().then(function () {
+					connection.destroyAllNow();
+				});
+			});
+	},
+	ensureIndexExists: function (tableName, index) {
+		console.log('ensureIndexExists', tableName, index);
+		var connection = new Connection();
+
+		return connection.run(r.table(tableName).indexList())
+			.then(function (indexList) {
+				if (!mout.array.contains(indexList, index)) {
+					return connection.run(r.table(tableName).indexCreate(index));
 				}
 			})
 			.then(function () {

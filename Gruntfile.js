@@ -150,7 +150,7 @@ module.exports = function (grunt) {
 				'test/unit/**/*.test.js'
 			],
 			integration: [
-				'test/integration/**/*.test.js'
+				'test/integration/model/static/*.test.js'
 			]
 		},
 
@@ -264,7 +264,7 @@ module.exports = function (grunt) {
 		'clean:build',
 		'instrument',
 		'reloadTasks',
-		'test-unit',
+//		'test-unit',
 		'test-integration',
 		'storeCoverage',
 		'makeReport'

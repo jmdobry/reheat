@@ -14,16 +14,23 @@ var Connection = require('../../../../build/instrument/lib/connection'),
 exports.saveIntegration = {
 	setUp: function (cb) {
 		var tasks = [],
-			tasks2 = [];
+			tasks2 = [],
+			tasks3 = [];
 		for (var i = 0; i < tables.length; i++) {
 			tasks.push(support.ensureTableExists(tables[i]));
 		}
+		tasks2.push(support.ensureIndexExists(tables[1], 'userId'));
+		tasks2.push(support.ensureIndexExists(tables[2], 'userId'));
+		tasks2.push(support.ensureIndexExists(tables[2], 'postId'));
 		for (i = 0; i < tables.length; i++) {
-			tasks2.push(r.table(tables[i]).delete());
+			tasks3.push(r.table(tables[i]).delete());
 		}
 		Promise.all(tasks)
 			.then(function () {
 				return Promise.all(tasks2);
+			})
+			.then(function () {
+				return Promise.all(tasks3);
 			})
 			.then(function () {
 				User = reheat.defineModel('User', {
@@ -191,7 +198,6 @@ exports.saveIntegration = {
 //			.error(test.done);
 //	},
 	relations: function (test) {
-
 		var user = new User({
 				name: 'John Anderson'
 			}),
@@ -276,11 +282,11 @@ exports.saveIntegration = {
 				return user2.save();
 			})
 			.then(function (user2) {
-				post3.setSync('userId', user.get(User.idAttribute));
-				post4.setSync('userId', user.get(User.idAttribute));
-				comment6.setSync('userId', user.get(User.idAttribute));
-				comment7.setSync('userId', user.get(User.idAttribute));
-				comment8.setSync('userId', user.get(User.idAttribute));
+				post3.setSync('userId', user2.get(User.idAttribute));
+				post4.setSync('userId', user2.get(User.idAttribute));
+				comment6.setSync('userId', user2.get(User.idAttribute));
+				comment7.setSync('userId', user2.get(User.idAttribute));
+				comment8.setSync('userId', user2.get(User.idAttribute));
 				return Promise.all([
 					post3.save()
 						.then(function (post) {
@@ -305,82 +311,114 @@ exports.saveIntegration = {
 				return User.get(user.get(User.idAttribute), { with: ['Post'] });
 			})
 			.then(function (tempUser) {
-				test.ok(mout.lang.isArray(tempUser.get(User.relations.hasMany.Post.localField)));
-				test.equal(tempUser.get(User.relations.hasMany.Post.localField).length, 3);
+				var posts = tempUser.get(User.relations.hasMany.Post.localField);
+				test.ok(mout.lang.isArray(posts));
+				test.equal(posts.length, 3);
 
-				return User.get(user.get(User.idAttribute), { with: ['Post.Comment'] });
-			})
-			.then(function (tempUser) {
-				test.ok(mout.lang.isArray(tempUser.get(User.relations.hasMany.Post.localField)));
-				test.equal(tempUser.get(User.relations.hasMany.Post.localField).length, 3);
+				mout.array.forEach(posts, function (post) {
+					test.ok(post instanceof Post);
+				});
 
+//				return User.get(user.get(User.idAttribute), { with: ['Post.Comment'] });
+//			})
+//			.then(function (tempUser) {
+//				test.ok(mout.lang.isArray(tempUser.get(User.relations.hasMany.Post.localField)));
+//				test.equal(tempUser.get(User.relations.hasMany.Post.localField).length, 3);
+//
 				return User.get(user.get(User.idAttribute), { with: ['Post', 'Comment'] });
 			})
 			.then(function (tempUser) {
-				test.ok(mout.lang.isArray(tempUser.get(User.relations.hasMany.Post.localField)));
-				test.ok(mout.lang.isArray(tempUser.get(User.relations.hasMany.Comment.localField)));
-				test.equal(tempUser.get(User.relations.hasMany.Post.localField).length, 3);
-				test.equal(tempUser.get(User.relations.hasMany.Comment.localField).length, 5);
+				var posts = tempUser.get(User.relations.hasMany.Post.localField),
+					comments = tempUser.get(User.relations.hasMany.Comment.localField);
+
+				test.ok(mout.lang.isArray(posts));
+				test.ok(mout.lang.isArray(comments));
+				test.equal(posts.length, 3);
+				test.equal(comments.length, 5);
+
+				mout.array.forEach(posts, function (post) {
+					test.ok(post instanceof Post);
+				});
+
+				mout.array.forEach(comments, function (comment) {
+					test.ok(comment instanceof Comment);
+				});
 
 				return User.get(user2.get(User.idAttribute), { with: ['Post'] });
 			})
 			// test the second user
 			.then(function (tempUser2) {
-				test.ok(mout.lang.isArray(tempUser2.get(User.relations.hasMany.Post.localField)));
-				test.equal(tempUser2.get(User.relations.hasMany.Post.localField).length, 2);
+				var posts = tempUser2.get(User.relations.hasMany.Post.localField);
+				test.ok(mout.lang.isArray(posts));
+				test.equal(posts.length, 2);
 
-				return User.get(user2.get(User.idAttribute), { with: ['Post.Comment'] });
-			})
-			.then(function (tempUser2) {
-				test.ok(mout.lang.isArray(tempUser2.get(User.relations.hasMany.Post.localField)));
-				test.equal(tempUser2.get(User.relations.hasMany.Post.localField).length, 2);
-
+				mout.array.forEach(posts, function (post) {
+					test.ok(post instanceof Post);
+				});
+//
+//				return User.get(user2.get(User.idAttribute), { with: ['Post.Comment'] });
+//			})
+//			.then(function (tempUser2) {
+//				test.ok(mout.lang.isArray(tempUser2.get(User.relations.hasMany.Post.localField)));
+//				test.equal(tempUser2.get(User.relations.hasMany.Post.localField).length, 2);
+//
 				return User.get(user2.get(User.idAttribute), { with: ['Post', 'Comment'] });
 			})
 			.then(function (tempUser2) {
-				test.ok(mout.lang.isArray(tempUser2.get(User.relations.hasMany.Post.localField)));
-				test.ok(mout.lang.isArray(tempUser2.get(User.relations.hasMany.Comment.localField)));
-				test.equal(tempUser2.get(User.relations.hasMany.Post.localField).length, 2);
-				test.equal(tempUser2.get(User.relations.hasMany.Comment.localField).length, 3);
+				var posts = tempUser2.get(User.relations.hasMany.Post.localField),
+					comments = tempUser2.get(User.relations.hasMany.Comment.localField);
 
-				return Post.filter({ with: ['User', 'Comment']});
-			})
-			// test the posts
-			.then(function (posts) {
-				test.equal(posts.length, 5);
+				test.ok(mout.lang.isArray(posts));
+				test.ok(mout.lang.isArray(comments));
+				test.equal(posts.length, 2);
+				test.equal(comments.length, 3);
 
-				for (var i = 0; i < posts.length; i++) {
-					if (posts[i].get(Post.idAttribute) === post1.get(Post.idAttribute)) {
-						test.equal(posts[i].get(Post.relations.belongsTo.User.localField).get(User.idAttribute) === user.get(User.idAttribute));
-					} else if (posts[i].get(Post.idAttribute) === post2.get(Post.idAttribute)) {
-						test.equal(posts[i].get(Post.relations.belongsTo.User.localField).get(User.idAttribute) === user.get(User.idAttribute));
-					} else if (posts[i].get(Post.idAttribute) === post3.get(Post.idAttribute)) {
-						test.equal(posts[i].get(Post.relations.belongsTo.User.localField).get(User.idAttribute) === user2.get(User.idAttribute));
-					} else if (posts[i].get(Post.idAttribute) === post4.get(Post.idAttribute)) {
-						test.equal(posts[i].get(Post.relations.belongsTo.User.localField).get(User.idAttribute) === user2.get(User.idAttribute));
-					} else if (posts[i].get(Post.idAttribute) === post5.get(Post.idAttribute)) {
-						test.equal(posts[i].get(Post.relations.belongsTo.User.localField).get(User.idAttribute) === user.get(User.idAttribute));
-					}
-				}
+				mout.array.forEach(posts, function (post) {
+					test.ok(post instanceof Post);
+				});
 
-				return Post.filter({ with: ['Comment']});
-			})
-			.then(function (posts) {
-				test.equal(posts.length, 5);
+				mout.array.forEach(comments, function (comment) {
+					test.ok(comment instanceof Comment);
+				});
 
-				for (var i = 0; i < posts.length; i++) {
-					test.isUndefined(posts[i].get(Post.relations.belongsTo.User.localField));
-				}
-
-				return Post.get(post1.get(Post.idAttribute), { with: ['User', 'Comment']});
-			})
-			// test individual posts
-			.then(function (post) {
-				test.equal(post.get(Post.relations.hasMany.Comment.localField).length, 0);
-
+//				return Post.filter({ with: ['User', 'Comment']});
+//			})
+//			// test the posts
+//			.then(function (posts) {
+//				test.equal(posts.length, 5);
+//
+//				for (var i = 0; i < posts.length; i++) {
+//					if (posts[i].get(Post.idAttribute) === post1.get(Post.idAttribute)) {
+//						test.equal(posts[i].get(Post.relations.belongsTo.User.localField).get(User.idAttribute) === user.get(User.idAttribute));
+//					} else if (posts[i].get(Post.idAttribute) === post2.get(Post.idAttribute)) {
+//						test.equal(posts[i].get(Post.relations.belongsTo.User.localField).get(User.idAttribute) === user.get(User.idAttribute));
+//					} else if (posts[i].get(Post.idAttribute) === post3.get(Post.idAttribute)) {
+//						test.equal(posts[i].get(Post.relations.belongsTo.User.localField).get(User.idAttribute) === user2.get(User.idAttribute));
+//					} else if (posts[i].get(Post.idAttribute) === post4.get(Post.idAttribute)) {
+//						test.equal(posts[i].get(Post.relations.belongsTo.User.localField).get(User.idAttribute) === user2.get(User.idAttribute));
+//					} else if (posts[i].get(Post.idAttribute) === post5.get(Post.idAttribute)) {
+//						test.equal(posts[i].get(Post.relations.belongsTo.User.localField).get(User.idAttribute) === user.get(User.idAttribute));
+//					}
+//				}
+//
+//				return Post.filter({ with: ['Comment']});
+//			})
+//			.then(function (posts) {
+//				test.equal(posts.length, 5);
+//
+//				for (var i = 0; i < posts.length; i++) {
+//					test.isUndefined(posts[i].get(Post.relations.belongsTo.User.localField));
+//				}
+//
 //				return Post.get(post1.get(Post.idAttribute), { with: ['User', 'Comment']});
-			})
-			.then(function () {
+//			})
+//			// test individual posts
+//			.then(function (post) {
+//				test.equal(post.get(Post.relations.hasMany.Comment.localField).length, 0);
+//
+////				return Post.get(post1.get(Post.idAttribute), { with: ['User', 'Comment']});
+//			})
+//			.then(function () {
 				test.done();
 			})
 			.catch(test.done)
