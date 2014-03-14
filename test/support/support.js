@@ -1,3 +1,7 @@
+var Connection = require('../../lib/connection'),
+	mout = require('mout'),
+	r = require('rethinkdb');
+
 module.exports = {
 	fail: function (msg) {
 		assert.equal('should not reach this!: ' + msg, 'failure');
@@ -18,5 +22,20 @@ module.exports = {
 	}],
 	TYPES_EXCEPT_BOOLEAN: ['string', 123, 123.123, null, undefined, {}, [], function () {
 	}],
-	TYPES_EXCEPT_FUNCTION: ['string', 123, 123.123, null, undefined, {}, [], true, false]
+	TYPES_EXCEPT_FUNCTION: ['string', 123, 123.123, null, undefined, {}, [], true, false],
+	ensureTableExists: function (tableName) {
+		var connection = new Connection();
+
+		return connection.run(r.tableList())
+			.then(function (tableList) {
+				if (!mout.array.contains(tableList, tableName)) {
+					return connection.run(r.tableCreate(tableName));
+				}
+			})
+			.then(function () {
+				connection.drain().then(function () {
+					connection.destroyAllNow();
+				});
+			});
+	}
 };
