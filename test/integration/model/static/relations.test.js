@@ -7,6 +7,7 @@ var Connection = require('../../../../build/instrument/lib/connection'),
 	sinon = require('sinon'),
 	mout = require('mout'),
 	connection = new Connection(),
+	Model = require('../../../../lib/model'),
 	Promise = require('bluebird'),
 	tables = ['user', 'post', 'comment'],
 	User, Post, Comment;
@@ -319,6 +320,39 @@ exports.saveIntegration = {
 					test.ok(post instanceof Post);
 				});
 
+				var JSONposts = [
+					{
+						title: 'post1',
+						id: post1.get(Post.idAttribute),
+						userId: tempUser.get(User.idAttribute)
+					},
+					{
+						title: 'post2',
+						id: post2.get(Post.idAttribute),
+						userId: tempUser.get(User.idAttribute)
+					},
+					{
+						title: 'post5',
+						id: post5.get(Post.idAttribute),
+						userId: tempUser.get(User.idAttribute)
+					}
+				];
+
+				JSONposts.sort(function (a, b) {
+					return a.id < b.id;
+				});
+
+				var userJSON = tempUser.toJSON();
+				userJSON.posts.sort(function (a, b) {
+					return a.id < b.id;
+				});
+
+				test.deepEqual(userJSON, {
+					id: tempUser.get(User.idAttribute),
+					name: 'John Anderson',
+					posts: JSONposts
+				});
+
 //				return User.get(user.get(User.idAttribute), { with: ['Post.Comment'] });
 //			})
 //			.then(function (tempUser) {
@@ -344,6 +378,80 @@ exports.saveIntegration = {
 					test.ok(comment instanceof Comment);
 				});
 
+				var JSONposts = [
+					{
+						title: 'post1',
+						id: post1.get(Post.idAttribute),
+						userId: tempUser.get(User.idAttribute)
+					},
+					{
+						title: 'post2',
+						id: post2.get(Post.idAttribute),
+						userId: tempUser.get(User.idAttribute)
+					},
+					{
+						title: 'post5',
+						id: post5.get(Post.idAttribute),
+						userId: tempUser.get(User.idAttribute)
+					}
+				];
+
+				JSONposts.sort(function (a, b) {
+					return a.id < b.id;
+				});
+
+				var JSONcomments = [
+					{
+						id: comment1.get(Comment.idAttribute),
+						postId: post2.get(Post.idAttribute),
+						userId: tempUser.get(User.idAttribute),
+						content: comment1.get('content')
+					},
+					{
+						id: comment2.get(Comment.idAttribute),
+						postId: post5.get(Post.idAttribute),
+						userId: tempUser.get(User.idAttribute),
+						content: comment2.get('content')
+					},
+					{
+						id: comment3.get(Comment.idAttribute),
+						postId: post5.get(Post.idAttribute),
+						userId: tempUser.get(User.idAttribute),
+						content: comment3.get('content')
+					},
+					{
+						id: comment4.get(Comment.idAttribute),
+						postId: post5.get(Post.idAttribute),
+						userId: tempUser.get(User.idAttribute),
+						content: comment4.get('content')
+					},
+					{
+						id: comment5.get(Comment.idAttribute),
+						postId: post5.get(Post.idAttribute),
+						userId: tempUser.get(User.idAttribute),
+						content: comment5.get('content')
+					}
+				];
+
+				JSONcomments.sort(function (a, b) {
+					return a.id < b.id;
+				});
+
+				var userJSON = tempUser.toJSON();
+				userJSON.posts.sort(function (a, b) {
+					return a.id < b.id;
+				});
+				userJSON.comments.sort(function (a, b) {
+					return a.id < b.id;
+				});
+
+				test.deepEqual(userJSON, {
+					id: tempUser.get(User.idAttribute),
+					name: 'John Anderson',
+					posts: JSONposts,
+					comments: JSONcomments
+				});
+
 				return User.get(user2.get(User.idAttribute), { with: ['Post'] });
 			})
 			// test the second user
@@ -354,6 +462,34 @@ exports.saveIntegration = {
 
 				mout.array.forEach(posts, function (post) {
 					test.ok(post instanceof Post);
+				});
+
+				var JSONposts = [
+					{
+						title: 'post3',
+						id: post3.get(Post.idAttribute),
+						userId: tempUser2.get(User.idAttribute)
+					},
+					{
+						title: 'post4',
+						id: post4.get(Post.idAttribute),
+						userId: tempUser2.get(User.idAttribute)
+					}
+				];
+
+				JSONposts.sort(function (a, b) {
+					return a.id < b.id;
+				});
+
+				var userJSON = tempUser2.toJSON();
+				userJSON.posts.sort(function (a, b) {
+					return a.id < b.id;
+				});
+
+				test.deepEqual(userJSON, {
+					id: tempUser2.get(User.idAttribute),
+					name: 'Sally Jones',
+					posts: JSONposts
 				});
 //
 //				return User.get(user2.get(User.idAttribute), { with: ['Post.Comment'] });
@@ -379,6 +515,63 @@ exports.saveIntegration = {
 
 				mout.array.forEach(comments, function (comment) {
 					test.ok(comment instanceof Comment);
+				});
+
+				var JSONposts = [
+					{
+						title: 'post3',
+						id: post3.get(Post.idAttribute),
+						userId: tempUser2.get(User.idAttribute)
+					},
+					{
+						title: 'post4',
+						id: post4.get(Post.idAttribute),
+						userId: tempUser2.get(User.idAttribute)
+					}
+				];
+
+				JSONposts.sort(function (a, b) {
+					return a.id < b.id;
+				});
+
+				var JSONcomments = [
+					{
+						id: comment6.get(Comment.idAttribute),
+						postId: post3.get(Post.idAttribute),
+						userId: tempUser2.get(User.idAttribute),
+						content: comment6.get('content')
+					},
+					{
+						id: comment7.get(Comment.idAttribute),
+						postId: post3.get(Post.idAttribute),
+						userId: tempUser2.get(User.idAttribute),
+						content: comment7.get('content')
+					},
+					{
+						id: comment8.get(Comment.idAttribute),
+						postId: post3.get(Post.idAttribute),
+						userId: tempUser2.get(User.idAttribute),
+						content: comment8.get('content')
+					}
+				];
+
+				JSONcomments.sort(function (a, b) {
+					return a.id < b.id;
+				});
+
+				var userJSON = tempUser2.toJSON();
+				userJSON.posts.sort(function (a, b) {
+					return a.id < b.id;
+				});
+				userJSON.comments.sort(function (a, b) {
+					return a.id < b.id;
+				});
+
+				test.deepEqual(userJSON, {
+					id: tempUser2.get(User.idAttribute),
+					name: 'Sally Jones',
+					posts: JSONposts,
+					comments: JSONcomments
 				});
 
 //				return Post.filter({ with: ['User', 'Comment']});
