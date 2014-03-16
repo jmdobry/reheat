@@ -15,6 +15,13 @@ var errors = require('../../../../build/instrument/lib/support/errors'),
 							}
 						});
 					}, 100);
+				},
+				dbList: function () {
+					return {
+						run: function (conn, cb) {
+							cb(null, ['test']);
+						}
+					};
 				}
 			}
 		}
