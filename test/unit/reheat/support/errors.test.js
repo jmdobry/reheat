@@ -12,10 +12,10 @@ exports.errors = {
 
 			test.equal(err2.type, 'UnhandledError');
 			test.equal(err2.message, 'UnhandledError: This is an uncaught exception. Please consider submitting an issue at https://github.com/jmdobry/reheat/issues.\n\n' +
-				'Original Uncaught Exception:\n' + err1.stack.toString());
+				'Original Uncaught Exception: Error\n' + err1.stack.toString());
 
 			test.equal(err2.stack, 'UnhandledError: This is an uncaught exception. Please consider submitting an issue at https://github.com/jmdobry/reheat/issues.\n\n' +
-				'Original Uncaught Exception:\n' + err1.stack.toString());
+				'Original Uncaught Exception: Error\n' + err1.stack.toString());
 
 			test.deepEqual(err2.originalError, err1);
 
