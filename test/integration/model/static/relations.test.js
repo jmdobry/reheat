@@ -9,8 +9,8 @@ var Connection = require('../../../../build/instrument/lib/connection'),
 	connection = new Connection(),
 	Model = require('../../../../lib/model'),
 	Promise = require('bluebird'),
-	tables = ['user', 'post', 'comment'],
-	User, Post, Comment;
+	tables = ['user', 'post', 'comment', 'profile'],
+	User, Post, Comment, Profile;
 
 exports.saveIntegration = {
 	setUp: function (cb) {
@@ -23,6 +23,7 @@ exports.saveIntegration = {
 		tasks2.push(support.ensureIndexExists(tables[1], 'userId'));
 		tasks2.push(support.ensureIndexExists(tables[2], 'userId'));
 		tasks2.push(support.ensureIndexExists(tables[2], 'postId'));
+		tasks2.push(support.ensureIndexExists(tables[3], 'userId'));
 		for (i = 0; i < tables.length; i++) {
 			tasks3.push(r.table(tables[i]).delete());
 		}
@@ -46,6 +47,25 @@ exports.saveIntegration = {
 							Comment: {
 								localField: 'comments' || mout.string.camelCase('Comment') + 'List',
 								foreignKey: 'userId' || mout.string.camelCase('User') + 'Id'
+							}
+						},
+						hasOne: {
+							Profile: {
+								localField: 'profile' || mout.string.camelCase('Profile'),
+								foreignKey: 'userId' || mout.string.camelCase('Profile') + 'Id'
+							}
+						}
+					}
+				});
+
+				Profile = reheat.defineModel('Profile', {
+					tableName: tables[3],
+					connection: connection,
+					relations: {
+						belongsTo: {
+							User: {
+								localKey: 'userId' || mout.string.camelCase('User') + 'Id',
+								localField: 'user' || mout.string.camelCase('User')
 							}
 						}
 					}
@@ -109,6 +129,7 @@ exports.saveIntegration = {
 				reheat.unregisterModel('User');
 				reheat.unregisterModel('Post');
 				reheat.unregisterModel('Comment');
+				reheat.unregisterModel('Profile');
 				cb();
 			})
 			.catch(cb)
@@ -205,6 +226,12 @@ exports.saveIntegration = {
 			user2 = new User({
 				name: 'Sally Jones'
 			}),
+			profile = new Profile({
+				email: 'john.anderson@example.com'
+			}),
+			profile2 = new Profile({
+				email: 'sally.jones@example.com'
+			}),
 			post1 = new Post({
 				title: 'post1'
 			}),
@@ -247,6 +274,7 @@ exports.saveIntegration = {
 
 		user.save()
 			.then(function (user) {
+				profile.setSync('userId', user.get(User.idAttribute));
 				post1.setSync('userId', user.get(User.idAttribute));
 				post2.setSync('userId', user.get(User.idAttribute));
 				post5.setSync('userId', user.get(User.idAttribute));
@@ -256,6 +284,7 @@ exports.saveIntegration = {
 				comment4.setSync('userId', user.get(User.idAttribute));
 				comment5.setSync('userId', user.get(User.idAttribute));
 				return Promise.all([
+					profile.save(),
 					post1.save(),
 					post2.save()
 						.then(function (post) {
@@ -283,12 +312,14 @@ exports.saveIntegration = {
 				return user2.save();
 			})
 			.then(function (user2) {
+				profile2.setSync('userId', user2.get(User.idAttribute));
 				post3.setSync('userId', user2.get(User.idAttribute));
 				post4.setSync('userId', user2.get(User.idAttribute));
 				comment6.setSync('userId', user2.get(User.idAttribute));
 				comment7.setSync('userId', user2.get(User.idAttribute));
 				comment8.setSync('userId', user2.get(User.idAttribute));
 				return Promise.all([
+					profile2.save(),
 					post3.save()
 						.then(function (post) {
 							comment6.setSync('postId', post.get(Post.idAttribute));
@@ -309,6 +340,13 @@ exports.saveIntegration = {
 				test.ok(user2.get(User.idAttribute));
 			})
 			.then(function () {
+				return User.get(user.get(User.idAttribute), { with: ['Profile'] });
+			})
+			.then(function (tempUser) {
+				var tempProfile = tempUser.get('profile');
+				test.ok(tempProfile instanceof Profile);
+				test.equal(tempProfile.get('userId'), tempUser.get(User.idAttribute));
+				test.equal(tempProfile.get('email'), profile.get('email'));
 				return User.get(user.get(User.idAttribute), { with: ['Post'] });
 			})
 			.then(function (tempUser) {
@@ -452,9 +490,16 @@ exports.saveIntegration = {
 					comments: JSONcomments
 				});
 
-				return User.get(user2.get(User.idAttribute), { with: ['Post'] });
+				return User.get(user2.get(User.idAttribute), { with: ['Profile'] });
 			})
 			// test the second user
+			.then(function (tempUser2) {
+				var tempProfile2 = tempUser2.get('profile');
+				test.ok(tempProfile2 instanceof Profile);
+				test.equal(tempProfile2.get('userId'), tempUser2.get(User.idAttribute));
+				test.equal(tempProfile2.get('email'), profile2.get('email'));
+				return User.get(user2.get(User.idAttribute), { with: ['Post'] });
+			})
 			.then(function (tempUser2) {
 				var posts = tempUser2.get(User.relations.hasMany.Post.localField);
 				test.ok(mout.lang.isArray(posts));
@@ -573,6 +618,28 @@ exports.saveIntegration = {
 					posts: JSONposts,
 					comments: JSONcomments
 				});
+				return Post.get(post3.get(Post.idAttribute), { with: ['User', 'Comment'] });
+			})
+			// test post3
+			.then(function (tempPost) {
+				var tempUser2 = tempPost.get('user'),
+					tempComments = tempPost.get('comments');
+
+				test.ok(tempUser2 instanceof User);
+				test.equal(tempUser2.get('id'), user2.get(User.idAttribute));
+				test.equal(tempUser2.get('name'), user2.get('name'));
+				test.equal(tempPost.get('comments').length, 3);
+
+				return Comment.get(comment2.get(Comment.idAttribute), { with: ['Post', 'User'] });
+			})
+			// test comment2
+			.then(function (tempComment) {
+				var tempUser = tempComment.get('user'),
+					tempPost = tempComment.get('post');
+
+				test.ok(tempComment instanceof Comment);
+				test.equal(tempUser.get(User.idAttribute), user.get(User.idAttribute));
+				test.equal(tempPost.get(Post.idAttribute), post5.get(Post.idAttribute));
 
 //				return Post.filter({ with: ['User', 'Comment']});
 //			})

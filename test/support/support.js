@@ -24,7 +24,6 @@ module.exports = {
 	}],
 	TYPES_EXCEPT_FUNCTION: ['string', 123, 123.123, null, undefined, {}, [], true, false],
 	ensureTableExists: function (tableName) {
-		console.log('ensureTableExists', tableName);
 		var connection = new Connection();
 
 		return connection.run(r.tableList())
@@ -40,7 +39,6 @@ module.exports = {
 			});
 	},
 	ensureIndexExists: function (tableName, index) {
-		console.log('ensureIndexExists', tableName, index);
 		var connection = new Connection();
 
 		return connection.run(r.table(tableName).indexList())
