@@ -4,66 +4,55 @@ var utils = require('../../../../build/instrument/lib/support/utils'),
 	Connection = require('../../../../build/instrument/lib/connection'),
 	reheat = require('../../../../build/instrument/lib'),
 	r = require('rethinkdb'),
-	connection = new Connection(),
+	mout = require('mout'),
+	connection,
 	tableName = 'save';
 
 exports.saveIntegration = {
 	setUp: function (cb) {
-		connection.run(r.tableList(), function (err, tableList) {
-			if (err) {
-				cb(err);
-			} else {
-				var connectionTableExists = false;
-				for (var i = 0; i < tableList.length; i++) {
-					if (tableList[i] === tableName) {
-						connectionTableExists = true;
-					}
-				}
-				if (!connectionTableExists) {
-					connection.run(r.tableCreate(tableName), function (err) {
-						if (err) {
-							cb(err);
-						} else {
-							cb();
-						}
-					});
+		connection = new Connection();
+		connection.run(r.dbList())
+			.then(function (dbList) {
+				if (mout.array.contains(dbList, 'test')) {
+					return connection.run(r.dbDrop('test'));
 				} else {
-					connection.run(r.table(tableName).delete(), function (err) {
+					return null;
+				}
+			})
+			.then(function () {
+				return connection.drain(function () {
+					connection.destroyAllNow();
+
+					connection = new Connection();
+					return connection.run(r.tableCreate(tableName), function (err) {
 						if (err) {
 							cb(err);
 						} else {
 							cb();
 						}
 					});
-				}
-			}
-		});
+				});
+			})
+			.catch(cb)
+			.error(cb);
 	},
 
 	tearDown: function (cb) {
-		connection.run(r.tableList(), function (err, tableList) {
-			if (err) {
-				cb(err);
-			} else {
-				var connectionTableExists = false;
-				for (var i = 0; i < tableList.length; i++) {
-					if (tableList[i] === tableName) {
-						connectionTableExists = true;
-					}
+		connection.run(r.dbList())
+			.then(function (dbList) {
+				if (mout.array.contains(dbList, 'test')) {
+					return connection.run(r.dbDrop('test'));
 				}
-				if (!connectionTableExists) {
+				return null;
+			})
+			.then(function () {
+				connection.drain(function () {
+					connection.destroyAllNow();
 					cb();
-				} else {
-					connection.run(r.table(tableName).delete(), function (err) {
-						if (err) {
-							cb(err);
-						} else {
-							cb();
-						}
-					});
-				}
-			}
-		});
+				});
+			})
+			.catch(cb)
+			.error(cb);
 	},
 	saveNew: function (test) {
 		test.expect(5);

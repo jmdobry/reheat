@@ -2,128 +2,114 @@
 
 var Connection = require('../../../../build/instrument/lib/connection'),
 	reheat = require('../../../../build/instrument/lib'),
-	support = require('../../../support/support.js'),
+	utils = require('../../../../build/instrument/lib/support/utils'),
 	r = require('rethinkdb'),
-	sinon = require('sinon'),
 	mout = require('mout'),
-	connection = new Connection(),
-	Model = require('../../../../lib/model'),
+	connection,
 	Promise = require('bluebird'),
 	tables = ['user', 'post', 'comment', 'profile'],
 	User, Post, Comment, Profile;
 
 exports.saveIntegration = {
 	setUp: function (cb) {
-		var tasks = [],
-			tasks2 = [],
-			tasks3 = [];
-		for (var i = 0; i < tables.length; i++) {
-			tasks.push(support.ensureTableExists(tables[i]));
-		}
-		tasks2.push(support.ensureIndexExists(tables[1], 'userId'));
-		tasks2.push(support.ensureIndexExists(tables[2], 'userId'));
-		tasks2.push(support.ensureIndexExists(tables[2], 'postId'));
-		tasks2.push(support.ensureIndexExists(tables[3], 'userId'));
-		for (i = 0; i < tables.length; i++) {
-			tasks3.push(r.table(tables[i]).delete());
-		}
-		Promise.all(tasks)
-			.then(function () {
-				return Promise.all(tasks2);
+		connection = new Connection();
+		connection.run(r.dbList())
+			.then(function (dbList) {
+				if (utils.contains(dbList, 'test')) {
+					return connection.run(r.dbDrop('test'));
+				} else {
+					return null;
+				}
 			})
 			.then(function () {
-				return Promise.all(tasks3);
-			})
-			.then(function () {
-				User = reheat.defineModel('User', {
-					tableName: tables[0],
-					connection: connection,
-					relations: {
-						hasMany: {
-							Post: {
-								localField: 'posts' || mout.string.camelCase('Post') + 'List',
-								foreignKey: 'userId' || mout.string.camelCase('User') + 'Id'
+				connection.drain(function () {
+					connection.destroyAllNow();
+
+					connection = new Connection();
+
+					User = reheat.defineModel('User', {
+						tableName: tables[0],
+						connection: connection,
+						relations: {
+							hasMany: {
+								Post: {
+									localField: 'posts',
+									foreignKey: 'userId'
+								},
+								Comment: {
+									localField: 'comments',
+									foreignKey: 'userId'
+								}
 							},
-							Comment: {
-								localField: 'comments' || mout.string.camelCase('Comment') + 'List',
-								foreignKey: 'userId' || mout.string.camelCase('User') + 'Id'
-							}
-						},
-						hasOne: {
-							Profile: {
-								localField: 'profile' || mout.string.camelCase('Profile'),
-								foreignKey: 'userId' || mout.string.camelCase('Profile') + 'Id'
+							hasOne: {
+								Profile: {
+									localField: 'profile',
+									foreignKey: 'userId'
+								}
 							}
 						}
-					}
-				});
+					});
 
-				Profile = reheat.defineModel('Profile', {
-					tableName: tables[3],
-					connection: connection,
-					relations: {
-						belongsTo: {
-							User: {
-								localKey: 'userId' || mout.string.camelCase('User') + 'Id',
-								localField: 'user' || mout.string.camelCase('User')
+					Profile = reheat.defineModel('Profile', {
+						tableName: tables[3],
+						connection: connection,
+						relations: {
+							belongsTo: {
+								User: {
+									localKey: 'userId',
+									localField: 'user'
+								}
 							}
 						}
-					}
-				});
+					});
 
-				Post = reheat.defineModel('Post', {
-					tableName: tables[1],
-					connection: connection,
-					relations: {
-						belongsTo: {
-							User: {
-								localKey: 'userId' || mout.string.camelCase('User') + 'Id',
-								localField: 'user' || mout.string.camelCase('User')
-							}
-						},
-						hasMany: {
-							Comment: {
-								localField: 'comments' || mout.string.camelCase('Comment') + 'List',
-								foreignKey: 'postId' || mout.string.camelCase('User') + 'Id'
-							}
-						}
-					}
-				});
-
-				Comment = reheat.defineModel('Comment', {
-					tableName: tables[2],
-					connection: connection,
-					relations: {
-						belongsTo: {
-							User: {
-								localKey: 'userId' || mout.string.camelCase('User') + 'Id',
-								localField: 'user' || mout.string.camelCase('User')
+					Post = reheat.defineModel('Post', {
+						tableName: tables[1],
+						connection: connection,
+						relations: {
+							belongsTo: {
+								User: {
+									localKey: 'userId',
+									localField: 'user'
+								}
 							},
-							Post: {
-								localKey: 'postId' || mout.string.camelCase('Post') + 'Id',
-								localField: 'post' || mout.string.camelCase('Post')
+							hasMany: {
+								Comment: {
+									localField: 'comments',
+									foreignKey: 'postId'
+								}
 							}
 						}
-					}
+					});
+
+					Comment = reheat.defineModel('Comment', {
+						tableName: tables[2],
+						connection: connection,
+						relations: {
+							belongsTo: {
+								User: {
+									localKey: 'userId',
+									localField: 'user'
+								},
+								Post: {
+									localKey: 'postId',
+									localField: 'post'
+								}
+							}
+						}
+					});
+					cb();
 				});
-				cb();
-			})
-			.catch(cb)
-			.error(cb);
+			}).catch(cb).error(cb);
 	},
 
 	tearDown: function (cb) {
-		var tasks = [],
-			tasks2 = [];
-		for (var i = 0; i < tables.length; i++) {
-			tasks.push(support.ensureTableExists(tables[i]));
-		}
-		for (i = 0; i < tables.length; i++) {
-			tasks2.push(r.table(tables[i]).delete());
-		}
-		Promise.all(tasks)
-			.then(function () {
-				return Promise.all(tasks2);
+		connection.run(r.dbList())
+			.then(function (dbList) {
+				if (utils.contains(dbList, 'test')) {
+					return connection.run(r.dbDrop('test'));
+				}
+				return null;
 			})
 			.then(function () {
 				reheat.unregisterModel('User');
@@ -628,7 +614,7 @@ exports.saveIntegration = {
 				test.ok(tempUser2 instanceof User);
 				test.equal(tempUser2.get('id'), user2.get(User.idAttribute));
 				test.equal(tempUser2.get('name'), user2.get('name'));
-				test.equal(tempPost.get('comments').length, 3);
+				test.equal(tempComments.length, 3);
 
 				return Comment.get(comment2.get(Comment.idAttribute), { with: ['Post', 'User'] });
 			})

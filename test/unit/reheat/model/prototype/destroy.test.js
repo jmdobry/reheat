@@ -52,7 +52,8 @@ exports.destroyTest = {
 			constructor: {
 				connection: {},
 				timestamps: false,
-				idAttribute: 'id'
+				idAttribute: 'id',
+				tableReady: Promise.resolve()
 			},
 			isNew: function () {
 				return false;
@@ -76,6 +77,7 @@ exports.destroyTest = {
 		});
 
 		instance.destroy(function (err, instance) {
+			console.log(err);
 			test.ifError(err);
 			test.deepEqual(instance.attributes, {
 				name: 'John'
@@ -124,7 +126,8 @@ exports.destroyTest = {
 			constructor: {
 				connection: {},
 				timestamps: false,
-				idAttribute: 'id'
+				idAttribute: 'id',
+				tableReady: Promise.resolve()
 			},
 			isNew: function () {
 				return true;
@@ -158,7 +161,8 @@ exports.destroyTest = {
 			constructor: {
 				connection: {},
 				timestamps: true,
-				softDelete: true
+				softDelete: true,
+				tableReady: Promise.resolve()
 			},
 			isNew: function () {
 				return false;
@@ -261,7 +265,8 @@ exports.destroyTest = {
 			constructor: {
 				connection: {},
 				timestamps: false,
-				softDelete: true
+				softDelete: true,
+				tableReady: Promise.resolve()
 			},
 			isNew: function () {
 				return false;

@@ -1,15 +1,16 @@
-var static = require('../../../../../build/instrument/lib/model/static');
+var s = require('../../../../../build/instrument/lib/model/static');
 
 exports.static = {
 	test: function (test) {
-		test.expect(6);
+		test.expect(7);
 
-		test.equal(static.idAttribute, 'id');
-		test.equal(static.tableName, 'test');
-		test.equal(static.timestamps, false);
-		test.equal(static.softDelete, false);
-		test.equal(static.connection, null);
-		test.equal(static.schema, null);
+		test.equal(s.idAttribute, 'id');
+		test.equal(s.tableName, '');
+		test.equal(s.timestamps, false);
+		test.equal(s.softDelete, false);
+		test.equal(s.connection, null);
+		test.equal(s.relations, null);
+		test.equal(s.schema, null);
 		test.done();
 	}
 };

@@ -13,6 +13,8 @@ exports.get = {
 			this.attributes = attrs;
 		}
 
+		Model.tableReady = Promise.resolve();
+		Model.relations = {};
 		Model.tableName = 'test';
 		Model.get = get;
 		Model.connection = {
@@ -37,6 +39,8 @@ exports.get = {
 			this.attributes = attrs;
 		}
 
+		Model.tableReady = Promise.resolve();
+		Model.relations = {};
 		Model.tableName = 'test';
 		Model.get = get;
 		Model.connection = {
@@ -61,6 +65,8 @@ exports.get = {
 			this.attributes = attrs;
 		}
 
+		Model.tableReady = Promise.resolve();
+		Model.relations = {};
 		Model.tableName = 'test';
 		Model.get = get;
 		Model.connection = {
@@ -85,6 +91,8 @@ exports.get = {
 			this.attributes = attrs;
 		}
 
+		Model.tableReady = Promise.resolve();
+		Model.relations = {};
 		Model.tableName = 'test';
 		Model.get = get;
 		Model.connection = {
@@ -109,6 +117,8 @@ exports.get = {
 			this.attributes = attrs;
 		}
 
+		Model.tableReady = Promise.resolve();
+		Model.relations = {};
 		Model.tableName = 'test';
 		Model.get = get;
 
@@ -140,6 +150,8 @@ exports.get = {
 			this.attributes = attrs;
 		}
 
+		Model.tableReady = Promise.resolve();
+		Model.relations = {};
 		Model.tableName = 'test';
 		Model.get = get;
 

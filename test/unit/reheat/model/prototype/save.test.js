@@ -76,7 +76,9 @@ exports.save = {
 			save: save,
 			constructor: {
 				connection: {},
-				timestamps: false
+				timestamps: false,
+				tableReady: Promise.resolve(),
+				relations: {}
 			},
 			isNew: function () {
 				return true;
@@ -96,6 +98,7 @@ exports.save = {
 		});
 
 		instance.save(function (err, instance) {
+			console.log(err);
 			test.ifError(err);
 			test.deepEqual(instance.attributes, {
 				name: 'John'
@@ -118,7 +121,9 @@ exports.save = {
 			save: save,
 			constructor: {
 				connection: {},
-				timestamps: true
+				timestamps: true,
+				relations: {},
+				tableReady: Promise.resolve()
 			},
 			isNew: function () {
 				return true;
@@ -192,7 +197,9 @@ exports.save = {
 			save: save,
 			constructor: {
 				connection: {},
-				timestamps: true
+				timestamps: true,
+				relations: {},
+				tableReady: Promise.resolve()
 			},
 			isNew: function () {
 				return false;
@@ -266,7 +273,9 @@ exports.save = {
 			save: save,
 			constructor: {
 				connection: {},
-				timestamps: true
+				relations: {},
+				timestamps: true,
+				tableReady: Promise.resolve()
 			},
 			isNew: function () {
 				return true;
