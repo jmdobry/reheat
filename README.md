@@ -1,6 +1,6 @@
 ## reheat
 
-__Current Version:__ 0.10.2
+__Current Version:__ 0.10.5
 
 __A red hot Node.js ORM for RethinkDB.__
 
@@ -64,12 +64,13 @@ var connection = new reheat.Connection({
 });
 
 var Post = reheat.Model.extend({
-	beforeCreate: function (cb) {
-		this.set('tags', []);
-		cb();
-	}
+	tableName: 'post',
+	connection: connection
 }, {
-	tableName: 'post'
+   	beforeCreate: function (cb) {
+   		this.setSync('tags', []);
+   		cb();
+   	}
 });
 
 var post = new Post({
