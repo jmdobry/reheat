@@ -53,7 +53,8 @@ exports.destroyTest = {
 				connection: {},
 				timestamps: false,
 				idAttribute: 'id',
-				tableReady: Promise.resolve()
+				tableReady: Promise.resolve(),
+				relations: {}
 			},
 			isNew: function () {
 				return false;
@@ -127,7 +128,8 @@ exports.destroyTest = {
 				connection: {},
 				timestamps: false,
 				idAttribute: 'id',
-				tableReady: Promise.resolve()
+				tableReady: Promise.resolve(),
+				relations: {}
 			},
 			isNew: function () {
 				return true;
@@ -162,7 +164,8 @@ exports.destroyTest = {
 				connection: {},
 				timestamps: true,
 				softDelete: true,
-				tableReady: Promise.resolve()
+				tableReady: Promise.resolve(),
+				relations: {}
 			},
 			isNew: function () {
 				return false;
@@ -266,7 +269,8 @@ exports.destroyTest = {
 				connection: {},
 				timestamps: false,
 				softDelete: true,
-				tableReady: Promise.resolve()
+				tableReady: Promise.resolve(),
+				relations: {}
 			},
 			isNew: function () {
 				return false;
