@@ -22,6 +22,8 @@
 		"module",
 		"exports",
 		"describe",
+		"beforeEach",
+		"afterEach",
 		"it",
 		"assert"
 	],
