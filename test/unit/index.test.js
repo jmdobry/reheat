@@ -2,20 +2,11 @@ var config = require('./config');
 
 module.exports = function () {
 
-	describe('/collection', function () {
+	config.register('unit_collection_tests', require('./collection/index.test'));
+	config.register('unit_model_tests', require('./model/index.test'));
+	config.register('unit_connection_tests', require('./connection/index.test'));
 
-		describe('/prototype', function () {
-			describe('toJSON', function () {
-				it('no tests yet!');
-			});
-		});
-		describe('/static', function () {
-			config.register('collection_static_filter_test', require('./collection/static/filter.test'));
-
-			describe('filter', config.get('collection_static_filter_test'));
-			describe('getAll', function () {
-				it('no tests yet!');
-			});
-		});
-	});
+	describe('/collection', config.get('unit_collection_tests'));
+	describe('/model', config.get('unit_model_tests'));
+	describe('/connection', config.get('unit_connection_tests'));
 };

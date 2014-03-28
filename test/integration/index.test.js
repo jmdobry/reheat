@@ -129,13 +129,48 @@ module.exports = function () {
 	});
 	describe('/collection', function () {
 		describe('/static', function () {
-//			describe('filter.js', require('./integration/collection/static/filter.test'));
+			describe('filter.js', function () {
+				it('no tests yet!');
+			});
 			describe('getAll.js', function () {
 				it('no tests yet!');
 			});
 		});
 		describe('/prototype', function () {
-			describe('index.js', function () {
+			describe('toJSON', function () {
+				it('no tests yet!');
+			});
+		});
+	});
+	describe('/model', function () {
+		describe('/static', function () {
+			describe('get.js', function () {
+				it('no tests yet!');
+			});
+			describe('filter.js', function () {
+				it('no tests yet!');
+			});
+			describe('getAll.js', function () {
+				it('no tests yet!');
+			});
+		});
+		describe('/prototype', function () {
+			describe('save', function () {
+				it('no tests yet!');
+			});
+			describe('destroy', function () {
+				it('no tests yet!');
+			});
+			describe('unset', function () {
+				it('no tests yet!');
+			});
+			describe('set', function () {
+				it('no tests yet!');
+			});
+			describe('setSync', function () {
+				it('no tests yet!');
+			});
+			describe('clear', function () {
 				it('no tests yet!');
 			});
 		});
