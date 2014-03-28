@@ -1,18 +1,16 @@
 module.exports = function () {
 	var config = require('./config'),
-		container = config.container,
-		r,
-		reheat;
+		Promise = config.get('Promise'),
+		r = config.get('r'),
+		reheat = require('../../lib'),
+		utils = config.get('utils');
 
 	beforeEach(function (done) {
-		config.reset();
-		r = container.get('r');
-		reheat = require('../lib');
-
-		var connection = new reheat.Connection(),
+		var connection = new reheat.Connection({
+				max: 1
+			}),
 			tables = ['user', 'post', 'comment', 'profile'],
-			User, Post, Profile, Comment,
-			utils = container.get('utils');
+			User, Post, Profile, Comment, Users, Posts, Profiles, Comments;
 
 		connection.run(r.dbList())
 			.then(function (dbList) {
@@ -23,92 +21,155 @@ module.exports = function () {
 				}
 			})
 			.then(function () {
-				connection.drain(function () {
-					connection.destroyAllNow();
-
-					connection = new reheat.Connection();
-
-					User = reheat.defineModel('User', {
-						tableName: tables[0],
-						connection: connection,
-						relations: {
-							hasMany: {
-								Post: {
-									localField: 'posts',
-									foreignKey: 'userId'
-								},
-								Comment: {
-									localField: 'comments',
-									foreignKey: 'userId'
-								}
-							},
-							hasOne: {
-								Profile: {
-									localField: 'profile',
-									foreignKey: 'userId'
-								}
-							}
-						}
-					});
-
-					Profile = reheat.defineModel('Profile', {
-						tableName: tables[3],
-						connection: connection,
-						relations: {
-							belongsTo: {
-								User: {
-									localKey: 'userId',
-									localField: 'user'
-								}
-							}
-						}
-					});
-
-					Post = reheat.defineModel('Post', {
-						tableName: tables[1],
-						connection: connection,
-						relations: {
-							belongsTo: {
-								User: {
-									localKey: 'userId',
-									localField: 'user'
-								}
-							},
-							hasMany: {
-								Comment: {
-									localField: 'comments',
-									foreignKey: 'postId'
-								}
-							}
-						}
-					});
-
-					Comment = reheat.defineModel('Comment', {
-						tableName: tables[2],
-						connection: connection,
-						relations: {
-							belongsTo: {
-								User: {
-									localKey: 'userId',
-									localField: 'user'
-								},
-								Post: {
-									localKey: 'postId',
-									localField: 'post'
-								}
-							}
-						}
-					});
-					done();
+				return connection.drain();
+			})
+			.then(function () {
+				return connection.destroyAllNow();
+			})
+			.then(function () {
+				connection = new reheat.Connection({
+					max: 5
 				});
+
+				User = reheat.defineModel('User', {
+					tableName: tables[0],
+					connection: connection,
+					relations: {
+						hasMany: {
+							Post: {
+								localField: 'posts',
+								foreignKey: 'userId'
+							},
+							Comment: {
+								localField: 'comments',
+								foreignKey: 'userId'
+							}
+						},
+						hasOne: {
+							Profile: {
+								localField: 'profile',
+								foreignKey: 'userId'
+							}
+						}
+					}
+				});
+
+				Profile = reheat.defineModel('Profile', {
+					tableName: tables[3],
+					connection: connection,
+					relations: {
+						belongsTo: {
+							User: {
+								localKey: 'userId',
+								localField: 'user'
+							}
+						}
+					}
+				});
+
+				Post = reheat.defineModel('Post', {
+					tableName: tables[1],
+					connection: connection,
+					relations: {
+						belongsTo: {
+							User: {
+								localKey: 'userId',
+								localField: 'user'
+							}
+						},
+						hasMany: {
+							Comment: {
+								localField: 'comments',
+								foreignKey: 'postId'
+							}
+						}
+					}
+				});
+
+				Comment = reheat.defineModel('Comment', {
+					tableName: tables[2],
+					connection: connection,
+					relations: {
+						belongsTo: {
+							User: {
+								localKey: 'userId',
+								localField: 'user'
+							},
+							Post: {
+								localKey: 'postId',
+								localField: 'post'
+							}
+						}
+					}
+				});
+
+				Users = reheat.defineCollection('Users', {
+					model: User
+				});
+
+				Profiles = reheat.defineCollection('Profiles', {
+					model: Profile
+				});
+
+				Posts = reheat.defineCollection('Posts', {
+					model: Post
+				});
+
+				Comments = reheat.defineCollection('Comments', {
+					model: Comment
+				});
+
+				config.register('User', function () {
+					return User;
+				});
+
+				config.register('Users', function () {
+					return Users;
+				});
+
+				config.register('Profile', function () {
+					return Profile;
+				});
+
+				config.register('Profiles', function () {
+					return Profiles;
+				});
+
+				config.register('Post', function () {
+					return Post;
+				});
+
+				config.register('Posts', function () {
+					return Posts;
+				});
+
+				config.register('Comment', function () {
+					return Comment;
+				});
+
+				config.register('Comments', function () {
+					return Comments;
+				});
+
+				return Promise.all([
+						User.tableReady,
+						Profile.tableReady,
+						Post.tableReady,
+						Comment.tableReady,
+						Profile.relations.indices.userId,
+						Post.relations.indices.userId,
+						Comment.relations.indices.userId,
+						Comment.relations.indices.postId
+					]).then(function () {
+						done();
+					});
 			}).catch(done).error(done);
 	});
 
 	afterEach(function (done) {
-		var connection = new reheat.Connection(),
-			utils = container.get('utils');
-
-		r = container.get('r');
+		var connection = new reheat.Connection({
+			max: 1
+		});
 
 		connection.run(r.dbList())
 			.then(function (dbList) {
@@ -116,6 +177,12 @@ module.exports = function () {
 					return connection.run(r.dbDrop('test'));
 				}
 				return null;
+			})
+			.then(function () {
+				return connection.drain();
+			})
+			.then(function () {
+				return connection.destroyAllNow();
 			})
 			.then(function () {
 				reheat.unregisterModel('User');
@@ -127,21 +194,10 @@ module.exports = function () {
 			.catch(done)
 			.error(done);
 	});
-	describe('/collection', function () {
-		describe('/static', function () {
-			describe('filter.js', function () {
-				it('no tests yet!');
-			});
-			describe('getAll.js', function () {
-				it('no tests yet!');
-			});
-		});
-		describe('/prototype', function () {
-			describe('toJSON', function () {
-				it('no tests yet!');
-			});
-		});
-	});
+
+	config.register('integration_collection_tests', require('./collection/index.test'));
+	describe('/collection', config.get('integration_collection_tests'));
+
 	describe('/model', function () {
 		describe('/static', function () {
 			describe('get.js', function () {

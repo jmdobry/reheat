@@ -1,5 +1,4 @@
 module.exports = function (container) {
-
 	return function () {
 
 		describe('/prototype', function () {
@@ -80,9 +79,14 @@ module.exports = function (container) {
 			});
 		});
 		describe('/static', function () {
-			container.register('unit_collection_static_filter_test', require('./static/filter.test'));
+			container.register('integration_collection_static_filter_test', require('./static/filter.test'));
+			container.register('integration_collection_static_filter_relations_test', require('./static/filter.relations.test'));
 
-			describe('filter', container.get('unit_collection_static_filter_test'));
+			describe('filter', function () {
+				describe('filter.test', container.get('integration_collection_static_filter_test'));
+				describe('filter.relations.test', container.get('integration_collection_static_filter_relations_test'));
+			});
+
 			describe('getAll', function () {
 				it('no tests yet!');
 			});
