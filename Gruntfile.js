@@ -8,7 +8,6 @@ module.exports = function (grunt) {
 	grunt.initConfig({
 		clean: {
 			doc: ['doc/'],
-			build: ['build/'],
 			afterDoc: [
 				'doc/resources/img/angular.png',
 				'doc/resources/img/angular_grey.png',
@@ -35,18 +34,6 @@ module.exports = function (grunt) {
 				'lib/**/*.js',
 				'test/**/*.js'
 			]
-		},
-
-		instrument: {
-			files: 'lib/**/*.js',
-			options: {
-				lazy: true,
-				basePath: 'build/instrument/'
-			}
-		},
-
-		reloadTasks: {
-			rootPath: 'build/instrument/lib'
 		},
 
 		concat: {
@@ -130,33 +117,20 @@ module.exports = function (grunt) {
 			}
 		},
 
-		storeCoverage: {
+		simplemocha: {
 			options: {
-				dir: 'build/report'
-			}
-		},
+				globals: [],
+				timeout: 3000,
+				ignoreLeaks: false,
+				//grep: '*-test',
+				ui: 'bdd',
+				reporter: 'spec'
+			},
 
-		makeReport: {
-			src: 'build/report/*.json',
-			options: {
-				type: 'lcov',
-				dir: 'build/report',
-				print: 'detail'
-			}
-		},
-
-		nodeunit: {
-			unit: [
-				'test/unit/**/*.test.js'
-			],
-			integration: [
-				'test/integration/**/*.test.js'
-			]
-		},
-
-		coveralls: {
-			options: {
-				coverage_dir: 'build/report'
+			all: {
+				src: [
+					'test/**/*.js'
+				]
 			}
 		},
 
@@ -252,27 +226,10 @@ module.exports = function (grunt) {
 		}
 	});
 
-	grunt.registerTask('test-unit', [
-		'nodeunit:unit'
-	]);
-
-	grunt.registerTask('test-integration', [
-		'nodeunit:integration'
-	]);
-
 	var testTasks = [
-		'clean:build',
-		'instrument',
-		'reloadTasks',
-		'test-unit',
-		'test-integration',
-		'storeCoverage',
-		'makeReport'
+		'simplemocha'
 	];
 
-	if (process.env.TRAVIS === true || process.env.TRAVIS === 'true') {
-		testTasks.push('coveralls');
-	}
 	grunt.registerTask('test', testTasks);
 
 	grunt.registerTask('doc', ['clean:doc', 'docular', 'concat', 'copy', 'clean:afterDoc', 'uglify']);
