@@ -198,37 +198,6 @@ module.exports = function () {
 	config.register('integration_collection_tests', require('./collection/index.test'));
 	describe('/collection', config.get('integration_collection_tests'));
 
-	describe('/model', function () {
-		describe('/static', function () {
-			describe('get.js', function () {
-				it('no tests yet!');
-			});
-			describe('filter.js', function () {
-				it('no tests yet!');
-			});
-			describe('getAll.js', function () {
-				it('no tests yet!');
-			});
-		});
-		describe('/prototype', function () {
-			describe('save', function () {
-				it('no tests yet!');
-			});
-			describe('destroy', function () {
-				it('no tests yet!');
-			});
-			describe('unset', function () {
-				it('no tests yet!');
-			});
-			describe('set', function () {
-				it('no tests yet!');
-			});
-			describe('setSync', function () {
-				it('no tests yet!');
-			});
-			describe('clear', function () {
-				it('no tests yet!');
-			});
-		});
-	});
+	config.register('integration_model_tests', require('./model/index.test'));
+	describe('/model', config.get('integration_model_tests'));
 };
