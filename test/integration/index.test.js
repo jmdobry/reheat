@@ -1,4 +1,4 @@
-module.exports = function () {
+describe('/integration', function () {
 	var config = require('./config'),
 		Promise = config.get('Promise'),
 		r = config.get('r'),
@@ -196,8 +196,8 @@ module.exports = function () {
 	});
 
 	config.register('integration_collection_tests', require('./collection/index.test'));
-	describe('/collection', config.get('integration_collection_tests'));
-
 	config.register('integration_model_tests', require('./model/index.test'));
+
+	describe('/collection', config.get('integration_collection_tests'));
 	describe('/model', config.get('integration_model_tests'));
-};
+});

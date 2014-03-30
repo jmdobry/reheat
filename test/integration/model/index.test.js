@@ -33,12 +33,13 @@ module.exports = function (container) {
 			});
 		});
 		describe('/static', function () {
-//			container.register('integration_model_static_filter_test', require('./static/get.test'));
+			container.register('integration_model_static_get_test', require('./static/get.test'));
+			container.register('integration_model_static_get_relations_test', require('./static/get.relations.test'));
 
-//			describe('get', function () {
-//				describe('get.test', container.get('integration_model_static_get_test'));
-//				describe('get.relations.test', container.get('integration_model_static_get_relations_test'));
-//			});
+			describe('get', function () {
+				describe('get.test', container.get('integration_model_static_get_test'));
+				describe('get.relations.test', container.get('integration_model_static_get_relations_test'));
+			});
 		});
 	};
 };

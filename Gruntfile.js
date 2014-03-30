@@ -127,9 +127,15 @@ module.exports = function (grunt) {
 				reporter: 'spec'
 			},
 
-			all: {
+			unit: {
 				src: [
-					'test/**/*.js'
+					'test/unit/**/*.js'
+				]
+			},
+
+			integration: {
+				src: [
+					'test/integration/*.js'
 				]
 			}
 		},
@@ -226,10 +232,13 @@ module.exports = function (grunt) {
 		}
 	});
 
-	var testTasks = [
-		'simplemocha'
-	];
+	grunt.registerTask('test-unit', 'simplemocha:unit');
+	grunt.registerTask('test-integration', 'simplemocha:integration');
 
+	var testTasks = [
+		'test-unit',
+		'test-integration'
+	];
 	grunt.registerTask('test', testTasks);
 
 	grunt.registerTask('doc', ['clean:doc', 'docular', 'concat', 'copy', 'clean:afterDoc', 'uglify']);
