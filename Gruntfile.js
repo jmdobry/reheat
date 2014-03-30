@@ -192,6 +192,19 @@ module.exports = function (grunt) {
 								lifecycle: 5,
 								saving: 6
 							}
+						},
+						{
+							id: 'collection',
+							title: 'Collection Guide',
+							docs: ['guide/collection/'],
+							rank: {
+								index: 1,
+								overview: 2,
+								options: 3,
+								instances: 4,
+								lifecycle: 5,
+								saving: 6
+							}
 						}
 					]
 				},
@@ -207,7 +220,8 @@ module.exports = function (grunt) {
 							scripts: [
 								'lib/connection/index.js',
 								'lib/support/errors.js',
-								'lib/model/'
+								'lib/model/',
+								'lib/collection/'
 							],
 							docs: ['guide/api']
 						}
