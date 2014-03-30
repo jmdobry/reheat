@@ -202,8 +202,19 @@ module.exports = function (grunt) {
 								overview: 2,
 								options: 3,
 								instances: 4,
-								lifecycle: 5,
-								saving: 6
+								static: 5
+							}
+						},
+						{
+							id: 'relations',
+							title: 'Relations Guide',
+							docs: ['guide/relations/'],
+							rank: {
+								index: 1,
+								overview: 2,
+								options: 3,
+								instances: 4,
+								static: 5
 							}
 						}
 					]

@@ -12,13 +12,15 @@ describe('/integration', function () {
 			tables = ['user', 'post', 'comment', 'profile'],
 			User, Post, Profile, Comment, Users, Posts, Profiles, Comments;
 
-		connection.run(r.dbList())
-			.then(function (dbList) {
-				if (utils.contains(dbList, 'test')) {
-					return connection.run(r.dbDrop('test'));
-				} else {
-					return null;
-				}
+		connection.run(r.db('test').tableList())
+			.then(function (tableList) {
+				var tasks = [];
+
+				utils.forEach(tableList, function (table) {
+					tasks.push(connection.run(r.db('test').table(table).delete()));
+				});
+
+				return Promise.all(tasks);
 			})
 			.then(function () {
 				return connection.drain();
@@ -167,23 +169,7 @@ describe('/integration', function () {
 	});
 
 	afterEach(function (done) {
-		var connection = new reheat.Connection({
-			max: 1
-		});
-
-		connection.run(r.dbList())
-			.then(function (dbList) {
-				if (utils.contains(dbList, 'test')) {
-					return connection.run(r.dbDrop('test'));
-				}
-				return null;
-			})
-			.then(function () {
-				return connection.drain();
-			})
-			.then(function () {
-				return connection.destroyAllNow();
-			})
+		Promise.resolve()
 			.then(function () {
 				reheat.unregisterModel('User');
 				reheat.unregisterModel('Post');
