@@ -1,12 +1,19 @@
 module.exports = function (container, assert, mout) {
 	return function () {
-		var User, Post, Profile, Comment;
+		var testData, testModels,
+			User, Profile, Post, Comment, Users, Posts, Comments, Profiles;
 
 		beforeEach(function () {
-			User = container.get('User');
-			Post = container.get('Post');
-			Profile = container.get('Profile');
-			Comment = container.get('Comment');
+			testData = container.get('testData');
+			testModels = container.get('testModels');
+			User = testModels.User;
+			Users = testModels.User.collection;
+			Post = testModels.Post;
+			Posts = testModels.Post.collection;
+			Profile = testModels.Profile;
+			Profiles = testModels.Profile.collection;
+			Comment = testModels.Comment;
+			Comments = testModels.Comment.collection;
 		});
 
 		it('should not try to destroy a new instance', function (done) {
