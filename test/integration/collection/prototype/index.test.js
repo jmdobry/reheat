@@ -313,25 +313,231 @@ module.exports = function (container, assert, mout, support, errors) {
 			});
 		});
 		describe('slice', function () {
-			it('no tests yet!');
+			it('should slice and return a new collection', function () {
+				var posts = new Posts([
+					{ author: 'a', title: 'a', order: 0 },
+					{ author: 'a', title: 'b', order: 1 },
+					{ author: 'a', title: 'c', order: 2 },
+					{ author: 'b', title: 'a', order: 3 },
+					{ author: 'b', title: 'b', order: 4 },
+					{ author: 'b', title: 'c', order: 5 },
+					{ author: 'c', title: 'a', order: 6 },
+					{ author: 'c', title: 'b', order: 7 },
+					{ author: 'c', title: 'c', order: 8 }
+				]);
+
+				var sliced = posts.slice(5);
+
+				assert.isTrue(sliced instanceof Posts);
+				assert.isFalse(sliced === posts);
+				assert.equal(sliced.size(), 4);
+
+				sliced = posts.slice(2, 3);
+
+				assert.isTrue(sliced instanceof Posts);
+				assert.isFalse(sliced === posts);
+				assert.equal(sliced.size(), 1);
+				assert.deepEqual(sliced.models[0].toJSON(), posts.models[2].toJSON());
+			});
 		});
 		describe('sort', function () {
-			it('no tests yet!');
+			it('should sort and return a new collection', function () {
+				var posts = new Posts([
+					{ author: 'a', title: 'a', order: 0 },
+					{ author: 'a', title: 'b', order: 1 },
+					{ author: 'a', title: 'c', order: 2 },
+					{ author: 'b', title: 'a', order: 3 },
+					{ author: 'b', title: 'b', order: 4 },
+					{ author: 'b', title: 'c', order: 5 },
+					{ author: 'c', title: 'a', order: 6 },
+					{ author: 'c', title: 'b', order: 7 },
+					{ author: 'c', title: 'c', order: 8 }
+				]);
+
+				var shuffled = new Posts([
+					posts.models[8],
+					posts.models[4],
+					posts.models[5],
+					posts.models[1],
+					posts.models[7],
+					posts.models[2],
+					posts.models[6],
+					posts.models[3],
+					posts.models[0]
+				]);
+
+				var sorted = shuffled.sort(function (a, b) {
+					return a.get('order') - b.get('order');
+				});
+
+				assert.deepEqual(posts.models[0].toJSON(), sorted.models[0].toJSON());
+				assert.deepEqual(posts.models[1].toJSON(), sorted.models[1].toJSON());
+				assert.deepEqual(posts.models[2].toJSON(), sorted.models[2].toJSON());
+				assert.deepEqual(posts.models[3].toJSON(), sorted.models[3].toJSON());
+				assert.deepEqual(posts.models[4].toJSON(), sorted.models[4].toJSON());
+				assert.deepEqual(posts.models[5].toJSON(), sorted.models[5].toJSON());
+				assert.deepEqual(posts.models[6].toJSON(), sorted.models[6].toJSON());
+				assert.deepEqual(posts.models[7].toJSON(), sorted.models[7].toJSON());
+				assert.deepEqual(posts.models[8].toJSON(), sorted.models[8].toJSON());
+			});
 		});
 		describe('sortBy', function () {
-			it('no tests yet!');
+			it('should sortBy and return a new collection', function () {
+				var posts = new Posts([
+					{ author: 'a', title: 'a', order: 0 },
+					{ author: 'a', title: 'b', order: 1 },
+					{ author: 'a', title: 'c', order: 2 },
+					{ author: 'b', title: 'a', order: 3 },
+					{ author: 'b', title: 'b', order: 4 },
+					{ author: 'b', title: 'c', order: 5 },
+					{ author: 'c', title: 'a', order: 6 },
+					{ author: 'c', title: 'b', order: 7 },
+					{ author: 'c', title: 'c', order: 8 }
+				]);
+
+				var shuffled = new Posts([
+					posts.models[8],
+					posts.models[4],
+					posts.models[5],
+					posts.models[1],
+					posts.models[7],
+					posts.models[2],
+					posts.models[6],
+					posts.models[3],
+					posts.models[0]
+				]);
+
+				var sorted = shuffled.sortBy(function (a) {
+					return a.get('order');
+				});
+
+				assert.deepEqual(posts.models[0].toJSON(), sorted.models[0].toJSON());
+				assert.deepEqual(posts.models[1].toJSON(), sorted.models[1].toJSON());
+				assert.deepEqual(posts.models[2].toJSON(), sorted.models[2].toJSON());
+				assert.deepEqual(posts.models[3].toJSON(), sorted.models[3].toJSON());
+				assert.deepEqual(posts.models[4].toJSON(), sorted.models[4].toJSON());
+				assert.deepEqual(posts.models[5].toJSON(), sorted.models[5].toJSON());
+				assert.deepEqual(posts.models[6].toJSON(), sorted.models[6].toJSON());
+				assert.deepEqual(posts.models[7].toJSON(), sorted.models[7].toJSON());
+				assert.deepEqual(posts.models[8].toJSON(), sorted.models[8].toJSON());
+			});
 		});
 		describe('unique', function () {
-			it('no tests yet!');
+			it('should remove duplicates and return a new collection', function () {
+				var posts = new Posts([
+					{ author: 'a', title: 'a', order: 0 },
+					{ author: 'a', title: 'b', order: 1 },
+					{ author: 'a', title: 'c', order: 2 },
+					{ author: 'b', title: 'a', order: 3 },
+					{ author: 'b', title: 'b', order: 4 },
+					{ author: 'b', title: 'c', order: 5 },
+					{ author: 'c', title: 'a', order: 6 },
+					{ author: 'c', title: 'b', order: 7 },
+					{ author: 'c', title: 'c', order: 8 }
+				]);
+
+				var uniqueAuthors = posts.unique(function (a, b) {
+					return a.get('author') === b.get('author');
+				});
+
+				assert.isTrue(uniqueAuthors instanceof Posts);
+				assert.isFalse(uniqueAuthors === Posts);
+				assert.equal(uniqueAuthors.size(), 3);
+				assert.deepEqual(uniqueAuthors.models[0].toJSON(), posts.models[2].toJSON());
+				assert.deepEqual(uniqueAuthors.models[1].toJSON(), posts.models[5].toJSON());
+				assert.deepEqual(uniqueAuthors.models[2].toJSON(), posts.models[8].toJSON());
+
+				var uniqueTitles = posts.unique(function (a, b) {
+					return a.get('title') === b.get('title');
+				});
+
+				assert.isTrue(uniqueTitles instanceof Posts);
+				assert.isFalse(uniqueTitles === Posts);
+				assert.equal(uniqueTitles.size(), 3);
+				assert.deepEqual(uniqueTitles.models[0].toJSON(), posts.models[6].toJSON());
+				assert.deepEqual(uniqueTitles.models[1].toJSON(), posts.models[7].toJSON());
+				assert.deepEqual(uniqueTitles.models[2].toJSON(), posts.models[8].toJSON());
+
+				var uniqueOrders = posts.unique(function (a, b) {
+					return a.get('order') === b.get('order');
+				});
+
+				assert.isTrue(uniqueOrders instanceof Posts);
+				assert.isFalse(uniqueOrders === Posts);
+				assert.equal(uniqueOrders.size(), 9);
+				assert.deepEqual(uniqueOrders.models[0].toJSON(), posts.models[0].toJSON());
+				assert.deepEqual(uniqueOrders.models[1].toJSON(), posts.models[1].toJSON());
+				assert.deepEqual(uniqueOrders.models[2].toJSON(), posts.models[2].toJSON());
+				assert.deepEqual(uniqueOrders.models[3].toJSON(), posts.models[3].toJSON());
+				assert.deepEqual(uniqueOrders.models[4].toJSON(), posts.models[4].toJSON());
+				assert.deepEqual(uniqueOrders.models[5].toJSON(), posts.models[5].toJSON());
+				assert.deepEqual(uniqueOrders.models[6].toJSON(), posts.models[6].toJSON());
+				assert.deepEqual(uniqueOrders.models[7].toJSON(), posts.models[7].toJSON());
+				assert.deepEqual(uniqueOrders.models[8].toJSON(), posts.models[8].toJSON());
+			});
 		});
 		describe('every', function () {
-			it('no tests yet!');
+			it('should return whether every item in the array passes the callback', function () {
+				var posts = new Posts([
+					{ author: 'a', title: 'b', order: 1 },
+					{ author: 'a', title: 'c', order: 2 },
+					{ author: 'b', title: 'a', order: 3 }
+				]);
+
+				assert.isFalse(posts.every(function (post) {
+					return post.get('order') % 2 === 0;
+				}));
+
+				assert.isTrue(posts.every(function (post) {
+					return post.isNew();
+				}));
+			});
 		});
 		describe('find', function () {
-			it('no tests yet!');
+			it('should find the first item that passes the callback', function () {
+				var posts = new Posts([
+					{ author: 'a', title: 'b', order: 1 },
+					{ author: 'a', title: 'c', order: 2 },
+					{ author: 'e', title: 'e', order: 2 },
+					{ author: 'f', title: 'f', order: 2 },
+					{ author: 'b', title: 'a', order: 3 }
+				]);
+
+				var found = posts.find(function (post) {
+					return post.get('order') === 2;
+				});
+
+				assert.deepEqual(found.toJSON(), posts.models[1].toJSON());
+
+				found = posts.find(function (post) {
+					return post.get('order') === 999;
+				});
+
+				assert.isUndefined(found);
+			});
 		});
 		describe('findLast', function () {
-			it('no tests yet!');
+			it('should find the last item that passes the callback', function () {
+				var posts = new Posts([
+					{ author: 'a', title: 'b', order: 1 },
+					{ author: 'a', title: 'c', order: 2 },
+					{ author: 'e', title: 'e', order: 2 },
+					{ author: 'f', title: 'f', order: 2 },
+					{ author: 'b', title: 'a', order: 3 }
+				]);
+
+				var found = posts.findLast(function (post) {
+					return post.get('order') === 2;
+				});
+
+				assert.deepEqual(found.toJSON(), posts.models[3].toJSON());
+
+				found = posts.findLast(function (post) {
+					return post ? post.get('order') === 999 : false;
+				});
+
+				assert.isUndefined(found);
+			});
 		});
 		describe('findIndex', function () {
 			it('no tests yet!');
@@ -340,7 +546,21 @@ module.exports = function (container, assert, mout, support, errors) {
 			it('no tests yet!');
 		});
 		describe('forEach', function () {
-			it('no tests yet!');
+			it('should call "callback" on every item in the collection', function () {
+				var posts = new Posts([
+					{ author: 'a', title: 'b', order: 1 },
+					{ author: 'a', title: 'c', order: 2 },
+					{ author: 'b', title: 'a', order: 3 }
+				]);
+
+				posts.forEach(function (post) {
+					post.setSync('order', post.get('order') * 10);
+				});
+
+				assert.equal(posts.models[0].get('order'), 10);
+				assert.equal(posts.models[1].get('order'), 20);
+				assert.equal(posts.models[2].get('order'), 30);
+			});
 		});
 		describe('invoke', function () {
 			it('no tests yet!');

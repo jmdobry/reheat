@@ -29,7 +29,7 @@ describe('/integration', function () {
 			})
 			.then(function () {
 				connection = new reheat.Connection({
-					max: 5
+					max: 2
 				});
 
 				var testModels = {
