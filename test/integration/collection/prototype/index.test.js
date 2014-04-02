@@ -72,6 +72,7 @@ module.exports = function (container, assert, mout, support, errors) {
 					'reduce',
 					'reject',
 					'remove',
+					'removeByPrimaryKey',
 					'reset',
 					'shuffle',
 					'size',
@@ -81,7 +82,6 @@ module.exports = function (container, assert, mout, support, errors) {
 					'sortBy',
 					'split',
 					'toJSON',
-					'toLookup',
 					'unique'
 				]);
 			});
@@ -540,10 +540,50 @@ module.exports = function (container, assert, mout, support, errors) {
 			});
 		});
 		describe('findIndex', function () {
-			it('no tests yet!');
+			it('should find the first item that passes the callback and return the index', function () {
+				var posts = new Posts([
+					{ author: 'a', title: 'b', order: 1 },
+					{ author: 'a', title: 'c', order: 2 },
+					{ author: 'e', title: 'e', order: 2 },
+					{ author: 'f', title: 'f', order: 2 },
+					{ author: 'b', title: 'a', order: 3 }
+				]);
+
+				var index = posts.findIndex(function (post) {
+					return post.get('order') === 2;
+				});
+
+				assert.equal(index, 1);
+
+				index = posts.findIndex(function (post) {
+					return post.get('order') === 999;
+				});
+
+				assert.equal(index, -1);
+			});
 		});
 		describe('findLastIndex', function () {
-			it('no tests yet!');
+			it('should find the last item that passes the callback and return the inde', function () {
+				var posts = new Posts([
+					{ author: 'a', title: 'b', order: 1 },
+					{ author: 'a', title: 'c', order: 2 },
+					{ author: 'e', title: 'e', order: 2 },
+					{ author: 'f', title: 'f', order: 2 },
+					{ author: 'b', title: 'a', order: 3 }
+				]);
+
+				var index = posts.findLastIndex(function (post) {
+					return post.get('order') === 2;
+				});
+
+				assert.equal(index, 3);
+
+				index = posts.findLastIndex(function (post) {
+					return post ? post.get('order') === 999 : false;
+				});
+
+				assert.equal(index, -1);
+			});
 		});
 		describe('forEach', function () {
 			it('should call "callback" on every item in the collection', function () {
@@ -563,28 +603,132 @@ module.exports = function (container, assert, mout, support, errors) {
 			});
 		});
 		describe('invoke', function () {
-			it('no tests yet!');
+			it('should invoke "methodName" in each item in the collection', function (done) {
+				var posts = new Posts([
+					{ author: 'a', title: 'b', order: 1 },
+					{ author: 'a', title: 'c', order: 2 },
+					{ author: 'b', title: 'a', order: 3 }
+				]);
+
+				posts.invoke('save');
+
+				setTimeout(function () {
+					assert.isFalse(posts.hasNew());
+					done();
+				}, 500);
+			});
 		});
 		describe('map', function () {
-			it('no tests yet!');
+			it('should call "callback" on each item and keep the result', function () {
+				var posts = new Posts([
+					{ author: 'a', title: 'b', order: 1 },
+					{ author: 'a', title: 'c', order: 2 },
+					{ author: 'b', title: 'a', order: 3 }
+				]);
+
+				var mapped = posts.map(function (post) {
+					return {
+						title: post.get('title'),
+						order: post.get('order') * 10
+					};
+				});
+
+				assert.deepEqual(mapped.toJSON(), [
+					{
+						title: 'b',
+						order: 10
+					},
+					{
+						title: 'c',
+						order: 20
+					},
+					{
+						title: 'a',
+						order: 30
+					}
+				]);
+			});
 		});
 		describe('pluck', function () {
-			it('no tests yet!');
+			it('should return an array of the plucked property', function () {
+				var posts = new Posts([
+					{ author: 'a', title: 'b', order: 1 },
+					{ author: 'a', title: 'c', order: 2 },
+					{ author: 'b', title: 'a', order: 3 }
+				]);
+
+				var plucked = posts.pluck('author');
+
+				assert.deepEqual(plucked, ['a', 'a', 'b']);
+
+				plucked = posts.pluck('title');
+
+				assert.deepEqual(plucked, ['b', 'c', 'a']);
+
+				plucked = posts.pluck('order');
+
+				assert.deepEqual(plucked, [1, 2, 3]);
+			});
 		});
 		describe('reduce', function () {
-			it('no tests yet!');
+			it('should reduce with an accumulator function and return the result', function () {
+				var posts = new Posts([
+					{ author: 'a', title: 'b', order: 1 },
+					{ author: 'a', title: 'c', order: 2 },
+					{ author: 'b', title: 'a', order: 3 }
+				]);
+
+				var reduced = posts.reduce(function (prev, cur, index, arr) {
+					prev = typeof prev !== 'number' ? prev.get('order') : prev;
+					return prev + arr[index].get('order');
+				});
+
+				assert.equal(reduced, 6);
+			});
 		});
-		describe('remove', function () {
-			it('no tests yet!');
-		});
-		describe('some', function () {
-			it('no tests yet!');
+		describe('removeByPrimaryKey', function () {
+			it('should remove a model instance by its primary key', function (done) {
+				Comments.filter({})
+					.then(function (comments) {
+						assert.equal(comments.size(), 8);
+
+						var comment = comments.removeByPrimaryKey(testData.comment6.get(Comment.idAttribute));
+
+						assert.deepEqual(comment.toJSON(), testData.comment6.toJSON());
+						assert.equal(comments.size(), 7);
+
+						done();
+					})
+					.catch(done)
+					.error(done);
+			});
 		});
 		describe('split', function () {
-			it('no tests yet!');
-		});
-		describe('toLookup', function () {
-			it('no tests yet!');
+			it('should split into segments', function () {
+				var posts = new Posts([
+					{ author: 'a', title: 'a', order: 0 },
+					{ author: 'a', title: 'b', order: 1 },
+					{ author: 'a', title: 'c', order: 2 },
+					{ author: 'b', title: 'a', order: 3 },
+					{ author: 'b', title: 'b', order: 4 },
+					{ author: 'b', title: 'c', order: 5 },
+					{ author: 'c', title: 'a', order: 6 },
+					{ author: 'c', title: 'b', order: 7 },
+					{ author: 'c', title: 'c', order: 8 }
+				]);
+
+				var segments = posts.split(4);
+
+				assert.equal(segments.length, 4);
+
+				segments = posts.split(3);
+
+				assert.equal(segments.length, 3);
+
+				segments = posts.split(123);
+
+				assert.equal(segments.length, 9);
+			});
 		});
 	};
 };

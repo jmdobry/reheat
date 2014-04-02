@@ -267,5 +267,4 @@ describe('/integration', function () {
 
 	describe('/collection', config.get('integration_collection_tests'));
 	describe('/model', config.get('integration_model_tests'));
-})
-;
+});
