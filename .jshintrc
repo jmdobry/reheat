@@ -21,7 +21,11 @@
 		"require",
 		"module",
 		"exports",
+		"before",
+		"after",
 		"describe",
+		"beforeEach",
+		"afterEach",
 		"it",
 		"assert"
 	],

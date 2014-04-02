@@ -1,104 +1,45 @@
-/*jshint loopfunc:true*/
+module.exports = function (container) {
+	return function () {
 
-var Connection = require('../../../build/instrument/lib/connection'),
-	reheat = require('../../../build/instrument/lib'),
-	r = require('rethinkdb'),
-	mout = require('mout'),
-	sinon = require('sinon'),
-	connection,
-	tableName = 'lifecycle';
+		describe('/prototype', function () {
+			container.register('integration_model_prototype_save_test', require('./prototype/save.test'));
+			container.register('integration_model_prototype_destroy_test', require('./prototype/destroy.test'));
 
-exports.saveIntegration = {
-	setUp: function (cb) {
-		connection = new Connection();
-		connection.run(r.dbList())
-			.then(function (dbList) {
-				if (mout.array.contains(dbList, 'test')) {
-					return connection.run(r.dbDrop('test'));
-				} else {
-					return null;
-				}
-			})
-			.then(function () {
-				return connection.drain(function () {
-					connection.destroyAllNow();
-
-					connection = new Connection();
-					return connection.run(r.tableCreate(tableName), function (err) {
-						if (err) {
-							cb(err);
-						} else {
-							cb();
-						}
-					});
-				});
-			})
-			.catch(cb)
-			.error(cb);
-	},
-
-	tearDown: function (cb) {
-		connection.run(r.dbList())
-			.then(function (dbList) {
-				if (mout.array.contains(dbList, 'test')) {
-					return connection.run(r.dbDrop('test'));
-				}
-				return null;
-			})
-			.then(function () {
-				connection.drain(function () {
-					connection.destroyAllNow();
-					cb();
-				});
-			})
-			.catch(cb)
-			.error(cb);
-	},
-	createLifecycle: function (test) {
-		test.expect(9);
-
-		var Post = reheat.defineModel('Post', {
-			tableName: tableName,
-			connection: connection
-		}, {
-			beforeValidate: function (cb) {
-				cb(null);
-			},
-			afterValidate: function (cb) {
-				cb(null);
-			},
-			beforeCreate: function (cb) {
-				cb(null);
-			},
-			afterCreate: function (instance, cb) {
-				cb(null, instance);
-			}
+			describe('save', container.get('integration_model_prototype_save_test'));
+			describe('destroy', container.get('integration_model_prototype_destroy_test'));
+			describe('unset', function () {
+				it('no tests yet!');
+			});
+			describe('set', function () {
+				it('no tests yet!');
+			});
+			describe('setSync', function () {
+				it('no tests yet!');
+			});
+			describe('clear', function () {
+				it('no tests yet!');
+			});
+			describe('toJSON', function () {
+				it('no tests yet!');
+			});
+			describe('functions', function () {
+				it('no tests yet!');
+			});
+			describe('clone', function () {
+				it('no tests yet!');
+			});
+			describe('isNew', function () {
+				it('no tests yet!');
+			});
 		});
+		describe('/static', function () {
+			container.register('integration_model_static_get_test', require('./static/get.test'));
+			container.register('integration_model_static_get_relations_test', require('./static/get.relations.test'));
 
-		var post = new Post({
-			author: 'John Anderson',
-			address: {
-				state: 'NY'
-			}
+			describe('get', function () {
+				describe('get.test', container.get('integration_model_static_get_test'));
+				describe('get.relations.test', container.get('integration_model_static_get_relations_test'));
+			});
 		});
-
-		sinon.spy(post, 'beforeValidate');
-		sinon.spy(post, 'afterValidate');
-		sinon.spy(post, 'beforeCreate');
-		sinon.spy(post, 'afterCreate');
-
-		post.save(function (err, post) {
-			test.ifError(err);
-			test.deepEqual(post.get('author'), 'John Anderson');
-			test.deepEqual(post.get('address.state'), 'NY');
-			test.ok(typeof post.get('id') === 'string');
-			test.equal(post.meta.inserted, 1);
-			test.equal(post.beforeValidate.callCount, 1);
-			test.equal(post.afterValidate.callCount, 1);
-			test.equal(post.beforeCreate.callCount, 1);
-			test.equal(post.afterCreate.callCount, 1);
-			reheat.unregisterModel('Post');
-			test.done();
-		});
-	}
+	};
 };

@@ -1,199 +1,158 @@
-/*jshint loopfunc:true*/
+module.exports = function (container, assert, mout) {
+	return function () {
+		var testData, testModels,
+			User, Profile, Post, Comment, Users, Posts, Comments, Profiles;
 
-var utils = require('../../../../build/instrument/lib/support/utils'),
-	Connection = require('../../../../build/instrument/lib/connection'),
-	reheat = require('../../../../build/instrument/lib'),
-	r = require('rethinkdb'),
-	mout = require('mout'),
-	connection,
-	tableName = 'save';
+		beforeEach(function () {
+			testData = container.get('testData');
+			testModels = container.get('testModels');
+			User = testModels.User;
+			Users = testModels.User.collection;
+			Post = testModels.Post;
+			Posts = testModels.Post.collection;
+			Profile = testModels.Profile;
+			Profiles = testModels.Profile.collection;
+			Comment = testModels.Comment;
+			Comments = testModels.Comment.collection;
+		});
 
-exports.saveIntegration = {
-	setUp: function (cb) {
-		connection = new Connection();
-		connection.run(r.dbList())
-			.then(function (dbList) {
-				if (mout.array.contains(dbList, 'test')) {
-					return connection.run(r.dbDrop('test'));
-				} else {
-					return null;
+		it('should correctly save a new instance', function (done) {
+			var post = new Post({
+				author: 'John Anderson',
+				address: {
+					state: 'NY'
 				}
-			})
-			.then(function () {
-				return connection.drain(function () {
-					connection.destroyAllNow();
+			});
 
-					connection = new Connection();
-					return connection.run(r.tableCreate(tableName), function (err) {
-						if (err) {
-							cb(err);
-						} else {
-							cb();
+			assert.isTrue(post.isNew());
+
+			post.save()
+				.then(function (post) {
+					assert.deepEqual(post.toJSON(), {
+						id: post.get(Post.idAttribute),
+						author: 'John Anderson',
+						address: {
+							state: 'NY'
 						}
 					});
-				});
-			})
-			.catch(cb)
-			.error(cb);
-	},
+					assert.isFalse(post.isNew());
+					assert.equal(post.meta.inserted, 1);
 
-	tearDown: function (cb) {
-		connection.run(r.dbList())
-			.then(function (dbList) {
-				if (mout.array.contains(dbList, 'test')) {
-					return connection.run(r.dbDrop('test'));
+					done();
+				})
+				.catch(done)
+				.error(done);
+		});
+
+		it('should correctly save a new instance with timestamps', function (done) {
+			Post.timestamps = true;
+
+			var post = new Post({
+				author: 'John Anderson',
+				address: {
+					state: 'NY'
 				}
-				return null;
-			})
-			.then(function () {
-				connection.drain(function () {
-					connection.destroyAllNow();
-					cb();
-				});
-			})
-			.catch(cb)
-			.error(cb);
-	},
-	saveNew: function (test) {
-		test.expect(5);
-
-		var Post = reheat.defineModel('Post', {
-			tableName: tableName,
-			connection: connection
-		});
-
-		var post = new Post({
-			author: 'John Anderson',
-			address: {
-				state: 'NY'
-			}
-		});
-
-		post.save(function (err, post) {
-			test.ifError(err);
-			test.deepEqual(post.get('author'), 'John Anderson');
-			test.deepEqual(post.get('address.state'), 'NY');
-			test.ok(typeof post.get('id') === 'string');
-			test.equal(post.meta.inserted, 1);
-			reheat.unregisterModel('Post');
-			test.done();
-		});
-	},
-	saveNewWithTimestamps: function (test) {
-		test.expect(9);
-
-		var Post = reheat.defineModel('Post', {
-			tableName: tableName,
-			connection: connection,
-			timestamps: true
-		});
-
-		var post = new Post({
-			author: 'John Anderson',
-			address: {
-				state: 'NY'
-			}
-		});
-
-		post.save(function (err, post) {
-			test.ifError(err);
-			test.deepEqual(post.get('author'), 'John Anderson');
-			test.deepEqual(post.get('address.state'), 'NY');
-			test.ok(typeof post.get('id') === 'string');
-			test.ok(utils.isDate(post.get('created')));
-			test.ok(utils.isDate(post.get('updated')));
-			test.deepEqual(post.get('updated'), post.get('created'));
-			test.deepEqual(post.get('deleted'), null);
-			test.equal(post.meta.inserted, 1);
-			reheat.unregisterModel('Post');
-			test.done();
-		});
-	},
-	saveExisting: function (test) {
-		test.expect(13);
-
-		var Post = reheat.defineModel('Post', {
-			tableName: tableName,
-			connection: connection
-		});
-
-		var id;
-
-		var post = new Post({
-			author: 'John Anderson',
-			address: {
-				state: 'NY'
-			}
-		});
-
-		post.save(function (err, post) {
-			test.ifError(err);
-			test.deepEqual(post.get('author'), 'John Anderson');
-			test.deepEqual(post.get('address.state'), 'NY');
-			test.ok(typeof post.get(Post.idAttribute) === 'string');
-			test.equal(post.meta.inserted, 1);
-			id = post.get(Post.idAttribute);
-			post.set({ author: 'Sally Johnson', address: { state: 'CO' } }, function (err) {
-				test.ifError(err);
-				test.deepEqual(post.get('author'), 'Sally Johnson');
-				test.deepEqual(post.get('address.state'), 'CO');
-				post.save(function (err, post) {
-					test.ifError(err);
-					test.deepEqual(post.get('author'), 'Sally Johnson');
-					test.deepEqual(post.get('address.state'), 'CO');
-					test.equal(post.meta.replaced, 1);
-					test.deepEqual(post.get('id'), id);
-					reheat.unregisterModel('Post');
-					test.done();
-				});
 			});
+
+			assert.isTrue(post.isNew());
+
+			post.save()
+				.then(function (post) {
+					assert.deepEqual(post.toJSON(), {
+						id: post.get(Post.idAttribute),
+						author: 'John Anderson',
+						address: {
+							state: 'NY'
+						},
+						created: post.get('created'),
+						updated: post.get('updated'),
+						deleted: null
+					});
+					assert.isTrue(mout.lang.isDate(post.get('created')));
+					assert.isTrue(mout.lang.isDate(post.get('created')));
+					assert.isFalse(post.isNew());
+					assert.equal(post.meta.inserted, 1);
+					Post.timestamps = false;
+					done();
+				})
+				.catch(done)
+				.error(done);
 		});
-	},
-	saveExistingWithTimestamps: function (test) {
-		test.expect(19);
 
-		var Post = reheat.defineModel('Post', {
-			tableName: tableName,
-			connection: connection,
-			timestamps: true
-		});
-
-		var id;
-
-		var post = new Post({
-			author: 'John Anderson',
-			address: {
-				state: 'NY'
-			}
-		});
-
-		post.save(function (err, post) {
-			test.ifError(err);
-			test.deepEqual(post.get('author'), 'John Anderson');
-			test.deepEqual(post.get('address.state'), 'NY');
-			test.ok(typeof post.get(Post.idAttribute) === 'string');
-			test.ok(utils.isDate(post.get('created')));
-			test.ok(utils.isDate(post.get('updated')));
-			test.deepEqual(post.get('updated'), post.get('created'));
-			test.deepEqual(post.get('deleted'), null);
-			test.equal(post.meta.inserted, 1);
-			id = post.get(Post.idAttribute);
-			post.set({ author: 'Sally Johnson', address: { state: 'CO' } }, function (err) {
-				test.ifError(err);
-				test.deepEqual(post.get('author'), 'Sally Johnson');
-				test.deepEqual(post.get('address.state'), 'CO');
-				post.save(function (err, post) {
-					test.ifError(err);
-					test.deepEqual(post.get('author'), 'Sally Johnson');
-					test.deepEqual(post.get('address.state'), 'CO');
-					test.equal(post.meta.replaced, 1);
-					test.deepEqual(post.get('id'), id);
-					test.ok(post.get('created') !== post.get('updated'));
-					test.ok(post.get('updated') > post.get('created'));
-					reheat.unregisterModel('Post');
-					test.done();
-				});
+		it('should update already saved instance', function (done) {
+			var post = new Post({
+				author: 'John Anderson',
+				address: {
+					state: 'NY'
+				}
 			});
+
+			assert.isTrue(post.isNew());
+
+			post.save()
+				.then(function (post) {
+					post.setSync('address.state', 'CO');
+					assert.isFalse(post.isNew());
+					assert.equal(post.meta.inserted, 1);
+
+					return post.save();
+				})
+				.then(function (post) {
+					assert.deepEqual(post.toJSON(), {
+						id: post.get(Post.idAttribute),
+						author: 'John Anderson',
+						address: {
+							state: 'CO'
+						}
+					});
+					assert.isFalse(post.isNew());
+					assert.equal(post.meta.replaced, 1);
+
+					done();
+				})
+				.catch(done)
+				.error(done);
 		});
-	}
+
+		it('should update already saved instance with timestamps', function (done) {
+			Post.timestamps = true;
+
+			var post = new Post({
+				author: 'John Anderson',
+				address: {
+					state: 'NY'
+				}
+			});
+
+			assert.isTrue(post.isNew());
+
+			post.save()
+				.then(function (post) {
+					post.setSync('address.state', 'CO');
+					assert.isFalse(post.isNew());
+					assert.equal(post.meta.inserted, 1);
+
+					return post.save();
+				})
+				.then(function (post) {
+					assert.deepEqual(post.toJSON(), {
+						id: post.get(Post.idAttribute),
+						author: 'John Anderson',
+						address: {
+							state: 'CO'
+						},
+						created: post.get('created'),
+						updated: post.get('updated'),
+						deleted: null
+					});
+					assert.notEqual(post.get('created'), post.get('updated'));
+					assert.isFalse(post.isNew());
+					assert.equal(post.meta.replaced, 1);
+
+					done();
+				})
+				.catch(done)
+				.error(done);
+		});
+	};
 };
