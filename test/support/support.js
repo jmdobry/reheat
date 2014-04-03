@@ -6,6 +6,8 @@ module.exports = {
 	}],
 	TYPES_EXCEPT_STRING_OR_ARRAY: [123, 123.123, null, undefined, {}, true, false, function () {
 	}],
+	TYPES_EXCEPT_ARRAY: ['string', 123, 123.123, null, undefined, {}, true, false, function () {
+	}],
 	TYPES_EXCEPT_STRING_OR_OBJECT: [123, 123.123, null, undefined, [], true, false, function () {
 	}],
 	TYPES_EXCEPT_STRING_OR_NUMBER: [null, undefined, {}, [], true, false, function () {

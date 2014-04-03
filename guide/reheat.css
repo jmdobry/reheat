@@ -3,61 +3,55 @@ body {
     background: url(/resources/img/cream_dust.png) repeat repeat;
 }
 
-.main-nav {
-    border-bottom: 2px solid #cb0018;
-}
-
-.main-nav:before {
-    content: " ";
-    position: absolute;
-    z-index: -1;
-    top: 5px;
-    left: 0px;
-    right: 0px;
-    bottom: -4px;
-    border: 2px solid #fd8023;
-}
-
 a {
-    color: #8e0410;
+    color: #B84900;
 }
 
 a:hover {
-    color: #cb0018;
+    color: #F65D03;
+}
+
+.main-nav .nav > li {
+    border: none;
+    padding: 3px 0;
+    margin: 0;
+}
+
+.main-nav .nav > li:hover {
+    background-color: #F65D03;
+}
+
+.navbar-inner {
+    background: #DF5B03 none;
 }
 
 .module-section.hidden .section-count {
-    color: #cb0018;
+    color: #DF5B03;
+}
+
+.documentation-group {
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
 
 .nav-list .active>a, .nav-list .active>a:hover {
-    background-color: #cb0018;
+    background-color: #F65D03;
 }
 
 .rounded-list a:before {
-    background: #cb0018;
+    background: #DF5B03;
 }
 
 .dropdown-menu li>a:hover, .dropdown-menu .active>a, .dropdown-menu .active>a:hover {
     color: #ffffff;
     text-decoration: none;
-    background-color: #cb0018;
+    background-color: #F65D03;
 }
 
 .footer {
-    border-top: 2px solid #cb0018;
-    position: relative;
-}
-
-.footer:before {
-    content: " ";
-    position: absolute;
-    z-index: -1;
-    top: -4px;
-    left: 0px;
-    right: 0px;
-    bottom: 37px;
-    border: 2px solid #fd8023;
+    background: #DF5B03 none;
 }
 
 .footer a {
@@ -70,4 +64,9 @@ a:hover {
 
 .nav>li>a:hover {
     background: none;
+}
+
+.navbar .nav>li>a {
+    color: #fff !important;
+    text-shadow: 0px 0px 1px black;
 }

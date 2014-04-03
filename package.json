@@ -1,7 +1,7 @@
 {
   "name": "reheat",
   "description": "A red hot Node.js ORM for RethinkDB.",
-  "version": "0.10.6",
+  "version": "0.11.0",
   "homepage": "https://github.com/jmdobry/reheat",
   "repository": {
     "type": "git",
@@ -44,7 +44,8 @@
     "mout": "~0.9.0",
     "bluebird": "~1.1.1",
     "rethinkdb": "~1.11.0-4",
-    "robocop.js": "~0.13.x"
+    "robocop.js": "~0.14.x",
+    "dependable": "^0.2.5"
   },
   "devDependencies": {
     "grunt": "~0.4.4",
@@ -55,14 +56,17 @@
     "grunt-contrib-concat": "~0.3.0",
     "grunt-karma-coveralls": "~2.4.3",
     "time-grunt": "~0.3.1",
-    "sinon": "~1.9.0",
+    "sinon": "^1.9.0",
     "grunt-contrib-uglify": "~0.4.0",
     "load-grunt-tasks": "~0.4.0",
     "grunt-cli": "~0.1.13",
     "grunt-contrib-jshint": "~0.9.2",
     "coveralls": "~2.10.0",
     "grunt-contrib-nodeunit": "~0.3.3",
-    "grunt-istanbul": "~0.2.5"
+    "grunt-istanbul": "~0.2.5",
+    "grunt-simple-mocha": "^0.4.0",
+    "chai": "^1.9.1",
+    "chai-as-promised": "^4.1.1"
   },
   "bugs": {
     "url": "https://github.com/jmdobry/reheat/issues",

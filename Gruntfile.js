@@ -8,7 +8,6 @@ module.exports = function (grunt) {
 	grunt.initConfig({
 		clean: {
 			doc: ['doc/'],
-			build: ['build/'],
 			afterDoc: [
 				'doc/resources/img/angular.png',
 				'doc/resources/img/angular_grey.png',
@@ -35,18 +34,6 @@ module.exports = function (grunt) {
 				'lib/**/*.js',
 				'test/**/*.js'
 			]
-		},
-
-		instrument: {
-			files: 'lib/**/*.js',
-			options: {
-				lazy: true,
-				basePath: 'build/instrument/'
-			}
-		},
-
-		reloadTasks: {
-			rootPath: 'build/instrument/lib'
 		},
 
 		concat: {
@@ -130,33 +117,26 @@ module.exports = function (grunt) {
 			}
 		},
 
-		storeCoverage: {
+		simplemocha: {
 			options: {
-				dir: 'build/report'
-			}
-		},
+				globals: [],
+				timeout: 5000,
+				ignoreLeaks: false,
+				//grep: '*-test',
+				ui: 'bdd',
+				reporter: 'spec'
+			},
 
-		makeReport: {
-			src: 'build/report/*.json',
-			options: {
-				type: 'lcov',
-				dir: 'build/report',
-				print: 'detail'
-			}
-		},
+			unit: {
+				src: [
+					'test/unit/**/*.js'
+				]
+			},
 
-		nodeunit: {
-			unit: [
-				'test/unit/**/*.test.js'
-			],
-			integration: [
-				'test/integration/**/*.test.js'
-			]
-		},
-
-		coveralls: {
-			options: {
-				coverage_dir: 'build/report'
+			integration: {
+				src: [
+					'test/integration/*.js'
+				]
 			}
 		},
 
@@ -212,6 +192,30 @@ module.exports = function (grunt) {
 								lifecycle: 5,
 								saving: 6
 							}
+						},
+						{
+							id: 'collection',
+							title: 'Collection Guide',
+							docs: ['guide/collection/'],
+							rank: {
+								index: 1,
+								overview: 2,
+								options: 3,
+								instances: 4,
+								static: 5
+							}
+						},
+						{
+							id: 'relations',
+							title: 'Relations Guide',
+							docs: ['guide/relations/'],
+							rank: {
+								index: 1,
+								overview: 2,
+								options: 3,
+								instances: 4,
+								static: 5
+							}
 						}
 					]
 				},
@@ -225,9 +229,7 @@ module.exports = function (grunt) {
 							id: 'api',
 							title: 'Reheat',
 							scripts: [
-								'lib/connection/index.js',
-								'lib/support/errors.js',
-								'lib/model/'
+								'lib/'
 							],
 							docs: ['guide/api']
 						}
@@ -252,27 +254,13 @@ module.exports = function (grunt) {
 		}
 	});
 
-	grunt.registerTask('test-unit', [
-		'nodeunit:unit'
-	]);
-
-	grunt.registerTask('test-integration', [
-		'nodeunit:integration'
-	]);
+	grunt.registerTask('test-unit', 'simplemocha:unit');
+	grunt.registerTask('test-integration', 'simplemocha:integration');
 
 	var testTasks = [
-		'clean:build',
-		'instrument',
-		'reloadTasks',
 		'test-unit',
-		'test-integration',
-		'storeCoverage',
-		'makeReport'
+		'test-integration'
 	];
-
-	if (process.env.TRAVIS === true || process.env.TRAVIS === 'true') {
-		testTasks.push('coveralls');
-	}
 	grunt.registerTask('test', testTasks);
 
 	grunt.registerTask('doc', ['clean:doc', 'docular', 'concat', 'copy', 'clean:afterDoc', 'uglify']);

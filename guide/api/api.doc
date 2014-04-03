@@ -39,10 +39,28 @@ var Person = reheat.defineModel('Person', {
 });
 ```
 
+Person.collection; // Default collection already defined
+
 ```js
 var person = new Person({
 	name: 'John Anderson'
 });
+```
+
+### Collection
+```js
+// This is optional. A default collection is defined for
+// every model you define.
+var Posts = reheat.defineCollection('Posts', {
+	model: Post
+});
+```
+
+```js
+var posts = new Posts([
+	{ author: 'John Anderson', title: 'How NOT to cook' },
+	{ author: 'Sally Johnson', title: 'How to cook' },
+]);
 ```
 
 ### Errors

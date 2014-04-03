@@ -1,219 +1,161 @@
-/*jshint loopfunc:true*/
+module.exports = function (container, assert, mout) {
+	return function () {
+		var testData, testModels,
+			User, Profile, Post, Comment, Users, Posts, Comments, Profiles;
 
-var utils = require('../../../../build/instrument/lib/support/utils'),
-	Connection = require('../../../../build/instrument/lib/connection'),
-	reheat = require('../../../../build/instrument/lib'),
-	r = require('rethinkdb'),
-	connection = new Connection(),
-	tableName = 'destroy';
+		beforeEach(function () {
+			testData = container.get('testData');
+			testModels = container.get('testModels');
+			User = testModels.User;
+			Users = testModels.User.collection;
+			Post = testModels.Post;
+			Posts = testModels.Post.collection;
+			Profile = testModels.Profile;
+			Profiles = testModels.Profile.collection;
+			Comment = testModels.Comment;
+			Comments = testModels.Comment.collection;
+		});
 
-exports.saveIntegration = {
-	setUp: function (cb) {
-		connection.run(r.tableList(), function (err, tableList) {
-			if (err) {
-				cb(err);
-			} else {
-				var connectionTableExists = false;
-				for (var i = 0; i < tableList.length; i++) {
-					if (tableList[i] === tableName) {
-						connectionTableExists = true;
-					}
+		it('should not try to destroy a new instance', function (done) {
+			var post = new Post({
+				author: 'John Anderson',
+				address: {
+					state: 'NY'
 				}
-				if (!connectionTableExists) {
-					connection.run(r.tableCreate(tableName), function (err) {
-						if (err) {
-							cb(err);
-						} else {
-							cb();
+			});
+
+			assert.isTrue(post.isNew());
+
+			post.destroy()
+				.then(function (post) {
+					assert.deepEqual(post.toJSON(), {
+						author: 'John Anderson',
+						address: {
+							state: 'NY'
 						}
 					});
-				} else {
-					connection.run(r.table(tableName).delete(), function (err) {
-						if (err) {
-							cb(err);
-						} else {
-							cb();
+					assert.isTrue(post.isNew());
+					assert.isUndefined(post.meta);
+
+					done();
+				})
+				.catch(done)
+				.error(done);
+		});
+
+		it('should destroy an already saved instance', function (done) {
+			var post = new Post({
+				author: 'John Anderson',
+				address: {
+					state: 'NY'
+				}
+			});
+
+			assert.isTrue(post.isNew());
+
+			post.save()
+				.then(function (post) {
+					assert.isFalse(post.isNew());
+					return post.destroy();
+				})
+				.then(function (post) {
+					assert.deepEqual(post.toJSON(), {
+						author: 'John Anderson',
+						address: {
+							state: 'NY'
 						}
 					});
-				}
-			}
-		});
-	},
+					assert.isTrue(post.isNew());
+					assert.isNull(post.meta.new_val);
+					assert.equal(post.meta.deleted, 1);
 
-	tearDown: function (cb) {
-		connection.run(r.tableList(), function (err, tableList) {
-			if (err) {
-				cb(err);
-			} else {
-				var connectionTableExists = false;
-				for (var i = 0; i < tableList.length; i++) {
-					if (tableList[i] === tableName) {
-						connectionTableExists = true;
-					}
+					done();
+				})
+				.catch(done)
+				.error(done);
+		});
+
+		it('should soft destroy an already saved instance with softDelete', function (done) {
+			Post.softDelete = true;
+
+			var post = new Post({
+				author: 'John Anderson',
+				address: {
+					state: 'NY'
 				}
-				if (!connectionTableExists) {
-					cb();
-				} else {
-					connection.run(r.table(tableName).delete(), function (err) {
-						if (err) {
-							cb(err);
-						} else {
-							cb();
-						}
+			});
+
+			assert.isTrue(post.isNew());
+
+			post.save()
+				.then(function (post) {
+					assert.isFalse(post.isNew());
+					return post.destroy();
+				})
+				.then(function (post) {
+					assert.deepEqual(post.toJSON(), {
+						id: post.get(Post.idAttribute),
+						author: 'John Anderson',
+						address: {
+							state: 'NY'
+						},
+						deleted: post.get('deleted')
 					});
+					assert.isTrue(mout.lang.isDate(post.get('deleted')));
+					assert.isFalse(post.isNew());
+					assert.equal(post.meta.replaced, 1);
+
+					Post.softDelete = false;
+					done();
+				})
+				.catch(done)
+				.error(done);
+		});
+
+		it('should soft destroy an already saved instance with softDelete and timestamps', function (done) {
+			Post.softDelete = true;
+			Post.timestamps = true;
+
+			var post = new Post({
+				author: 'John Anderson',
+				address: {
+					state: 'NY'
 				}
-			}
-		});
-	},
-	tryToDestroyNew: function (test) {
-		test.expect(4);
-
-		var Post = reheat.defineModel('Post', {
-			tableName: tableName,
-			connection: connection
-		});
-
-		var post = new Post({
-			author: 'John Anderson',
-			address: {
-				state: 'NY'
-			}
-		});
-
-		post.destroy(function (err, post) {
-			test.ifError(err);
-			test.deepEqual(post.get('author'), 'John Anderson');
-			test.deepEqual(post.get('address.state'), 'NY');
-			test.equal(post.meta, undefined);
-			reheat.unregisterModel('Post');
-			test.done();
-		});
-	},
-	destroyExisting: function (test) {
-		test.expect(14);
-
-		var Post = reheat.defineModel('Post', {
-			tableName: tableName,
-			connection: connection
-		});
-
-		var id;
-
-		var post = new Post({
-			author: 'John Anderson',
-			address: {
-				state: 'NY'
-			}
-		});
-
-		post.save(function (err, post) {
-			test.ifError(err);
-			test.deepEqual(post.get('author'), 'John Anderson');
-			test.deepEqual(post.get('address.state'), 'NY');
-			test.ok(typeof post.get(Post.idAttribute) === 'string');
-			test.equal(post.meta.inserted, 1);
-			id = post.get(Post.idAttribute);
-			post.destroy(function (err, post) {
-				test.ifError(err);
-				test.deepEqual(post.get('author'), 'John Anderson');
-				test.deepEqual(post.get('address.state'), 'NY');
-				test.equal(post.meta.deleted, 1);
-				test.deepEqual(post.get('id'), undefined);
-				test.deepEqual(post.toJSON(), {
-					author: 'John Anderson',
-					address: {
-						state: 'NY'
-					}
-				});
-				test.deepEqual(post.previousAttributes, {
-					author: 'John Anderson',
-					address: {
-						state: 'NY'
-					},
-					id: id
-				});
-				connection.run(r.table(tableName).get(id), function (err, post) {
-					test.ifError(err);
-					test.deepEqual(post, null);
-					reheat.unregisterModel('Post');
-					test.done();
-				});
 			});
+
+			assert.isTrue(post.isNew());
+
+			post.save()
+				.then(function (post) {
+					assert.isFalse(post.isNew());
+					assert.deepEqual(post.get('created'), post.get('updated'));
+					return post.destroy();
+				})
+				.then(function (post) {
+					assert.deepEqual(post.toJSON(), {
+						id: post.get(Post.idAttribute),
+						author: 'John Anderson',
+						address: {
+							state: 'NY'
+						},
+						created: post.get('created'),
+						updated: post.get('updated'),
+						deleted: post.get('deleted')
+					});
+					assert.isTrue(mout.lang.isDate(post.get('created')));
+					assert.isTrue(mout.lang.isDate(post.get('updated')));
+					assert.isTrue(mout.lang.isDate(post.get('deleted')));
+					assert.notDeepEqual(post.get('created'), post.get('updated'));
+					assert.deepEqual(post.get('updated'), post.get('deleted'));
+					assert.isFalse(post.isNew());
+					assert.equal(post.meta.replaced, 1);
+
+					Post.softDelete = false;
+					Post.timestamps = false;
+					done();
+				})
+				.catch(done)
+				.error(done);
 		});
-	},
-	destroyExistingWithTimestampsAndSoftDelete: function (test) {
-		test.expect(12);
-
-		var Post = reheat.defineModel('Post', {
-			tableName: tableName,
-			connection: connection,
-			timestamps: true,
-			softDelete: true
-		});
-
-		var id;
-
-		var post = new Post({
-			author: 'John Anderson',
-			address: {
-				state: 'NY'
-			}
-		});
-
-		post.save(function (err, post) {
-			test.ifError(err);
-			test.deepEqual(post.get('author'), 'John Anderson');
-			test.deepEqual(post.get('address.state'), 'NY');
-			test.ok(typeof post.get(Post.idAttribute) === 'string');
-			test.equal(post.meta.inserted, 1);
-			id = post.get(Post.idAttribute);
-			post.destroy(function (err, post) {
-				test.ifError(err);
-				test.deepEqual(post.get('author'), 'John Anderson');
-				test.deepEqual(post.get('address.state'), 'NY');
-				test.equal(post.meta.replaced, 1);
-				test.ok(utils.isDate(post.get('deleted')));
-				test.ok(post.get('created') !== post.get('updated'));
-				test.ok(post.get('updated').getTime() === post.get('deleted').getTime());
-				reheat.unregisterModel('Post');
-				test.done();
-			});
-		});
-	},
-	destroyExistingWithSoftDelete: function (test) {
-		test.expect(10);
-
-		var Post = reheat.defineModel('Post', {
-			tableName: tableName,
-			connection: connection,
-			softDelete: true
-		});
-
-		var id;
-
-		var post = new Post({
-			author: 'John Anderson',
-			address: {
-				state: 'NY'
-			}
-		});
-
-		post.save(function (err, post) {
-			test.ifError(err);
-			test.deepEqual(post.get('author'), 'John Anderson');
-			test.deepEqual(post.get('address.state'), 'NY');
-			test.ok(typeof post.get(Post.idAttribute) === 'string');
-			test.equal(post.meta.inserted, 1);
-			id = post.get(Post.idAttribute);
-			post.destroy(function (err, post) {
-				test.ifError(err);
-				test.deepEqual(post.get('author'), 'John Anderson');
-				test.deepEqual(post.get('address.state'), 'NY');
-				test.equal(post.meta.replaced, 1);
-				test.ok(utils.isDate(post.get('deleted')));
-				reheat.unregisterModel('Post');
-				test.done();
-			});
-		});
-	}
+	};
 };
