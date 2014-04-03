@@ -143,13 +143,13 @@ describe('/integration', function () {
 						title: 'post2'
 					}),
 					post3: new Post({
-						title: 'post5'
-					}),
-					post4: new Post({
 						title: 'post3'
 					}),
-					post5: new Post({
+					post4: new Post({
 						title: 'post4'
+					}),
+					post5: new Post({
+						title: 'post5'
 					}),
 					comment1: new Comment({
 						content: 'sweet!'

@@ -1,5 +1,21 @@
-module.exports = function (container) {
+module.exports = function (container, assert) {
 	return function () {
+
+		var testData, testModels,
+			User, Profile, Post, Comment, Users, Posts, Comments, Profiles;
+
+		beforeEach(function () {
+			testData = container.get('testData');
+			testModels = container.get('testModels');
+			User = testModels.User;
+			Users = testModels.User.collection;
+			Post = testModels.Post;
+			Posts = testModels.Post.collection;
+			Profile = testModels.Profile;
+			Profiles = testModels.Profile.collection;
+			Comment = testModels.Comment;
+			Comments = testModels.Comment.collection;
+		});
 
 		describe('/prototype', function () {
 			describe('save', function () {
@@ -15,29 +31,156 @@ module.exports = function (container) {
 				describe('destroy.relations.test', container.get('integration_model_prototype_destroy_relations_test'));
 			});
 
+			container.register('integration_model_prototype_load_test', require('./prototype/load.test'));
+			describe('load', container.get('integration_model_prototype_load_test'));
+
 			describe('unset', function () {
-				it('no tests yet!');
+				it('should unset an attribute', function (done) {
+					assert.equal(testData.user1.get('name'), 'John Anderson');
+					testData.user1.unset('name')
+						.then(function () {
+							assert.isUndefined(testData.user1.get('name'));
+							done();
+						})
+						.catch(done)
+						.error(done);
+				});
+				it('should unset a nested attribute', function (done) {
+					testData.user1.attributes.job = {
+						wage: '$10'
+					};
+					assert.equal(testData.user1.get('job.wage'), '$10');
+					testData.user1.unset('job.wage')
+						.then(function () {
+							assert.isUndefined(testData.user1.get('job.wage'));
+							done();
+						})
+						.catch(done)
+						.error(done);
+				});
 			});
 			describe('set', function () {
-				it('no tests yet!');
+				it('should set an attribute', function (done) {
+					assert.isUndefined(testData.user1.get('job'));
+					testData.user1.set('job', 'boss')
+						.then(function () {
+							assert.equal(testData.user1.get('job'), 'boss');
+							done();
+						})
+						.catch(done)
+						.error(done);
+				});
+				it('should set a nested attribute', function (done) {
+					assert.isUndefined(testData.user1.get('job.wage'));
+					testData.user1.set('job.wage', '$10')
+						.then(function () {
+							assert.equal(testData.user1.get('job.wage'), '$10');
+							assert.deepEqual(testData.user1.toJSON(), {
+								id: testData.user1.get(User.idAttribute),
+								name: testData.user1.get('name'),
+								job: {
+									wage: testData.user1.get('job.wage')
+								}
+							});
+							done();
+						})
+						.catch(done)
+						.error(done);
+				});
 			});
 			describe('setSync', function () {
-				it('no tests yet!');
+				it('should set an attribute', function () {
+					assert.isUndefined(testData.user1.get('job'));
+					testData.user1.setSync('job', 'boss');
+					assert.equal(testData.user1.get('job'), 'boss');
+				});
+				it('should set a nested attribute', function () {
+					assert.isUndefined(testData.user1.get('job.wage'));
+					testData.user1.setSync('job.wage', '$10');
+					assert.equal(testData.user1.get('job.wage'), '$10');
+					assert.deepEqual(testData.user1.toJSON(), {
+						id: testData.user1.get(User.idAttribute),
+						name: testData.user1.get('name'),
+						job: {
+							wage: testData.user1.get('job.wage')
+						}
+					});
+				});
 			});
 			describe('clear', function () {
-				it('no tests yet!');
+				it('should clear all attributes', function (done) {
+					testData.user1.setSync('job.wage', '$10');
+					assert.isDefined(testData.user1.get('job.wage'));
+					assert.isDefined(testData.user1.get('name'));
+					testData.user1.clear()
+						.then(function () {
+							assert.isUndefined(testData.user1.get('job.wage'));
+							assert.isUndefined(testData.user1.get('name'));
+							done();
+						})
+						.catch(done)
+						.error(done);
+				});
 			});
 			describe('toJSON', function () {
-				it('no tests yet!');
+				it('should JSONify the attributes', function () {
+					assert.deepEqual(testData.user1.toJSON(), {
+						id: testData.user1.get(User.idAttribute),
+						name: testData.user1.get('name')
+					});
+					assert.deepEqual(testData.post1.toJSON(), {
+						id: testData.post1.get(Post.idAttribute),
+						title: testData.post1.get('title'),
+						userId: testData.user1.get(User.idAttribute)
+					});
+				});
 			});
-			describe('functions', function () {
-				it('no tests yet!');
+			describe('function', function () {
+				it('should return the correct list of functions', function () {
+					assert.deepEqual(testData.user1.functions(), [
+						'afterCreate',
+						'afterDestroy',
+						'afterUpdate',
+						'afterValidate',
+						'beforeCreate',
+						'beforeDestroy',
+						'beforeUpdate',
+						'beforeValidate',
+						'clear',
+						'clone',
+						'constructor',
+						'destroy',
+						'escape',
+						'functions',
+						'get',
+						'initialize',
+						'isNew',
+						'load',
+						'save',
+						'set',
+						'setSync',
+						'toJSON',
+						'unset',
+						'validate'
+					]);
+				});
 			});
 			describe('clone', function () {
-				it('no tests yet!');
+				it('should clone a model instance', function () {
+					var clone = testData.user1.clone();
+
+					assert.isFalse(clone === testData.user1);
+					assert.deepEqual(clone.toJSON(), testData.user1.toJSON());
+				});
 			});
 			describe('isNew', function () {
-				it('no tests yet!');
+				it('should return whether a model instance has been saved to the database', function () {
+					var user = new User({ name: 'test user '});
+
+					assert.isTrue(user.isNew());
+
+					assert.isFalse(testData.user1.isNew());
+				});
 			});
 		});
 		describe('/static', function () {
