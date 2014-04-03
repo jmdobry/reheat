@@ -1,4 +1,4 @@
-##### 0.11.0 - 03 April 2014
+##### 1.0.0-beta.1 - 03 April 2014
 Added support for relations/associations.
 
 ###### Breaking API changes
