@@ -18,7 +18,7 @@ module.exports = function (container, Promise, assert) {
 		});
 
 		it('correctly retrieves a single hasOne relationship', function (done) {
-			Users.filter({}, { with: ['Profile'] })
+			Users.findAll({}, { with: ['Profile'] })
 				.then(function (users) {
 					assert.isTrue(users instanceof Users, 'should return an instance of the "Users" collection');
 					assert.equal(users.size(), 2, 'should have 2 users');
@@ -32,7 +32,7 @@ module.exports = function (container, Promise, assert) {
 		});
 
 		it('correctly retrieves a single hasMany relationship', function (done) {
-			Users.filter({}, { with: ['Post'] })
+			Users.findAll({}, { with: ['Post'] })
 				.then(function (users) {
 					assert.isTrue(users instanceof Users, 'should return an instance of the "Users" collection');
 					assert.equal(users.size(), 2, 'should have 2 users');
@@ -52,7 +52,7 @@ module.exports = function (container, Promise, assert) {
 		});
 
 		it('correctly retrieves multiple relationships', function (done) {
-			Users.filter({}, { with: ['Profile', 'Post', 'Comment'] })
+			Users.findAll({}, { with: ['Profile', 'Post', 'Comment'] })
 				.then(function (users) {
 					assert.isTrue(users instanceof Users, 'should return an instance of the "Users" collection');
 					assert.equal(users.size(), 2, 'should have 2 users');
@@ -82,7 +82,7 @@ module.exports = function (container, Promise, assert) {
 		});
 
 		it('correctly retrieves a single belongsTo relationship', function (done) {
-			Profiles.filter({}, { with: ['User'] })
+			Profiles.findAll({}, { with: ['User'] })
 				.then(function (profiles) {
 					assert.isTrue(profiles instanceof Profiles, 'should return an instance of the "Profiles" collection');
 					assert.equal(profiles.size(), 2, 'should have 2 profiles');
@@ -97,7 +97,7 @@ module.exports = function (container, Promise, assert) {
 		});
 
 		it('correctly retrieves multiple belongsTo relationships', function (done) {
-			Comments.filter({}, { with: ['User', 'Post'] })
+			Comments.findAll({}, { with: ['User', 'Post'] })
 				.then(function (comments) {
 					assert.isTrue(comments instanceof Comments, 'should return an instance of the "Comments" collection');
 					assert.equal(comments.size(), 8, 'should have 8 comments');

@@ -3,9 +3,9 @@ module.exports = function (container) {
 	return function () {
 
 		describe('/static', function () {
-			container.register('unit_collection_static_filter_test', require('./static/filter.test'));
+			container.register('unit_collection_static_findAll_test', require('./static/findAll.test'));
 
-			describe('filter', container.get('unit_collection_static_filter_test'));
+			describe('findAll', container.get('unit_collection_static_findAll_test'));
 			describe('getAll', function () {
 				it('no tests yet!');
 			});

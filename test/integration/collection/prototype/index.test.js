@@ -19,7 +19,7 @@ module.exports = function (container, assert, mout, support, errors) {
 
 		describe('toJSON', function () {
 			it('returns correct value', function (done) {
-				Users.filter({ limit: 1 })
+				Users.findAll({ limit: 1 })
 					.then(function (users) {
 						assert.deepEqual(users.toJSON(), [
 							users.models[0].toJSON()
@@ -30,7 +30,7 @@ module.exports = function (container, assert, mout, support, errors) {
 					.error(done);
 			});
 			it('calls toJSON() on relations', function (done) {
-				Users.filter({ limit: 1 }, { with: ['Profile', 'Post' ] })
+				Users.findAll({ limit: 1 }, { with: ['Profile', 'Post' ] })
 					.then(function (users) {
 						var user = users.models[0];
 
@@ -55,6 +55,7 @@ module.exports = function (container, assert, mout, support, errors) {
 				assert.deepEqual(posts.functions(), [
 					'clone',
 					'constructor',
+					'destroy',
 					'every',
 					'filter',
 					'find',
@@ -88,7 +89,7 @@ module.exports = function (container, assert, mout, support, errors) {
 		});
 		describe('clone', function () {
 			it('should clone a collection', function (done) {
-				Users.filter({})
+				Users.findAll({})
 					.then(function (users) {
 						var clone = users.clone();
 						clone.test = 'test';
@@ -103,7 +104,7 @@ module.exports = function (container, assert, mout, support, errors) {
 					.error(done);
 			});
 			it('calls toJSON() on relations', function (done) {
-				Users.filter({}, { with: ['Profile', 'Post' ] })
+				Users.findAll({}, { with: ['Profile', 'Post' ] })
 					.then(function (users) {
 						var clone = users.clone();
 						clone.test = 'test';
@@ -133,7 +134,7 @@ module.exports = function (container, assert, mout, support, errors) {
 		});
 		describe('hasNew', function () {
 			it('should not have anything new', function (done) {
-				Users.filter({})
+				Users.findAll({})
 					.then(function (users) {
 						assert.isFalse(users.hasNew());
 						done();
@@ -149,7 +150,7 @@ module.exports = function (container, assert, mout, support, errors) {
 					author: 'Fred Frank'
 				});
 
-				Users.filter({}, { with: ['Profile', 'Post' ] })
+				Users.findAll({}, { with: ['Profile', 'Post' ] })
 					.then(function (users) {
 						assert.isFalse(users.hasNew());
 						assert.isFalse(users.models[0].get('posts').hasNew());
@@ -165,7 +166,7 @@ module.exports = function (container, assert, mout, support, errors) {
 		});
 		describe('getByPrimaryKey', function () {
 			it('should return undefined if the model is not in the collection', function (done) {
-				Users.filter({})
+				Users.findAll({})
 					.then(function (users) {
 						assert.isUndefined(users.getByPrimaryKey('12345'));
 						done();
@@ -174,7 +175,7 @@ module.exports = function (container, assert, mout, support, errors) {
 					.error(done);
 			});
 			it('should throw an error if "primaryKey" is not a string', function (done) {
-				Users.filter({})
+				Users.findAll({})
 					.then(function (users) {
 						mout.array.forEach(support.TYPES_EXCEPT_STRING, function (type) {
 							assert.throws(function () {
@@ -187,7 +188,7 @@ module.exports = function (container, assert, mout, support, errors) {
 					.error(done);
 			});
 			it('should return the correct model if it is in the collection', function (done) {
-				Users.filter({})
+				Users.findAll({})
 					.then(function (users) {
 						assert.deepEqual(users.models[0].toJSON(), users.getByPrimaryKey(users.models[0].get(User.idAttribute)).toJSON());
 						assert.deepEqual(users.models[1].toJSON(), users.getByPrimaryKey(users.models[1].get(User.idAttribute)).toJSON());
@@ -688,7 +689,7 @@ module.exports = function (container, assert, mout, support, errors) {
 		});
 		describe('removeByPrimaryKey', function () {
 			it('should remove a model instance by its primary key', function (done) {
-				Comments.filter({})
+				Comments.findAll({})
 					.then(function (comments) {
 						assert.equal(comments.size(), 8);
 

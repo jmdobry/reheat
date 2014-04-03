@@ -165,8 +165,8 @@ Users.getAll(['12345', '67890'], { with: ['Profile', 'Post', 'Comment'] }).then(
 
 See the tests for more examples:
 
-- [get.relations.test.js](https://github.com/jmdobry/reheat/blob/master/test/integration/model/static/get.relations.test.js)
-- [filter.relations.test.js](https://github.com/jmdobry/reheat/blob/master/test/integration/collection/static/filter.relations.test.js)
+- [findOne.relations.test.js](https://github.com/jmdobry/reheat/blob/master/test/integration/model/static/findOne.relations.test.js)
+- [findAll.relations.test.js](https://github.com/jmdobry/reheat/blob/master/test/integration/collection/static/findAll.relations.test.js)
 - [getAll.relations.test.js](https://github.com/jmdobry/reheat/blob/master/test/integration/collection/static/getAll.relations.test.js)
 
 @doc overview

@@ -3,10 +3,15 @@ module.exports = function (container) {
 
 		describe('/prototype', function () {
 			container.register('integration_model_prototype_save_test', require('./prototype/save.test'));
-			container.register('integration_model_prototype_destroy_test', require('./prototype/destroy.test'));
 
 			describe('save', container.get('integration_model_prototype_save_test'));
-			describe('destroy', container.get('integration_model_prototype_destroy_test'));
+			describe('destroy', function () {
+				container.register('integration_model_prototype_destroy_test', require('./prototype/destroy.test'));
+				container.register('integration_model_prototype_destroy_relations_test', require('./prototype/destroy.relations.test'));
+				describe('destroy.test', container.get('integration_model_prototype_destroy_test'));
+				describe('destroy.relations.test', container.get('integration_model_prototype_destroy_relations_test'));
+			});
+
 			describe('unset', function () {
 				it('no tests yet!');
 			});
@@ -33,13 +38,15 @@ module.exports = function (container) {
 			});
 		});
 		describe('/static', function () {
-			container.register('integration_model_static_get_test', require('./static/get.test'));
-			container.register('integration_model_static_get_relations_test', require('./static/get.relations.test'));
+			container.register('integration_model_static_findOne_test', require('./static/findOne.test'));
+			container.register('integration_model_static_findOne_relations_test', require('./static/findOne.relations.test'));
+			container.register('integration_model_static_destroyOne_test', require('./static/destroyOne.test'));
 
-			describe('get', function () {
-				describe('get.test', container.get('integration_model_static_get_test'));
-				describe('get.relations.test', container.get('integration_model_static_get_relations_test'));
+			describe('findOne', function () {
+				describe('findOne.test', container.get('integration_model_static_findOne_test'));
+				describe('findOne.relations.test', container.get('integration_model_static_findOne_relations_test'));
 			});
+			describe('destroyOne', container.get('integration_model_static_destroyOne_test'));
 		});
 	};
 };

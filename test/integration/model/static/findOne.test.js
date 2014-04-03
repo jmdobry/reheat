@@ -18,7 +18,7 @@ module.exports = function (container, Promise, assert, mout, support, errors) {
 		});
 
 		it('should retrieve a single row without relations', function (done) {
-			Post.get(testData.post1.get(Post.idAttribute), { profile: true })
+			Post.findOne(testData.post1.get(Post.idAttribute), { profile: true })
 				.then(function (post) {
 					assert.isTrue(mout.lang.isArray(post.queries));
 					assert.equal(post.queries.length, 1);
@@ -33,7 +33,7 @@ module.exports = function (container, Promise, assert, mout, support, errors) {
 		});
 
 		it('should accept empty options', function (done) {
-			Post.get(testData.post1.get(Post.idAttribute), function (err, post) {
+			Post.findOne(testData.post1.get(Post.idAttribute), function (err, post) {
 				if (err) {
 					return done(err);
 				} else {
@@ -48,27 +48,27 @@ module.exports = function (container, Promise, assert, mout, support, errors) {
 		it('should throw errors for illegal arguments', function (done) {
 			mout.array.forEach(support.TYPES_EXCEPT_FUNCTION, function (type) {
 				assert.throws(function () {
-					Post.get(testData.post1.get(Post.idAttribute), {}, type || true);
-				}, errors.IllegalArgumentError, 'Model.get(primaryKey[, options][, cb]): cb: Must be a function!');
+					Post.findOne(testData.post1.get(Post.idAttribute), {}, type || true);
+				}, errors.IllegalArgumentError, 'Model.findOne(primaryKey[, options][, cb]): cb: Must be a function!');
 			});
 
 			var tasks = [];
 
 			mout.array.forEach(support.TYPES_EXCEPT_STRING, function (type) {
-				tasks.push(assert.isRejected(Post.get(type), errors.IllegalArgumentError, 'Model.get(primaryKey[, options][, cb]): primaryKey: Must be a string!'));
+				tasks.push(assert.isRejected(Post.findOne(type), errors.IllegalArgumentError, 'Model.findOne(primaryKey[, options][, cb]): primaryKey: Must be a string!'));
 			});
 
 			mout.array.forEach(support.TYPES_EXCEPT_OBJECT, function (type) {
 				if (!mout.lang.isFunction(type)) {
-					tasks.push(assert.isRejected(Post.get(testData.post1.get(Post.idAttribute), type || true), errors.IllegalArgumentError, 'Model.get(primaryKey[, options][, cb]): options: Must be an object!'));
+					tasks.push(assert.isRejected(Post.findOne(testData.post1.get(Post.idAttribute), type || true), errors.IllegalArgumentError, 'Model.findOne(primaryKey[, options][, cb]): options: Must be an object!'));
 				}
 			});
 
 			mout.array.forEach(support.TYPES_EXCEPT_ARRAY, function (type) {
 				if (!mout.lang.isFunction(type)) {
-					tasks.push(assert.isRejected(Post.get(testData.post1.get(Post.idAttribute), {
+					tasks.push(assert.isRejected(Post.findOne(testData.post1.get(Post.idAttribute), {
 						with: type || true
-					}), errors.IllegalArgumentError, 'Model.get(primaryKey[, options][, cb]): options.with: Must be an array!'));
+					}), errors.IllegalArgumentError, 'Model.findOne(primaryKey[, options][, cb]): options.with: Must be an array!'));
 				}
 			});
 
@@ -81,7 +81,7 @@ module.exports = function (container, Promise, assert, mout, support, errors) {
 		});
 
 		it('should retrieve a single row without relations in raw mode', function (done) {
-			Post.get(testData.post1.get(Post.idAttribute), { raw: true })
+			Post.findOne(testData.post1.get(Post.idAttribute), { raw: true })
 				.then(function (post) {
 					assert.isFalse(post instanceof Post, 'should not be an instance of "Post"');
 					assert.deepEqual(post, testData.post1.toJSON(), 'should retrieve the right post');

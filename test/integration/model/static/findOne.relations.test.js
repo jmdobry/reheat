@@ -18,7 +18,7 @@ module.exports = function (container, Promise, assert) {
 		});
 
 		it('correctly retrieves a single hasOne relationship', function (done) {
-			User.get(testData.user2.get(User.idAttribute), { with: ['Profile'] })
+			User.findOne(testData.user2.get(User.idAttribute), { with: ['Profile'] })
 				.then(function (user) {
 					assert.isTrue(user instanceof User, 'should return an instance of "User"');
 					assert.equal(user.get(User.idAttribute), testData.user2.get(User.idAttribute), 'should be the right user');
@@ -32,7 +32,7 @@ module.exports = function (container, Promise, assert) {
 		});
 
 		it('correctly retrieves a single hasMany relationship', function (done) {
-			User.get(testData.user2.get(User.idAttribute), { with: ['Post'] })
+			User.findOne(testData.user2.get(User.idAttribute), { with: ['Post'] })
 				.then(function (user) {
 					assert.isTrue(user instanceof User, 'should return an instance of "User"');
 					assert.equal(user.get(User.idAttribute), testData.user2.get(User.idAttribute), 'should be the right user');
@@ -50,7 +50,7 @@ module.exports = function (container, Promise, assert) {
 		});
 
 		it('correctly retrieves multiple relationships', function (done) {
-			User.get(testData.user2.get(User.idAttribute), { with: ['Profile', 'Post', 'Comment'] })
+			User.findOne(testData.user2.get(User.idAttribute), { with: ['Profile', 'Post', 'Comment'] })
 				.then(function (user) {
 					assert.isTrue(user instanceof User, 'should return an instance of "User"');
 					assert.equal(user.get(User.idAttribute), testData.user2.get(User.idAttribute), 'should be the right user');
@@ -78,7 +78,7 @@ module.exports = function (container, Promise, assert) {
 		});
 
 		it('correctly retrieves a single belongsTo relationship', function (done) {
-			Profile.get(testData.profile2.get(Profile.idAttribute), { with: ['User'] })
+			Profile.findOne(testData.profile2.get(Profile.idAttribute), { with: ['User'] })
 				.then(function (profile) {
 					assert.isTrue(profile instanceof Profile, 'should return an instance of "Profile"');
 					assert.deepEqual(profile.get(Profile.idAttribute), testData.profile2.get(Profile.idAttribute), 'should be the right profile');
@@ -93,7 +93,7 @@ module.exports = function (container, Promise, assert) {
 		});
 
 		it('correctly retrieves multiple belongsTo relationships', function (done) {
-			Comment.get(testData.comment8.get(Comment.idAttribute), { with: ['User', 'Post'] })
+			Comment.findOne(testData.comment8.get(Comment.idAttribute), { with: ['User', 'Post'] })
 				.then(function (comment) {
 					assert.isTrue(comment instanceof Comment, 'should return an instance of "Comment"');
 					assert.deepEqual(comment.get(Comment.idAttribute), testData.comment8.get(Comment.idAttribute), 'should be the right comment');

@@ -47,12 +47,6 @@ module.exports = function () {
 				describe('get', function () {
 					it('no tests yet!');
 				});
-				describe('filter', function () {
-					it('no tests yet!');
-				});
-				describe('getAll', function () {
-					it('no tests yet!');
-				});
 			});
 		});
 	};

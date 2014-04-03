@@ -3,8 +3,8 @@ var dependable = require('dependable');
 module.exports = function (container, assert, Promise, errors, mout, support) {
 
 	return function () {
-		var errorPrefix = 'Collection.filter(predicate[, options][, cb]): ',
-			filter,
+		var errorPrefix = 'Collection.findAll(predicate[, options][, cb]): ',
+			findAll,
 			new_container,
 			Collection,
 			Model;
@@ -43,7 +43,7 @@ module.exports = function (container, assert, Promise, errors, mout, support) {
 				});
 			});
 
-			filter = container.get('Collection_filter', {
+			findAll = container.get('Collection_findAll', {
 				container: new_container,
 				models: {},
 				collections: {},
@@ -53,14 +53,14 @@ module.exports = function (container, assert, Promise, errors, mout, support) {
 
 		it('should work', function (done) {
 
-			filter.apply(Collection, [
+			findAll.apply(Collection, [
 				{},
 				function (err, collection) {
 					if (err) {
 						done(err);
 					} else {
 						assert.isTrue(collection instanceof Collection);
-						filter.apply(Collection, [
+						findAll.apply(Collection, [
 								{}
 							])
 							.then(function (collection) {
@@ -78,7 +78,7 @@ module.exports = function (container, assert, Promise, errors, mout, support) {
 
 			mout.array.forEach(support.TYPES_EXCEPT_FUNCTION, function (type) {
 				assert.throws(function () {
-					filter.apply(Collection, [
+					findAll.apply(Collection, [
 						{},
 						{},
 						type || true
@@ -87,30 +87,30 @@ module.exports = function (container, assert, Promise, errors, mout, support) {
 			});
 
 			mout.array.forEach(support.TYPES_EXCEPT_OBJECT, function (type) {
-				assert.isRejected(filter.apply(Collection, [type]), errors.IllegalArgumentError, errorPrefix + 'predicate: Must be an object!');
-				assert.isRejected(filter.apply(Collection, [
+				assert.isRejected(findAll.apply(Collection, [type]), errors.IllegalArgumentError, errorPrefix + 'predicate: Must be an object!');
+				assert.isRejected(findAll.apply(Collection, [
 					{},
 					(typeof type === 'function' ? true : type || true)
 				]), errors.IllegalArgumentError, errorPrefix + 'options: Must be an object!');
 			});
 
 			mout.array.forEach(support.TYPES_EXCEPT_STRING_OR_OBJECT, function (type) {
-				assert.isRejected(filter.apply(Collection, [
+				assert.isRejected(findAll.apply(Collection, [
 					{ where: type || true }
 				]), errors.IllegalArgumentError, errorPrefix + 'predicate.where: Must be a string or an object!');
 			});
 
 			mout.array.forEach(support.TYPES_EXCEPT_NUMBER, function (type) {
-				assert.isRejected(filter.apply(Collection, [
+				assert.isRejected(findAll.apply(Collection, [
 					{ limit: type || true }
 				]), errors.IllegalArgumentError, errorPrefix + 'predicate.limit: Must be a number!');
-				assert.isRejected(filter.apply(Collection, [
+				assert.isRejected(findAll.apply(Collection, [
 					{ skip: type || true }
 				]), errors.IllegalArgumentError, errorPrefix + 'predicate.skip: Must be a number!');
 			});
 
 			mout.array.forEach(support.TYPES_EXCEPT_STRING_OR_ARRAY, function (type) {
-				assert.isRejected(filter.apply(Collection, [
+				assert.isRejected(findAll.apply(Collection, [
 					{ pluck: type || true },
 					{ raw: true }
 				]), errors.IllegalArgumentError, errorPrefix + 'predicate.pluck: Must be a string or an array!');
