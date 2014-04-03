@@ -75,6 +75,7 @@ module.exports = function (container, assert, mout, support, errors) {
 					'remove',
 					'removeByPrimaryKey',
 					'reset',
+					'save',
 					'shuffle',
 					'size',
 					'slice',
@@ -729,6 +730,45 @@ module.exports = function (container, assert, mout, support, errors) {
 				segments = posts.split(123);
 
 				assert.equal(segments.length, 9);
+			});
+		});
+		describe('save', function () {
+			it('should call save on all model instances', function (done) {
+				var posts = new Posts([
+					{ author: 'a', title: 'a', order: 0 },
+					{ author: 'a', title: 'b', order: 1 },
+					{ author: 'a', title: 'c', order: 2 },
+					{ author: 'b', title: 'a', order: 3 },
+					{ author: 'b', title: 'b', order: 4 },
+					{ author: 'b', title: 'c', order: 5 },
+					{ author: 'c', title: 'a', order: 6 },
+					{ author: 'c', title: 'b', order: 7 },
+					{ author: 'c', title: 'c', order: 8 }
+				]);
+
+				var post1 = posts.models[0];
+
+				posts.save()
+					.then(function (posts) {
+						assert.equal(posts.size(), 9);
+						assert.isFalse(posts.hasNew());
+
+						post1.setSync('author', 'fff');
+						return posts.save();
+					})
+					.then(function (posts) {
+						assert.equal(posts.size(), 9);
+						assert.isFalse(posts.hasNew());
+						assert.equal(post1.get('author'), 'fff');
+						assert.equal(post1.previousAttributes.author, 'a');
+						return Post.findOne(post1.get(Post.idAttribute));
+					})
+					.then(function (post) {
+						assert.deepEqual(post.toJSON(), post1.toJSON());
+						done();
+					})
+					.catch(done)
+					.error(done);
 			});
 		});
 	};
