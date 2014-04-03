@@ -229,10 +229,7 @@ module.exports = function (grunt) {
 							id: 'api',
 							title: 'Reheat',
 							scripts: [
-								'lib/connection/index.js',
-								'lib/support/errors.js',
-								'lib/model/',
-								'lib/collection/'
+								'lib/'
 							],
 							docs: ['guide/api']
 						}
