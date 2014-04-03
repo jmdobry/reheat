@@ -2,9 +2,12 @@ module.exports = function (container) {
 	return function () {
 
 		describe('/prototype', function () {
-			container.register('integration_model_prototype_save_test', require('./prototype/save.test'));
-
-			describe('save', container.get('integration_model_prototype_save_test'));
+			describe('save', function () {
+				container.register('integration_model_prototype_save_test', require('./prototype/save.test'));
+				container.register('integration_model_prototype_save_relations_test', require('./prototype/save.relations.test'));
+				describe('save.test', container.get('integration_model_prototype_save_test'));
+				describe('save.relations.test', container.get('integration_model_prototype_save_relations_test'));
+			});
 			describe('destroy', function () {
 				container.register('integration_model_prototype_destroy_test', require('./prototype/destroy.test'));
 				container.register('integration_model_prototype_destroy_relations_test', require('./prototype/destroy.relations.test'));
