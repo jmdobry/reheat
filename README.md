@@ -1,10 +1,11 @@
 ## reheat
 
-__Current Version:__ 0.10.6
+__Current Version:__ 0.11.0
 
 __A red hot Node.js ORM for RethinkDB.__
 
 #### This is alpha software! API will fluctuate until 1.0.0.
+You can use it, but be prepared to keep a close eye on the changelog.
 
 All documentation can be found at [http://reheat.codetrain.io/](http://reheat.codetrain.io/).
 
@@ -31,9 +32,9 @@ Reheat is an ORM for [RethinkDB](http://rethinkdb.com), built for the [Node.js](
 - Convert `req.query` to ReQL query (great for your app's API).
 - Query builder (it's just ReQL, easy!)
 - Connection and Schema can each be used on their own
+- Relationships/Associations
 
 #### Roadmap:
-- Relationships
 - Transactions (and rollbacks)
 - Migrations
 - You tell me!
