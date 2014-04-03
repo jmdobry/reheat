@@ -5,37 +5,7 @@
 
 # Schema
 
-Reheat uses the [robocop.js](http://jmdobry.github.io/robocop.js/) library for schema definition and validation.
-
-You are not required to provide a Schema when defining a Model, but if you do, instances of your Model will
-automatically be validated against the Model's Schema during create and update operations.
-
 <page-list></page-list>
-
-```js
-var reheat = require('reheat');
-
-var personSchema = reheat.defineSchema('PersonSchema', {
-	name: {
-		type: 'string',
-		maxLength: 255
-	},
-	age: {
-		type: 'number',
-		max: 120,
-		min: 0
-	}
-});
-
-// This Model will use personSchema as its Schema
-var Person = reheat.defineModel('Person', {
-	schema: personSchema,
-	{...}
-});
-
-// This Model will not use any Schema
-var FreestylePerson = reheat.defineModel('FreestylePerson', {...});
-```
 
 @doc overview
 @id overview
@@ -108,10 +78,10 @@ own.
 
 ### Default Rules
 - nullable
-- max,
-- min,
-- maxLength,
-- minLength,
+- max
+- min
+- maxLength
+- minLength
 - type
 
 ### Default Data Types

@@ -136,9 +136,7 @@ var Post = reheat.defineModel('Post', {
 Methods that support quering relations:
 
 - [Model#get(primaryKey[ options][, cb])](http://reheat/documentation/api/api/Model.static_methods:get)
-- [Model#filter(predicate[, options][, cb])](http://reheat/documentation/api/api/Model.static_methods:filter)
-- [Model#getAll(predicate[, options][, cb])](http://reheat/documentation/api/api/Model.static_methods:getAll)
-- [Collection#filter(predicate[, options][, cb])](http://reheat/documentation/api/api/Collection.static_methods:filter)
+- [Collection#findAll(predicate[, options][, cb])](http://reheat/documentation/api/api/Collection.static_methods:findAll)
 - [Collection#getAll(keys, index[, options][, cb])](http://reheat/documentation/api/api/Collection.static_methods:getAll)
 
 Examples:
@@ -148,7 +146,7 @@ User.get('1234', { with: ['Profile'] }).then(function (user) {
 	user.get('profile');
 });
 
-Posts.filter({ author: 'John Anderson' }, { with: ['Comment'] }).then(function (posts) {
+Posts.findAll({ author: 'John Anderson' }, { with: ['Comment'] }).then(function (posts) {
 	posts.forEach(function (post) {
 		post.get('comments');
 	});
@@ -174,6 +172,44 @@ See the tests for more examples:
 @name Saving/Destroy Relations
 @description
 
-Currently, when you save or destroy a model instance, any relations attached to it will be ignored (so they don't pollute your tables).
+When you call `Model#save` or `Model#destroy` you can pass an option (`deepSave` or `deepDestroy`) which cause `save` or `destroy` to be called
+on any hasOne or hasMany relations loaded into model instance.
 
-You'll need to save each relation manually for now.
+```js
+var profileId;
+
+User.get('12345', { with: ['Profile'] })
+	.then(function (user) {
+		profileId = user.get('profile').get('id');
+		return user.destroy({ deepDestroy: true });
+	})
+	.then(function () {
+		return User.get('12345');
+	})
+	.then(function (user) {
+		user; // null
+
+		return Profile.get(profileId);
+	})
+	.then(function (profile) {
+		profile; // null
+	});
+```
+
+`Model.destroyOne`, a static method, is a more efficient way to destroy a single row, along with any hasOne or hasMany relations.
+
+```js
+Model.destroyOne('12345', { with: ['Profile'] })
+	.then(function (result) {
+		result.deleted; // 1
+		return User.get('12345');
+	})
+	.then(function (user) {
+		user; // null
+
+		return Profile.get(profileId);
+	})
+	.then(function (profile) {
+		profile; // null
+	});
+```

@@ -14,10 +14,10 @@
 
 The `Collection` "class" works much like a [Backbone.js Collection](http://backbonejs.org/#Collection), providing a useful wrapper around an array of instances of your model classes.
 
-Any query (get, getAll, filter) whose result contains somewhere within it an array of instances of one of your model classes will wrap that array in a collection instance. For example:
+Any query (get, getAll, findAll) whose result contains somewhere within it an array of instances of one of your model classes will wrap that array in a collection instance. For example:
 
 ```js
-Posts.filter({ where: { userId: '12345' } })
+Posts.findAll({ where: { userId: '12345' } })
 	.then(function (posts) {
 		console.log(posts instanceof Posts); // true
 		posts.toJSON(); // [{...}, {...}, ..., {...}]
@@ -47,7 +47,7 @@ var Posts = reheat.defineCollection('Posts', {
 	model: Post
 });
 
-Posts.filter({})
+Posts.findAll({})
 	.then(function (posts) {
 		console.log(posts instanceof Posts); // true
 
@@ -134,17 +134,17 @@ console.log(posts.models[0] instanceof Post); // true
 Collections have a few useful static methods.
 
 ### Filtering
-`Collection.filter(predicate[, options][, cb])`
+`Collection.findAll(predicate[, options][, cb])`
 
 Examples:
 ```js
-Posts.filter({
+Posts.findAll({
 	author: 'John Anderson'
 }).then(function (posts) {
 	// do something with the instance of "Posts"
 });
 
-Posts.filter({
+Posts.findAll({
 	author: 'John Anderson'
 }, {
 	with: ['Comment', 'User']

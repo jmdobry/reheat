@@ -5,45 +5,7 @@
 
 # Model
 
-You define models via `reheat.defineModel()` which map to tables. Instances of your models map to individual rows in the tables.
-
-Terms used in documentation:
-
-- _Model_ - Reheat's Model class.
-- _model(s)_ - Your models you've created via `reheat.defineModel()` (map to tables).
-- _(model) instances_ - Instances of your models (map to rows).
-- `Model#property` - Refers to prototype or instance properties of instances of a model you've defined.
-- `Model.property` - Refers to static properties on a model you've defined.
-
 <page-list></page-list>
-
-```js
-var reheat = require('reheat'),
-	Connection = reheat.Connection;
-
-// This Model will use personSchema as its Schema
-var Person = reheat.defineModel('Person', {
-	tableName: 'person',
-	connection: new Connection()
-});
-
-var person = new Person({
-	name: 'John Anderson',
-	age: 30
-});
-
-person.isNew(); //  true
-
-person.save(function (err, person) {
-	person.toJSON();    //  {
-						//      name: 'John Anderson',
-						//      age: 30,
-						//      id: '4a16101b-f35e-46d5-be0e-3a9596abfcf9'
-						//  }
-
-	person.isNew(); //  false
-});
-```
 
 @doc overview
 @id overview
@@ -262,7 +224,7 @@ of methods from `Model.prototype`.
 The CRUD operations performed on instances of each model go through a lifecycle. By default, the lifecycle steps don't
 do anything except for the CRUD operation itself.
 
-What about `this`? Each lifecycle step is executed in the context of the instance on which you called `save(cb)` or `destroy(cb)`.
+What about `this`? Each lifecycle step is executed in the context of the instance on which you called `save([options][, cb])` or `destroy([options][, cb])`.
 
 ## Lifecycle steps
 
@@ -275,7 +237,7 @@ If `isNew() === true`:
 - `afterValidate(cb)`
 - `beforeCreate(cb)`
 - `save(cb)` - Don't override this, bad things might happen!
-- `afterCreate(instance, meta, cb)` - Make sure to pass along `instance` and `meta` if you override this! i.e. `cb(null, instance, meta)`
+- `afterCreate(instance, cb)` - Make sure to pass along `instance` if you override this! i.e. `cb(null, instance)`
 
 Else if `isNew() === false`:
 
@@ -284,20 +246,20 @@ Else if `isNew() === false`:
 - `afterValidate(cb)`
 - `beforeUpdate(cb)`
 - `save(cb)` - Don't override this, bad things might happen!
-- `afterUpdate(instance, meta, cb)` - Make sure to pass along `instance` and `meta` if you override this! i.e. `cb(null, instance, meta)`
+- `afterUpdate(instance, cb)` - Make sure to pass along `instance` if you override this! i.e. `cb(null, instance)`
 
 #### Model#destroy(cb)
 
 - `beforeDestroy(cb)`
 - `destroy(cb)` - Don't override this, bad things might happen!
-- `afterDestroy(instance, meta, cb)` - Make sure to pass along `instance` and `meta` if you override this! i.e. `cb(null, instance, meta)`
+- `afterDestroy(instance, cb)` - Make sure to pass along `instance` if you override this! i.e. `cb(null, instance)`
 
 @doc overview
 @id saving
 @name Saving Data
 @description
 
-You save data to the database by calling `save(cb)` on instances of your models.
+You save data to the database by calling `save([options][, cb])` on instances of your models.
 
 If an instance is new, meaning that its properties do not yet contain the field specified by the instance's model's
 `idAttribute` field, then the save operation will be an insert (see [r#insert](http://rethinkdb.com/api/javascript#insert)).
