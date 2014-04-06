@@ -1,10 +1,10 @@
 ## reheat
 
-__Current Version:__ 1.0.0-beta.1
+__Current Version:__ 1.0.0-beta.2
 
 __A red hot Node.js ORM for RethinkDB.__
 
-#### This is alpha software! API will fluctuate until 1.0.0.
+#### This is beta software! API may fluctuate before 1.0.0.
 You can use it, but be prepared to keep a close eye on the changelog.
 
 All documentation can be found at [http://reheat.codetrain.io/](http://reheat.codetrain.io/).

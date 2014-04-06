@@ -1,3 +1,8 @@
+##### 1.0.0-beta.2 - 06 April 2014
+
+###### Backwards compatible bug fixes
+- #42 - Querying for relations needs to handle missing "localKey"
+
 ##### 1.0.0-beta.1 - 03 April 2014
 Added support for relations/associations.
 
