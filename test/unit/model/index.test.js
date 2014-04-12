@@ -1,6 +1,7 @@
-var reheat = require('../../../lib/');
+var reheat = require('../../../lib/'),
+	destroy = require('../../../build/instrument/lib/model/prototype/destroy');
 
-module.exports = function (assert, mout, support, errors) {
+module.exports = function (assert, mout, support, errors, Promise) {
 
 	return function () {
 		describe('/model', function () {
@@ -24,7 +25,102 @@ module.exports = function (assert, mout, support, errors) {
 					it('no tests yet!');
 				});
 				describe('destroy', function () {
-					it('no tests yet!');
+					var instance, queue;
+					before(function (done) {
+						instance = {
+							attributes: {
+								name: 'John',
+								id: 2
+							},
+							destroy: destroy,
+							constructor: {
+								connection: {},
+								timestamps: true,
+								softDelete: true,
+								tableReady: Promise.resolve(),
+								relations: {}
+							},
+							isNew: function () {
+								return false;
+							},
+							get: function () {
+								return 2;
+							}
+						};
+						done();
+					});
+					beforeEach(function (done) {
+						queue = []
+						done();
+					});
+
+					it('shold throw an error for a non-function callback', function () {
+						mout.array.forEach(support.TYPES_EXCEPT_FUNCTION, function (type) {
+							if (type) {
+								try {
+									instance.destroy(false, type);
+									support.fail('destroy let non-function type through');
+								}
+								catch (err) {
+									assert.equal(err.type, 'IllegalArgumentError');
+									assert.deepEqual(err.errors, { actual: typeof type, expected: 'function' });
+									assert.equal(err.message, 'Model#destroy([options], cb): cb: Must be a function!');
+								}
+							}
+						});
+					});
+					it('should throw an error for a non-object option', function () {
+						mout.array.forEach(support.TYPES_EXCEPT_OBJECT, function (type) {
+							if (type && typeof type != 'function') {
+								instance.destroy(type, function (err) {
+									assert.ok(err);
+									assert.equal(err.type, 'IllegalArgumentError');
+									assert.deepEqual(err.errors, { actual: typeof type, expected: 'object' });
+									assert.equal(err.message, 'Model#destroy([options], cb): options: Must be an object!');
+								});
+							}
+						});
+					});
+					it('should throw an error for an invalid relation', function () {
+						var relationTypes = [{
+							hasOne: {
+								Snap: {}
+							}
+						}, {
+							hasMany: {
+								Crackle: {}
+							}
+						}, {
+							belongsTo: {
+								Pop: {}
+							}
+						}];
+						var relationNames = ['hasOne', 'hasMany', 'belongsTo'];
+						var objNames = ['Snap', 'Crackle', 'Pop'];
+						var dummyObj = {};
+						var queue = [];
+
+						for (var i = 0; i < relationTypes.length; i++) {
+							queue.push((function (j) {
+								var newInstance = {
+									destroy: destroy,
+									constructor: {
+										connection: {},
+										timestamps: true,
+										softDelete: true,
+										tableReady: Promise.resolve(),
+										relations: relationTypes[j]
+									}
+								};
+
+								newInstance.destroy(dummyObj, function (err) {
+									assert.equal(err.type, 'RuntimeError');
+									assert.equal(err.message, 'undefined Model defined ' + relationNames[j] + ' relationship to nonexistent ' + objNames[j] + ' Model!');
+								});
+							})(i));
+						}
+						Promise.all(queue);
+					});
 				});
 				describe('escape', function () {
 					it('no tests yet!');
@@ -65,7 +161,7 @@ module.exports = function (assert, mout, support, errors) {
 					reheat.unregisterModel('Dummy');
 					connection.drain();
 					done();
-				})
+				});
 
 				it('should throw an error for a non-string name', function () {
 					mout.array.forEach(support.TYPES_EXCEPT_STRING, function (type) {
