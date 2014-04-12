@@ -45,7 +45,8 @@
     "bluebird": "~1.1.1",
     "rethinkdb": "~1.11.0-4",
     "robocop.js": "~0.14.x",
-    "dependable": "^0.2.5"
+    "dependable": "^0.2.5",
+    "rethinkdbdash": "^1.12.3"
   },
   "devDependencies": {
     "grunt": "~0.4.4",
