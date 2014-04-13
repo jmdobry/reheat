@@ -262,9 +262,9 @@ describe('/integration', function () {
 			.error(done);
 	});
 
-//	config.register('integration_collection_tests', require('./collection/index.test'));
+	config.register('integration_collection_tests', require('./collection/index.test'));
 	config.register('integration_model_tests', require('./model/index.test'));
 
-//	describe('/collection', config.get('integration_collection_tests'));
+	describe('/collection', config.get('integration_collection_tests'));
 	describe('/model', config.get('integration_model_tests'));
 });
