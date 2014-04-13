@@ -1,3 +1,8 @@
+##### 1.0.0-beta.4 - 12 April 2014
+
+###### Backwards compatible bug fixes
+- Fixed secondary indices not being created properly.
+
 ##### 1.0.0-beta.3 - 12 April 2014
 
 ###### Backwards compatible bug fixes
