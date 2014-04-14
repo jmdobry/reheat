@@ -1,3 +1,18 @@
+##### 1.0.0-beta.5 - 12 April 2014
+
+###### Backwards compatible bug fixes
+- Fixed `Collection#toJSON()` not properly calling `toJSON()` on its model instances.
+
+##### 1.0.0-beta.4 - 12 April 2014
+
+###### Backwards compatible bug fixes
+- Fixed secondary indices not being created properly.
+
+##### 1.0.0-beta.3 - 12 April 2014
+
+###### Backwards compatible bug fixes
+- Cleaned up use of promises to be more correct and memory safe.
+
 ##### 1.0.0-beta.2 - 06 April 2014
 
 ###### Backwards compatible bug fixes

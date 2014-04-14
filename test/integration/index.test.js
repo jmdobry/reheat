@@ -11,12 +11,12 @@ describe('/integration', function () {
 			}),
 			User, Post, Profile, Comment;
 
-		connection.run(r.db('test').tableList())
+		connection.run(r.tableList())
 			.then(function (tableList) {
 				var tasks = [];
 
 				utils.forEach(tableList, function (table) {
-					tasks.push(connection.run(r.db('test').table(table).delete()));
+					tasks.push(connection.run(r.table(table).delete()));
 				});
 
 				return Promise.all(tasks);

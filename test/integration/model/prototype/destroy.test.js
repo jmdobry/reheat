@@ -35,11 +35,12 @@ module.exports = function (container, assert, mout) {
 						}
 					});
 					assert.isTrue(post.isNew());
-					assert.isUndefined(post.meta);
-
 					done();
 				})
-				.catch(done)
+				.catch(function (err) {
+					console.log(err);
+					done(err);
+				})
 				.error(done);
 		});
 
@@ -66,7 +67,7 @@ module.exports = function (container, assert, mout) {
 						}
 					});
 					assert.isTrue(post.isNew());
-					assert.isNull(post.meta.new_val);
+					assert.isUndefined(post.meta.new_val);
 					assert.equal(post.meta.deleted, 1);
 
 					done();
