@@ -1,3 +1,5 @@
+/*jshint loopfunc:true*/
+
 var reheat = require('../../../lib/'),
 	destroy = require('../../../build/instrument/lib/model/prototype/destroy');
 
@@ -50,7 +52,7 @@ module.exports = function (assert, mout, support, errors, Promise) {
 						done();
 					});
 					beforeEach(function (done) {
-						queue = []
+						queue = [];
 						done();
 					});
 
@@ -71,7 +73,7 @@ module.exports = function (assert, mout, support, errors, Promise) {
 					});
 					it('should throw an error for a non-object option', function () {
 						mout.array.forEach(support.TYPES_EXCEPT_OBJECT, function (type) {
-							if (type && typeof type != 'function') {
+							if (type && typeof type !== 'function') {
 								instance.destroy(type, function (err) {
 									assert.ok(err);
 									assert.equal(err.type, 'IllegalArgumentError');
