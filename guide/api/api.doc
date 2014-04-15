@@ -66,6 +66,7 @@ var posts = new Posts([
 ### Errors
 ```js
 // Error constructor functions
+reheat.support.UnhandledError;
 reheat.support.IllegalArgumentError;
 reheat.support.RuntimeError;
 reheat.support.ValidationError;
