@@ -1,3 +1,8 @@
+##### 1.0.0-beta.6 - 14 May 2014
+
+###### Backwards compatible bug fixes
+- Upgraded to rethinkdb v1.12.0-0
+
 ##### 1.0.0-beta.5 - 12 April 2014
 
 ###### Backwards compatible bug fixes
