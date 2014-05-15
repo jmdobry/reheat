@@ -1,6 +1,6 @@
 ## reheat
 
-__Current Version:__ 1.0.0-beta.5
+__Current Version:__ 1.0.0-beta.6
 
 __A red hot Node.js ORM for RethinkDB.__
 

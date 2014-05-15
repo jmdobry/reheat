@@ -1,7 +1,7 @@
 {
   "name": "reheat",
   "description": "A red hot Node.js ORM for RethinkDB.",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-beta.6",
   "homepage": "https://github.com/jmdobry/reheat",
   "repository": {
     "type": "git",
@@ -43,7 +43,7 @@
     "generic-pool": "~2.0.4",
     "mout": "0.9.x",
     "bluebird": "~1.2.2",
-    "rethinkdb": "1.11.0-4",
+    "rethinkdb": "1.12.0-0",
     "robocop.js": "~0.14.x",
     "dependable": "^0.2.5"
   },
