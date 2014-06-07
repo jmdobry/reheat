@@ -7,7 +7,7 @@ __A red hot Node.js ORM for RethinkDB.__
 #### This is beta software! API may fluctuate before 1.0.0.
 You can use it, but be prepared to keep a close eye on the changelog.
 
-All documentation can be found at [http://reheat.codetrain.io/](http://reheat.codetrain.io/).
+All documentation can be found at [http://reheat.pseudobry.com/](http://reheat.pseudobry.com/).
 
 <a href="https://nodei.co/npm/reheat/">
     <img src="https://nodei.co/npm/reheat.png?downloads=true">
@@ -64,14 +64,9 @@ var connection = new reheat.Connection({
 	db: 'local'
 });
 
-var Post = reheat.Model.extend({
+var Post = reheat.defineModel('Post', {
 	tableName: 'post',
 	connection: connection
-}, {
-   	beforeCreate: function (cb) {
-   		this.setSync('tags', []);
-   		cb();
-   	}
 });
 
 var post = new Post({
@@ -81,12 +76,11 @@ var post = new Post({
 
 post.isNew(); // true
 
-post.save(function (err, post) {
+post.save().then(function (post) {
 	post.toJSON();  //  {
 					//      id: '1c83229b-1628-4098-a618-abc05af1ebdb',
 					//      author: 'Jason Dobry',
-					//      title: 'How to reheat your app',
-					//      tags: []
+					//      title: 'How to reheat your app'
 					//  }
 
 	post.isNew();   //  false
@@ -96,13 +90,13 @@ post.save(function (err, post) {
 ## Resources
 
 #### Getting Started
-[Getting Started](http://reheat.codetrain.io/documentation/guide/overview/index) - Read how to install reheat and get it running in your application.
+[Getting Started](http://reheat.pseudobry.com/documentation/guide/overview/index) - Read how to install reheat and get it running in your application.
 
 #### Guide
-[Guide](http://reheat.codetrain.io/documentation/guide/index) - List of tutorials on how to use reheat.
+[Guide](http://reheat.pseudobry.com/documentation/guide/index) - List of tutorials on how to use reheat.
 
 #### API
-[API](http://reheat.codetrain.io/documentation/api/api/index) - Reference API documentation for reheat.
+[API](http://reheat.pseudobry.com/documentation/api/api/index) - Reference API documentation for reheat.
 
 #### Community
 [Mailing List](https://groups.google.com/forum/?fromgroups#!forum/reheat) - Ask questions and get help.
