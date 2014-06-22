@@ -1,3 +1,8 @@
+##### 1.0.0-beta.7 - 22 June 2014
+
+###### Backwards compatible bug fixes
+- Upgraded dependencies
+
 ##### 1.0.0-beta.6 - 14 May 2014
 
 ###### Backwards compatible bug fixes
