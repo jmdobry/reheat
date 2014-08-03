@@ -1,6 +1,8 @@
 module.exports = function (grunt) {
 
-	require('load-grunt-tasks')(grunt);
+	require('jit-grunt')(grunt, {
+    simplemocha: 'grunt-simple-mocha'
+  });
 	require('time-grunt')(grunt);
 
 	var dev = process.cwd().indexOf('/home/jdobry/reheat') === -1;
