@@ -23,21 +23,21 @@ automatically be validated against the Model's Schema during create and update o
 var reheat = require('reheat');
 
 var personSchema = reheat.defineSchema('PersonSchema', {
-	name: {
-		type: 'string',
-		maxLength: 255
-	},
-	age: {
-		type: 'number',
-		max: 120,
-		min: 0
-	}
+  name: {
+    type: 'string',
+    maxLength: 255
+  },
+  age: {
+    type: 'number',
+    max: 120,
+    min: 0
+  }
 });
 
 // This Model will use personSchema as its Schema
 var Person = reheat.defineModel('Person', {
-	schema: personSchema,
-	{...}
+  schema: personSchema,
+  {...}
 });
 
 // This Model will not use any Schema
@@ -55,14 +55,14 @@ Reheat delegates Schema functionality to robocop.js.
 
 ```js
 reheat.defineSchema('PersonSchema', {
-	name: {
-		type: 'string'
-	}
+  name: {
+    type: 'string'
+  }
 });
 
 var Person = reheat.defineModel('Person', {
-	schema: reheat.getSchema('PersonSchema'),
-	{...}
+  schema: reheat.getSchema('PersonSchema'),
+  {...}
 });
 ```
 

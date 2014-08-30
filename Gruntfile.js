@@ -245,7 +245,7 @@ module.exports = function (grunt) {
 			docular_partial_navigation: 'guide/nav.html',
 			docular_partial_footer: 'guide/footer.html',
 			analytics: {
-				account: '34445126-3',
+				account: 'UA-34445126-3',
 				domainName: 'reheat.pseudobry.com'
 			},
 			discussions: {

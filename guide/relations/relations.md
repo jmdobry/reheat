@@ -18,75 +18,75 @@ Reheat will create the necessary secondary indices for you if they don't already
 
 ```js
 var User = reheat.defineModel('User', {
-	tableName: 'user',
-	connection: connection,
-	relations: {
-		hasMany: {
-			Post: {
-				localField: 'posts',
-				foreignKey: 'userId'
-			},
-			Comment: {
-				localField: 'comments',
-				foreignKey: 'userId'
-			}
-		},
-		hasOne: {
-			Profile: {
-				localField: 'profile',
-				foreignKey: 'userId'
-			}
-		}
-	}
+  tableName: 'user',
+  connection: connection,
+  relations: {
+    hasMany: {
+      Post: {
+        localField: 'posts',
+        foreignKey: 'userId'
+      },
+      Comment: {
+        localField: 'comments',
+        foreignKey: 'userId'
+      }
+    },
+    hasOne: {
+      Profile: {
+        localField: 'profile',
+        foreignKey: 'userId'
+      }
+    }
+  }
 });
 
 var Profile = reheat.defineModel('Profile', {
-	tableName: 'profile',
-	connection: connection,
-	relations: {
-		belongsTo: {
-			User: {
-				localKey: 'userId',
-				localField: 'user'
-			}
-		}
-	}
+  tableName: 'profile',
+  connection: connection,
+  relations: {
+    belongsTo: {
+      User: {
+        localKey: 'userId',
+        localField: 'user'
+      }
+    }
+  }
 });
 
 var Post = reheat.defineModel('Post', {
-	tableName: 'post',
-	connection: connection,
-	relations: {
-		belongsTo: {
-			User: {
-				localKey: 'userId',
-				localField: 'user'
-			}
-		},
-		hasMany: {
-			Comment: {
-				localField: 'comments',
-				foreignKey: 'postId'
-			}
-		}
-	}
+  tableName: 'post',
+  connection: connection,
+  relations: {
+    belongsTo: {
+      User: {
+        localKey: 'userId',
+        localField: 'user'
+      }
+    },
+    hasMany: {
+      Comment: {
+        localField: 'comments',
+        foreignKey: 'postId'
+      }
+    }
+  }
 });
 
 var Comment = reheat.defineModel('Comment', {
-	tableName: 'comment',
-	connection: connection,
-	relations: {
-		belongsTo: {
-			User: {
-				localKey: 'userId',
-				localField: 'user'
-			},
-			Post: {
-				localKey: 'postId',
-				localField: 'post'
-			}
-		}
-	}
+  tableName: 'comment',
+  connection: connection,
+  relations: {
+    belongsTo: {
+      User: {
+        localKey: 'userId',
+        localField: 'user'
+      },
+      Post: {
+        localKey: 'postId',
+        localField: 'post'
+      }
+    }
+  }
 });
 ```
 
@@ -95,10 +95,10 @@ var Comment = reheat.defineModel('Comment', {
 ```js
 User.get('1234', { with: ['Post'] }).then(function (user) {
 
-	User.relations.hasMany.Post.localField; // "posts"
+  User.relations.hasMany.Post.localField; // "posts"
 
-	// therefore
-	console.log(user.get('posts') instanceof Post.collection); // true
+  // therefore
+  console.log(user.get('posts') instanceof Post.collection); // true
 });
 ```
 
@@ -109,22 +109,22 @@ User.get('1234', { with: ['Post'] }).then(function (user) {
 Examples:
 ```js
 var Post = reheat.defineModel('Post', {
-	tableName: 'post',
-	connection: connection,
-	relations: {
-		belongsTo: {
-			User: {
-				localKey: 'userId', // secondary index on "userId" in the "post" table
-				localField: 'user'
-			}
-		},
-		hasMany: {
-			Comment: {
-				localField: 'comments',
-				foreignKey: 'postId' // secondary index on "postId" in the "comment" table
-			}
-		}
-	}
+  tableName: 'post',
+  connection: connection,
+  relations: {
+    belongsTo: {
+      User: {
+        localKey: 'userId', // secondary index on "userId" in the "post" table
+        localField: 'user'
+      }
+    },
+    hasMany: {
+      Comment: {
+        localField: 'comments',
+        foreignKey: 'postId' // secondary index on "postId" in the "comment" table
+      }
+    }
+  }
 });
 ```
 
@@ -143,21 +143,21 @@ Examples:
 
 ```js
 User.get('1234', { with: ['Profile'] }).then(function (user) {
-	user.get('profile');
+  user.get('profile');
 });
 
 Posts.findAll({ author: 'John Anderson' }, { with: ['Comment'] }).then(function (posts) {
-	posts.forEach(function (post) {
-		post.get('comments');
-	});
+  posts.forEach(function (post) {
+    post.get('comments');
+  });
 });
 
 Users.getAll(['12345', '67890'], { with: ['Profile', 'Post', 'Comment'] }).then(function (users) {
-	users.forEach(function (user) {
-		user.get('profile');
-		user.get('posts');
-		user.get('comments');
-	});
+  users.forEach(function (user) {
+    user.get('profile');
+    user.get('posts');
+    user.get('comments');
+  });
 });
 ```
 
@@ -179,37 +179,37 @@ on any hasOne or hasMany relations loaded into model instance.
 var profileId;
 
 User.get('12345', { with: ['Profile'] })
-	.then(function (user) {
-		profileId = user.get('profile').get('id');
-		return user.destroy({ deepDestroy: true });
-	})
-	.then(function () {
-		return User.get('12345');
-	})
-	.then(function (user) {
-		user; // null
+  .then(function (user) {
+    profileId = user.get('profile').get('id');
+    return user.destroy({ deepDestroy: true });
+  })
+  .then(function () {
+    return User.get('12345');
+  })
+  .then(function (user) {
+    user; // null
 
-		return Profile.get(profileId);
-	})
-	.then(function (profile) {
-		profile; // null
-	});
+    return Profile.get(profileId);
+  })
+  .then(function (profile) {
+    profile; // null
+  });
 ```
 
 `Model.destroyOne`, a static method, is a more efficient way to destroy a single row, along with any hasOne or hasMany relations.
 
 ```js
 Model.destroyOne('12345', { with: ['Profile'] })
-	.then(function (result) {
-		result.deleted; // 1
-		return User.get('12345');
-	})
-	.then(function (user) {
-		user; // null
+  .then(function (result) {
+    result.deleted; // 1
+    return User.get('12345');
+  })
+  .then(function (user) {
+    user; // null
 
-		return Profile.get(profileId);
-	})
-	.then(function (profile) {
-		profile; // null
-	});
+    return Profile.get(profileId);
+  })
+  .then(function (profile) {
+    profile; // null
+  });
 ```

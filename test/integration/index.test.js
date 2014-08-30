@@ -12,9 +12,6 @@ describe('/integration', function () {
     var User, Post, Profile, Comment;
 
     connection.run(connection.r.tableList())
-      .then(function (cursor) {
-        return cursor.toArray();
-      })
       .then(function (tableList) {
         var tasks = [];
 

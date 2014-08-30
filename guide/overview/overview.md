@@ -29,16 +29,15 @@ are sufficient for connecting to a default RethinkDB instance on `localhost`. Ev
 instance of `Connection` in order to operate.
 
 ```js
-var r = require('rethinkdb'),
-	reheat = require('reheat'),
-	Connection = reheat.Connection;
+var reheat = require('reheat');
+var Connection = reheat.Connection;
 
 // Connect to a default RethinkDB instance
 var connection = new Connection();
 
-connection.run(r.tableList(), function (err, tableList) {
-	// A default RethinkDB instance has one db ('test') with no tables
-	tableList;  //  [ ]
+connection.run(connection.r.tableList(), function (err, tableList) {
+  // A default RethinkDB instance has one db ('test') with no tables
+  tableList;  //  [ ]
 });
 ```
 
@@ -58,15 +57,15 @@ automatically be validated against the Model's Schema during create and update o
 var reheat = require('reheat')
 
 var personSchema = reheat.defineSchema('PersonSchema', {
-	name: {
-		type: 'string',
-		maxLength: 255
-	},
-	age: {
-		type: 'number',
-		max: 120,
-		min: 0
-	}
+  name: {
+    type: 'string',
+    maxLength: 255
+  },
+  age: {
+    type: 'number',
+    max: 120,
+    min: 0
+  }
 });
 
 // This Model will use personSchema as its Schema
@@ -90,30 +89,30 @@ Reheat provides an extensible Model class from which your Models inherit propert
 Backbone Models work.
 
 ```js
-var reheat = require('reheat'),
-	Connection = reheat.Connection;
+var reheat = require('reheat');
+var Connection = reheat.Connection;
 
 // This Model will use personSchema as its Schema
 var Person = reheat.defineModel('Person', {
-	tableName: 'person',
-	connection: new Connection()
+  tableName: 'person',
+  connection: new Connection()
 });
 
 var person = new Person({
-	name: 'John Anderson',
-	age: 30
+  name: 'John Anderson',
+  age: 30
 });
 
 person.isNew(); //  true
 
 person.save(function (err, person) {
-	person.toJSON();    //  {
-						//      name: 'John Anderson',
-						//      age: 30,
-						//      id: '4a16101b-f35e-46d5-be0e-3a9596abfcf9'
-						//  }
+  person.toJSON();    //  {
+                      //      name: 'John Anderson',
+                      //      age: 30,
+                      //      id: '4a16101b-f35e-46d5-be0e-3a9596abfcf9'
+                      //  }
 
-	person.isNew(); //  false
+  person.isNew(); //  false
 });
 ```
 

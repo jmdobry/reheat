@@ -1,4 +1,4 @@
-##### 1.0.0-beta.8 - xx August 2014
+##### 1.0.0-beta.8 - 30 August 2014
 
 ###### Breaking API changes
 - Switched out rethinkdb and generic-pool for rethinkdbdash
@@ -16,7 +16,7 @@ var User = reheat.defineModel('User', {
   tableName: 'user'
 });
 
-connection.run(r.dbList()).then(function (cursor) {
+connection.run(r.dbList()).then(function (tableList) {
   // ...
 });
 ```
@@ -31,7 +31,7 @@ var User = reheat.defineModel('User', {
   tableName: 'user'
 });
 
-connection.run(User.r.dbList()).then(function (cursor) {
+connection.run(User.r.dbList()).then(function (dbList) {
   // ...
 });
 ```
