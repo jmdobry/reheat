@@ -1,17 +1,17 @@
 var container = require('../../lib/config').container,
-	path = require('path');
+  path = require('path');
 
 container.register('assert', function () {
-	var chai = require('chai'),
-		chaiAsPromised = require('chai-as-promised');
+  var chai = require('chai'),
+    chaiAsPromised = require('chai-as-promised');
 
-	chai.use(chaiAsPromised);
+  chai.use(chaiAsPromised);
 
-	return chai.assert;
+  return chai.assert;
 });
 
 container.register('sinon', function () {
-	return require('sinon');
+  return require('sinon');
 });
 
 container.load(path.join(__dirname, './mocks/'));

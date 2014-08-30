@@ -25,30 +25,30 @@ Terms used in documentation:
 <page-list></page-list>
 
 ```js
-var reheat = require('reheat'),
-	Connection = reheat.Connection;
+var reheat = require('reheat');
+var Connection = reheat.Connection;
 
 // This Model will use personSchema as its Schema
 var Person = reheat.defineModel('Person', {
-	tableName: 'person',
-	connection: new Connection()
+  tableName: 'person',
+  connection: new Connection()
 });
 
 var person = new Person({
-	name: 'John Anderson',
-	age: 30
+  name: 'John Anderson',
+  age: 30
 });
 
 person.isNew(); //  true
 
 person.save(function (err, person) {
-	person.toJSON();    //  {
-						//      name: 'John Anderson',
-						//      age: 30,
-						//      id: '4a16101b-f35e-46d5-be0e-3a9596abfcf9'
-						//  }
+  person.toJSON();    //  {
+                      //      name: 'John Anderson',
+                      //      age: 30,
+                      //      id: '4a16101b-f35e-46d5-be0e-3a9596abfcf9'
+                      //  }
 
-	person.isNew(); //  false
+  person.isNew(); //  false
 });
 ```
 
@@ -63,21 +63,21 @@ Example:
 
 ```js
 var Person = reheat.defineModel('Person', {
-	// These properties will be available on Person itself
-	say: function () {
-	    return 'Person!';
-	},
-	whisper: function () {
-	    return 'Shhhhh';
-	}
+  // These properties will be available on Person itself
+  say: function () {
+    return 'Person!';
+  },
+  whisper: function () {
+    return 'Shhhhh';
+  }
 }, {
-	// These properties will be on the prototype of any instances of Person
-	say: function () {
-		return 'Hello';
-	},
-	yell: function () {
-		return 'Oho!';
-	}
+  // These properties will be on the prototype of any instances of Person
+  say: function () {
+    return 'Hello';
+  },
+  yell: function () {
+    return 'Oho!';
+  }
 });
 
 Person.say(); // "Person!"
@@ -101,31 +101,31 @@ Example:
 
 ```js
 var Person = reheat.defineModel('Person', {...}, {
-	// Override toJSON() for custom serialization
-	toJSON: function () {
-		var attrs = Model.prototype.toJSON.call(this);
-		delete attrs.secretField;
-		return attrs;
-	},
+  // Override toJSON() for custom serialization
+  toJSON: function () {
+    var attrs = Model.prototype.toJSON.call(this);
+    delete attrs.secretField;
+    return attrs;
+  },
 
-	// Override afterCreate() to perform logic needed after database inserts
-	afterCreate: function(instance, meta, cb) {
-		// send transactional email, etc.
-		console.log('sent transactional email!');
-		cb(null, instance, meta);
-	}
+  // Override afterCreate() to perform logic needed after database inserts
+  afterCreate: function(instance, meta, cb) {
+    // send transactional email, etc.
+    console.log('sent transactional email!');
+    cb(null, instance, meta);
+  }
 
 });
 
 var person = new Person({
-	name: 'John Anderson',
-	secretField: 'secret'
+  name: 'John Anderson',
+  secretField: 'secret'
 });
 
 person.toJSON(); // { name: 'John Anderson' }
 
 person.save(function (err, person, meta) {
-	person.toJSON(); { name: 'John Anderson', id: '4a16101b-f35e-46d5-be0e-3a9596abfcf9' }
+  person.toJSON(); { name: 'John Anderson', id: '4a16101b-f35e-46d5-be0e-3a9596abfcf9' }
 }); // "sent transactional email!"
 ```
 
@@ -137,7 +137,7 @@ Example:
 
 ```js
 var Person = reheat.defineModel('Person', {
-	connection: new reheat.Connection()
+  connection: new reheat.Connection()
 });
 ```
 
@@ -147,46 +147,46 @@ Example:
 
 ```js
 var Person = reheat.defineModel('Person', {
-	// required
-	connection: new reheat.Connection(),
+  // required
+  connection: new reheat.Connection(),
 
-	// optional
-	schema: reheat.defineSchema('PersonSchema', {
-		name: {
-			type: 'string'
-		}
-	}),
+  // optional
+  schema: reheat.defineSchema('PersonSchema', {
+    name: {
+      type: 'string'
+    }
+  }),
 
-	// optional - default "test"
-	tableName: 'person',
+  // optional - default "test"
+  tableName: 'person',
 
-	// optional - default false
-	softDelete: true,
+  // optional - default false
+  softDelete: true,
 
-	// optional - default false
-	timestamps: true
+  // optional - default false
+  timestamps: true
 });
 
 Person.tableName; // "person"
 Person.softDelete; // true
 Person.timestamps; // true
 
-Person.connection.run(r.tableList(), function(err, tableList) {
-	tableList; // [ "person", ... ]
+Person.connection.run(Person.connection.r.tableList(), function(err, tableList) {
+  tableList; // [ "person", ... ]
 
-	Person.schema.validate({
-		name: 1234
-	}, function (err) {
-		err;    //  {
-				//      name: {
-				//          errors: [{
-				//              rule: 'type',
-				//              actual: 'number',
-				//              expected: 'string'
-				//          }]
-				//      }
-				//  }
-	});
+  Person.schema.validate({
+    name: 1234
+  }, function (err) {
+    err;    //  {
+            //      name: {
+            //          errors: [{
+            //              rule: 'type',
+            //              actual: 'number',
+            //              expected: 'string'
+            //          }]
+            //      }
+            //  }
+  });
 });
 ```
 

@@ -1,6 +1,8 @@
 module.exports = function (grunt) {
 
-	require('load-grunt-tasks')(grunt);
+	require('jit-grunt')(grunt, {
+    simplemocha: 'grunt-simple-mocha'
+  });
 	require('time-grunt')(grunt);
 
 	var dev = process.cwd().indexOf('/home/jdobry/reheat') === -1;
@@ -243,7 +245,7 @@ module.exports = function (grunt) {
 			docular_partial_navigation: 'guide/nav.html',
 			docular_partial_footer: 'guide/footer.html',
 			analytics: {
-				account: '34445126-3',
+				account: 'UA-34445126-3',
 				domainName: 'reheat.pseudobry.com'
 			},
 			discussions: {

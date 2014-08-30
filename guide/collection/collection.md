@@ -18,13 +18,13 @@ Any query (get, getAll, findAll) whose result contains somewhere within it an ar
 
 ```js
 Posts.findAll({ where: { userId: '12345' } })
-	.then(function (posts) {
-		console.log(posts instanceof Posts); // true
-		posts.toJSON(); // [{...}, {...}, ..., {...}]
-		posts.size(); // 23
+  .then(function (posts) {
+    console.log(posts instanceof Posts); // true
+    posts.toJSON(); // [{...}, {...}, ..., {...}]
+    posts.size(); // 23
 
-		console.log(posts.models[0] instanceof Post); // true
-	});
+    console.log(posts.models[0] instanceof Post); // true
+  });
 ```
 
 You don't need to use `reheat.defineCollection()` unless you want to add custom behavior, otherwise a collection will be defined for you for every model you define.
@@ -48,13 +48,13 @@ var Posts = reheat.defineCollection('Posts', {
 });
 
 Posts.findAll({})
-	.then(function (posts) {
-		console.log(posts instanceof Posts); // true
+  .then(function (posts) {
+    console.log(posts instanceof Posts); // true
 
-		if (posts.size() > 0) {
-			console.log(posts.models[0] instanceof Post); // true
-		}
-	});
+    if (posts.size() > 0) {
+      console.log(posts.models[0] instanceof Post); // true
+    }
+  });
 ```
 
 ### prototype properties
@@ -67,9 +67,9 @@ Example:
 
 ```js
 var Posts = reheat.defineCollection('Posts', {...}, {
-	saySomething: function () {
-		console.log('hello');
-	}
+  saySomething: function () {
+    console.log('hello');
+  }
 });
 
 var posts = new Posts();
@@ -110,16 +110,16 @@ Example:
 
 ```js
 var posts = new Posts([
-	{ author: 'John Anderson' title: 'How NOT to cook' },
-	{ author: 'Sally Johnson', title: 'How to cook' }
+  { author: 'John Anderson' title: 'How NOT to cook' },
+  { author: 'Sally Johnson', title: 'How to cook' }
 ]);
 
 // posts now contains instances of Post
 console.log(posts.models[0] instanceof Post); // true
 
 posts = new Posts([
-	new Post({ author: 'John Anderson' title: 'How NOT to cook' }),
-	new Post({ author: 'Sally Johnson', title: 'How to cook' })
+  new Post({ author: 'John Anderson' title: 'How NOT to cook' }),
+  new Post({ author: 'Sally Johnson', title: 'How to cook' })
 ]);
 
 // same result
@@ -139,17 +139,17 @@ Collections have a few useful static methods.
 Examples:
 ```js
 Posts.findAll({
-	author: 'John Anderson'
+  author: 'John Anderson'
 }).then(function (posts) {
-	// do something with the instance of "Posts"
+  // do something with the instance of "Posts"
 });
 
 Posts.findAll({
-	author: 'John Anderson'
+  author: 'John Anderson'
 }, {
-	with: ['Comment', 'User']
+  with: ['Comment', 'User']
 }).then(function (posts) {
-	// do something with the instance of "Posts"
+  // do something with the instance of "Posts"
 });
 ```
 

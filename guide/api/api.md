@@ -25,17 +25,17 @@ var connection = new reheat.Connection({
 ### Schema
 ```js
 var personSchema = reheat.defineSchema('PersonSchema', {
-	name: {
-		type: 'string'
-	}
+  name: {
+    type: 'string'
+  }
 });
 ```
 
 ### Model
 ```js
 var Person = reheat.defineModel('Person', {
-	connection: connection,
-	schema: personSchema
+  connection: connection,
+  schema: personSchema
 });
 ```
 
@@ -43,7 +43,7 @@ Person.collection; // Default collection already defined
 
 ```js
 var person = new Person({
-	name: 'John Anderson'
+  name: 'John Anderson'
 });
 ```
 
@@ -52,14 +52,14 @@ var person = new Person({
 // This is optional. A default collection is defined for
 // every model you define.
 var Posts = reheat.defineCollection('Posts', {
-	model: Post
+  model: Post
 });
 ```
 
 ```js
 var posts = new Posts([
-	{ author: 'John Anderson', title: 'How NOT to cook' },
-	{ author: 'Sally Johnson', title: 'How to cook' },
+  { author: 'John Anderson', title: 'How NOT to cook' },
+  { author: 'Sally Johnson', title: 'How to cook' },
 ]);
 ```
 
