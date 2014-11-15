@@ -1,7 +1,7 @@
 {
   "name": "reheat",
   "description": "A red hot Node.js ORM for RethinkDB.",
-  "version": "1.0.0-beta.8",
+  "version": "1.0.0-beta.9",
   "homepage": "https://github.com/jmdobry/reheat",
   "repository": {
     "type": "git",
@@ -40,14 +40,14 @@
   ],
   "readmeFilename": "README.md",
   "dependencies": {
-    "mout": "~0.9.x",
+    "mout": "~0.10.x",
     "bluebird": "~2.3.x",
     "robocop.js": "~0.15.x",
     "dependable": "^0.2.5",
-    "rethinkdbdash": "~1.14.x"
+    "rethinkdbdash": "~1.15.x"
   },
   "devDependencies": {
-    "chai": "~1.9.x",
+    "chai": "~1.10.x",
     "chai-as-promised": "~4.1.x",
     "coveralls": "~2.11.x",
     "docular": "^0.6.3",
@@ -55,17 +55,17 @@
     "grunt-cli": "~0.1.x",
     "grunt-contrib-clean": "~0.6.x",
     "grunt-contrib-concat": "~0.5.x",
-    "grunt-contrib-copy": "~0.5.x",
+    "grunt-contrib-copy": "~0.7.x",
     "grunt-contrib-jshint": "~0.10.x",
     "grunt-contrib-nodeunit": "~0.4.x",
-    "grunt-contrib-uglify": "~0.5.x",
+    "grunt-contrib-uglify": "~0.6.x",
     "grunt-docular": "0.1.2",
     "grunt-istanbul": "~0.3.x",
     "grunt-karma-coveralls": "~2.5.x",
     "grunt-simple-mocha": "~0.4.x",
-    "jit-grunt": "~0.8.x",
+    "jit-grunt": "~0.9.x",
     "sandboxed-module": "~1.0.x",
-    "sinon": "~1.10.x",
+    "sinon": "~1.11.x",
     "time-grunt": "~1.0.x"
   },
   "bugs": {
