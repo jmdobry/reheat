@@ -1,3 +1,7 @@
+##### 1.0.0-beta.10 - 22 November 2014
+
+Switched order of skip and limit in Collection.findAll
+
 ##### 1.0.0-beta.8 - 30 August 2014
 
 ###### Breaking API changes
