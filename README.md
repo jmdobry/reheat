@@ -1,3 +1,7 @@
+# I have stopped working on this project in favor of [js-data + js-data-rethinkdb](http://www.js-data.io/docs/dsrethinkdbadapter).
+
+----
+
 ## reheat
 
 __Current Version:__ 1.0.0-beta.10 (Supports RethinkDB 1.15.x and newer)
